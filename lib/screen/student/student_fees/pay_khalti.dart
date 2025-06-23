@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:khalti_flutter/khalti_flutter.dart';
 
 class PayKhalti extends StatefulWidget {
   const PayKhalti({super.key});
@@ -12,9 +13,7 @@ class _PayKhaltiState extends State<PayKhalti> {
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
       onPressed: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Initiating Khalti Payment...')),
-        );
+        payWithKhalti(context);
       },
       icon: const Icon(Icons.payment, color: Colors.white),
       label: const Text(
@@ -28,6 +27,34 @@ class _PayKhaltiState extends State<PayKhalti> {
           borderRadius: BorderRadius.circular(8),
         ),
       ),
+    );
+  }
+  void payWithKhalti(BuildContext context) {
+    KhaltiScope.of(context).pay(
+      config: PaymentConfig(
+        amount: 10000,
+        productIdentity: 'product_${DateTime.now().millisecondsSinceEpoch}',
+        productName: 'Product Fee',
+      ),
+      onSuccess: (PaymentSuccessModel success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Payment Successful! Token: ${success.token}'),
+          ),
+        );
+      },
+      onFailure: (PaymentFailureModel failure) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Payment Failed: ${failure.message}'),
+          ),
+        );
+      },
+      onCancel: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Payment Cancelled')),
+        );
+      },
     );
   }
 }

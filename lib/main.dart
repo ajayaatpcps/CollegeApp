@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:khalti_flutter/khalti_flutter.dart'; // Add Khalti package
 import 'package:lbef/resource/routes.dart';
 import 'package:lbef/resource/routes_name.dart';
 import 'package:lbef/screen/auth/login_page.dart';
@@ -40,28 +41,38 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => UserViewModel()),
         ChangeNotifierProvider(create: (_) => UserDataViewModel()),
         ChangeNotifierProvider(create: (_) => CollegeFeeViewModel()),
-
       ],
       child: Builder(
         builder: (context) {
-          return MediaQuery(
-            data: MediaQuery.of(context).copyWith(
-              textScaler: TextScaler.noScaling,
-            ),
-            child: MaterialApp(s
-              title: 'LBEF',
-              theme: ThemeData(
-                colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
-                useMaterial3: true,
-                fontFamily: 'Poppins',
-              ),
-              debugShowCheckedModeBanner: false,
-              // initialRoute: RoutesName.flash,
-              // onGenerateRoute: Routes.generateRoute,
-              home: const StudentNavbar(
-                index: 0,
-              ),
-            ),
+          return KhaltiScope(
+            publicKey: 'test_public_key_d5d9f63743584dc38753056b0cc737d5',
+            builder: (context, navigatorKey) {
+              return MediaQuery(
+                data: MediaQuery.of(context).copyWith(
+                  textScaler: TextScaler.noScaling,
+                ),
+                child: MaterialApp(
+                  title: 'LBEF',
+                  theme: ThemeData(
+                    colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+                    useMaterial3: true,
+                    fontFamily: 'poppins',
+                  ),
+                  debugShowCheckedModeBanner: false,
+                  navigatorKey: navigatorKey,
+                  supportedLocales: const [
+                    Locale('en', 'US'),
+                    Locale('ne', 'NP'),
+                  ],
+                  localizationsDelegates: const [
+                    KhaltiLocalizations.delegate,
+                  ],
+                  home: const StudentNavbar(
+                    index: 0,
+                  ),
+                ),
+              );
+            },
           );
         },
       ),
