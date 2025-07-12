@@ -22,7 +22,7 @@ class AdmitCard extends StatelessWidget {
         ),
         actions: const [
           Image(
-            image: AssetImage('assets/images/pcpsLogo.png'),
+            image: AssetImage('assets/images/lbef.png'),
             width: 70,
             height: 50,
             fit: BoxFit.contain,
@@ -188,14 +188,10 @@ class AdmitCard extends StatelessWidget {
       (await rootBundle.load('assets/images/new.jpg')).buffer.asUint8List(),
     );
     final pcpsLogo = pw.MemoryImage(
-      (await rootBundle.load('assets/images/pcpsLogo.png'))
-          .buffer
-          .asUint8List(),
+      (await rootBundle.load('assets/images/lbef.png')).buffer.asUint8List(),
     );
     final bedfordLogo = pw.MemoryImage(
-      (await rootBundle.load('assets/images/pcpsLogo.png'))
-          .buffer
-          .asUint8List(),
+      (await rootBundle.load('assets/images/lbef.png')).buffer.asUint8List(),
     );
 
     pdf.addPage(

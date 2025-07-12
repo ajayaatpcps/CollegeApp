@@ -43,13 +43,13 @@ class _FlashScreenState extends State<FlashScreen> {
       Navigator.of(context).push(
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>
-          const MyCollegeIntroScreen(),
+              const MyCollegeIntroScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             const begin = Offset(1.0, 0.0);
             const end = Offset.zero;
             const curve = Curves.easeInOut;
             var tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
             var offsetAnimation = animation.drive(tween);
             return SlideTransition(
               position: offsetAnimation,
@@ -85,10 +85,12 @@ class _FlashScreenState extends State<FlashScreen> {
   @override
   Widget build(BuildContext context) {
     final deviceHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
         child: Image.asset(
-          'assets/images/pcpsLogo.png',
+          'assets/images/lbefHd.jpg',
           height: 300,
         ),
       ),

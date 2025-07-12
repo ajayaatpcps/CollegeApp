@@ -88,7 +88,8 @@ class _DisplayDialogCalenderState extends State<DisplayDialogCalender> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -98,7 +99,7 @@ class _DisplayDialogCalenderState extends State<DisplayDialogCalender> {
                         height: 60,
                         decoration: const BoxDecoration(
                           image: DecorationImage(
-                            image: AssetImage('assets/images/pcpsLogo.png'),
+                            image: AssetImage('assets/images/lbef.png'),
                             fit: BoxFit.contain,
                           ),
                         ),

@@ -28,7 +28,7 @@ class _UnauthorisedPageState extends State<UnauthorisedPage> {
         ),
         actions: const [
           Image(
-            image: AssetImage('assets/images/pcpsLogo.png'),
+            image: AssetImage('assets/images/lbef.png'),
             width: 56,
             height: 24,
             fit: BoxFit.cover,

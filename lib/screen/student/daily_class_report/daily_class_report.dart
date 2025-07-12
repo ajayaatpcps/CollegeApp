@@ -44,7 +44,7 @@ class _DailyClassReportState extends State<DailyClassReport> {
         automaticallyImplyLeading: false,
         actions: const [
           Image(
-            image: AssetImage('assets/images/pcpsLogo.png'),
+            image: AssetImage('assets/images/lbef.png'),
             width: 70,
             height: 50,
             fit: BoxFit.contain,
@@ -82,7 +82,7 @@ class _DailyClassReportState extends State<DailyClassReport> {
                 physics: const BouncingScrollPhysics(),
                 itemCount: dcrList.length,
                 separatorBuilder: (context, index) =>
-                const SizedBox(height: 14),
+                    const SizedBox(height: 14),
                 itemBuilder: (context, index) {
                   final report = dcrList[index];
                   return InkWell(

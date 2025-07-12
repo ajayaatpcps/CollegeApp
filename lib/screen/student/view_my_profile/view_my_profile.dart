@@ -29,7 +29,7 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
           Padding(
             padding: EdgeInsets.only(right: 16),
             child: Image(
-              image: AssetImage('assets/images/pcpsLogo.png'),
+              image: AssetImage('assets/images/lbef.png'),
               width: 70,
               fit: BoxFit.contain,
             ),

@@ -31,7 +31,7 @@ class ProfilePage extends StatelessWidget {
 
       if (!await launchUrl(
         uri,
-        mode: LaunchMode.externalApplication, 
+        mode: LaunchMode.externalApplication,
       )) {
         throw Exception('Could not launch $url');
       }
@@ -48,7 +48,7 @@ class ProfilePage extends StatelessWidget {
         automaticallyImplyLeading: false,
         actions: const [
           Image(
-            image: AssetImage('assets/images/pcpsLogo.png'),
+            image: AssetImage('assets/images/lbef.png'),
             width: 70,
             height: 50,
             fit: BoxFit.contain,

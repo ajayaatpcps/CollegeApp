@@ -65,7 +65,7 @@ class _FileApplicationState extends State<FileApplication> {
         ),
         actions: const [
           Image(
-              image: AssetImage('assets/images/pcpsLogo.png'),
+              image: AssetImage('assets/images/lbef.png'),
               width: 70,
               height: 50),
           SizedBox(width: 14),

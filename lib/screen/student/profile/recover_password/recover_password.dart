@@ -36,7 +36,8 @@ class _RecoverPasswordState extends State<RecoverPassword> {
         data: ThemeData.light().copyWith(
           primaryColor: AppColors.primary,
           colorScheme: ColorScheme.light(primary: AppColors.primary),
-          buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
+          buttonTheme:
+              const ButtonThemeData(textTheme: ButtonTextTheme.primary),
         ),
         child: child!,
       ),
@@ -66,7 +67,7 @@ class _RecoverPasswordState extends State<RecoverPassword> {
         ),
         actions: const [
           Image(
-            image: AssetImage('assets/images/pcpsLogo.png'),
+            image: AssetImage('assets/images/lbef.png'),
             width: 70,
             height: 50,
             fit: BoxFit.contain,
@@ -90,8 +91,6 @@ class _RecoverPasswordState extends State<RecoverPassword> {
                 onChanged: (value) {},
               ),
               const SizedBox(height: 10),
-
-
               CustomLabelTextfield(
                 text: 'Personal Email',
                 hintText: 'Enter your personal email',
@@ -100,11 +99,9 @@ class _RecoverPasswordState extends State<RecoverPassword> {
                 width: double.infinity,
                 obscureText: false,
                 textController: _emailController,
-
                 onChanged: (value) {},
               ),
-              const SizedBox(height:10 ),
-
+              const SizedBox(height: 10),
               const Row(
                 children: [
                   Text(
@@ -150,7 +147,8 @@ class _RecoverPasswordState extends State<RecoverPassword> {
                         _emailController.text.isEmpty ||
                         _dobController.text.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Please fill in all fields')),
+                        const SnackBar(
+                            content: Text('Please fill in all fields')),
                       );
                       return;
                     }

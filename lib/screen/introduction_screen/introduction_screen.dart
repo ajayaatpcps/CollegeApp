@@ -23,7 +23,7 @@ class _MyCollegeIntroScreenState extends State<MyCollegeIntroScreen> {
   }
 
   Widget buildImage(String assetName, {double width = 250}) {
-    return Image.asset('assets/images/pcpsLogo.png', width: width);
+    return Image.asset('assets/images/lbef.png', width: width);
   }
 
   @override

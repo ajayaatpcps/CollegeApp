@@ -58,7 +58,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         ),
         actions: const [
           Image(
-            image: AssetImage('assets/images/pcpsLogo.png'),
+            image: AssetImage('assets/images/lbef.png'),
             width: 70,
             height: 50,
             fit: BoxFit.contain,

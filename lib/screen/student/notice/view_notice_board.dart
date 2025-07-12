@@ -60,7 +60,7 @@ class _ViewNoticeBoardState extends State<ViewNoticeBoard> {
           Padding(
             padding: EdgeInsets.only(right: 16),
             child: Image(
-              image: AssetImage('assets/images/pcpsLogo.png'),
+              image: AssetImage('assets/images/lbef.png'),
               width: 70,
               height: 50,
               fit: BoxFit.contain,

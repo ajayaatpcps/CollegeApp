@@ -29,7 +29,8 @@ class _DownloadForumsState extends State<DownloadForums> {
   }
 
   void fetch() async {
-    await Provider.of<DownloadFormsViewModel>(context, listen: false).fetch(context);
+    await Provider.of<DownloadFormsViewModel>(context, listen: false)
+        .fetch(context);
   }
 
   Future<void> downloadFile(String fileName, String fileLink) async {
@@ -107,7 +108,7 @@ class _DownloadForumsState extends State<DownloadForums> {
         ),
         actions: const [
           Image(
-            image: AssetImage('assets/images/pcpsLogo.png'),
+            image: AssetImage('assets/images/lbef.png'),
             width: 70,
             height: 50,
             fit: BoxFit.contain,
@@ -126,10 +127,11 @@ class _DownloadForumsState extends State<DownloadForums> {
                 crossAxisCount: 2,
                 mainAxisSpacing: 8, // Unified spacing for consistency
                 crossAxisSpacing: 8,
-                childAspectRatio: 0.85, // Slightly increased to prevent overflow
+                childAspectRatio:
+                    0.85, // Slightly increased to prevent overflow
                 children: List.generate(
                   (size.height / 240).ceil(), // Adjusted for taller cells
-                      (index) => const Padding(
+                  (index) => const Padding(
                     padding: EdgeInsets.all(4),
                     child: ClassCardShimmer(),
                   ),
@@ -197,19 +199,24 @@ class _DownloadForumsState extends State<DownloadForums> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          report.description ?? report.documentName ?? 'No description',
-                          style: TextStyle(fontSize: 11, color: Colors.grey[800]),
+                          report.description ??
+                              report.documentName ??
+                              'No description',
+                          style:
+                              TextStyle(fontSize: 11, color: Colors.grey[800]),
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                         ),
                         const Spacer(),
                         Text(
                           'Published: ${report.publishOn != null && report.publishOn!.isNotEmpty ? parseDate(report.publishOn!) : "Unknown"}',
-                          style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                          style:
+                              TextStyle(fontSize: 10, color: Colors.grey[600]),
                         ),
                         const Align(
                           alignment: Alignment.bottomRight,
-                          child: Icon(Icons.download, color: Colors.grey, size: 20),
+                          child: Icon(Icons.download,
+                              color: Colors.grey, size: 20),
                         ),
                       ],
                     ),

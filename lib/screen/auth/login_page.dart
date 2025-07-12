@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 30),
                 Container(
                   child: const Image(
-                    image: AssetImage('assets/images/pcpsLogo.png'),
+                    image: AssetImage('assets/images/lbef.png'),
                     fit: BoxFit.contain,
                     width: 250,
                     height: 140,
@@ -133,9 +133,10 @@ class _LoginPageState extends State<LoginPage> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 InkWell(
-                                  onTap:(){
+                                  onTap: () {
                                     Navigator.of(context).push(
-                                      SlideRightRoute(page: const RecoverPassword()),
+                                      SlideRightRoute(
+                                          page: const RecoverPassword()),
                                     );
                                   },
                                   child: const Text(
@@ -197,7 +198,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     children: [
                       Text(
-                        '© 2025 PCPS. All Rights Reserved.',
+                        '© 2025 LBEF. All Rights Reserved.',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey,

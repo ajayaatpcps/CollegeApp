@@ -75,7 +75,7 @@ class DisplayDialog extends StatelessWidget {
                       height: 60,
                       decoration: const BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage('assets/images/pcpsLogo.png'),
+                          image: AssetImage('assets/images/lbef.png'),
                           fit: BoxFit.contain,
                         ),
                       ),

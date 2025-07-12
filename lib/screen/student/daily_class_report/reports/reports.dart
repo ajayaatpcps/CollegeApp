@@ -76,7 +76,7 @@ class _ReportsState extends State<Reports> {
         ),
         actions: const [
           Image(
-            image: AssetImage('assets/images/pcpsLogo.png'),
+            image: AssetImage('assets/images/lbef.png'),
             width: 70,
             height: 50,
             fit: BoxFit.contain,
@@ -114,7 +114,7 @@ class _ReportsState extends State<Reports> {
                   final data = viewModel.currentDetails;
 
                   if (viewModel.isLoading) {
-                    return const Expanded(child: ReportsShimmer());
+                    return const ReportsShimmer();
                   }
 
                   if (data == null ||
