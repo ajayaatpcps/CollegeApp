@@ -67,17 +67,17 @@ class _DashboardHeadState extends State<DashboardHead> {
       'icon': Icons.calendar_month,
       'className': const CalendarScreen()
     },
-    {'text': 'Breo', 'icon': Icons.web, 'link': 'https://breo.beds.ac.uk/'},
+    // {'text': 'Breo', 'icon': Icons.web, 'link': 'https://breo.beds.ac.uk/'},
     {
       'text': "Download forms",
       'icon': Icons.assignment,
       'className': const DownloadForums()
     },
-    {
-      'text': 'E-vision',
-      'icon': Icons.laptop,
-      'link': 'https://evision.beds.ac.uk/'
-    },
+    // {
+    //   'text': 'E-vision',
+    //   'icon': Icons.laptop,
+    //   'link': 'https://evision.beds.ac.uk/'
+    // },
     {'text': 'Security', 'icon': Icons.lock, 'alert': true},
   ];
 
@@ -290,8 +290,8 @@ class _DashboardHeadState extends State<DashboardHead> {
                           },
                           errorBuilder: (context, error, stackTrace) =>
                               Container(
-                            width: 70,
-                            height: 70,
+                            width: 90,
+                            height: 100,
                             color: Colors.white,
                             child: Center(
                               child: Icon(

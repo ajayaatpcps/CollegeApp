@@ -212,36 +212,36 @@ class ProfilePage extends StatelessWidget {
                           .push(_buildSlideRoute(const ClassRoutines()));
                     }),
 
-                    buildListTile(Icons.laptop, 'E-vision access', () async {
-                      final shouldExit = await showDialog<bool>(
-                        context: context,
-                        builder: (context) => Alert(
-                          icon: Icons.web,
-                          iconColor: AppColors.primary,
-                          title: 'E-vision Access',
-                          content: 'Are you sure you want to open E-vision?',
-                          buttonText: 'Yes',
-                        ),
-                      );
-                      if (shouldExit ?? false) {
-                        _launchUrl('https://evision.beds.ac.uk/');
-                      }
-                    }),
-                    buildListTile(Icons.web, 'Breo access', () async {
-                      final shouldExit = await showDialog<bool>(
-                        context: context,
-                        builder: (context) => Alert(
-                          icon: Icons.web,
-                          iconColor: AppColors.primary,
-                          title: 'Breo Access',
-                          content: 'Are you sure you want to open Breo?',
-                          buttonText: 'Yes',
-                        ),
-                      );
-                      if (shouldExit == true) {
-                        _launchUrl('https://breo.beds.ac.uk/');
-                      }
-                    }),
+                    // buildListTile(Icons.laptop, 'E-vision access', () async {
+                    //   final shouldExit = await showDialog<bool>(
+                    //     context: context,
+                    //     builder: (context) => Alert(
+                    //       icon: Icons.web,
+                    //       iconColor: AppColors.primary,
+                    //       title: 'E-vision Access',
+                    //       content: 'Are you sure you want to open E-vision?',
+                    //       buttonText: 'Yes',
+                    //     ),
+                    //   );
+                    //   if (shouldExit ?? false) {
+                    //     _launchUrl('https://evision.beds.ac.uk/');
+                    //   }
+                    // }),
+                    // buildListTile(Icons.web, 'Breo access', () async {
+                    //   final shouldExit = await showDialog<bool>(
+                    //     context: context,
+                    //     builder: (context) => Alert(
+                    //       icon: Icons.web,
+                    //       iconColor: AppColors.primary,
+                    //       title: 'Breo Access',
+                    //       content: 'Are you sure you want to open Breo?',
+                    //       buttonText: 'Yes',
+                    //     ),
+                    //   );
+                    //   if (shouldExit == true) {
+                    //     _launchUrl('https://breo.beds.ac.uk/');
+                    //   }
+                    // }),
                     // buildListTile(Icons.event, 'Events', () {
                     //   Navigator.of(context)
                     //       .push(_buildSlideRoute(const Event()));
