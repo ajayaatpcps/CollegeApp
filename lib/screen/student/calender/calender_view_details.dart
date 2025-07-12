@@ -126,7 +126,7 @@ class _CalenderViewDetailsState extends State<CalenderViewDetails> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Organizer Email',
+                    'Contact Email',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
