@@ -4,6 +4,7 @@ import 'package:lbef/resource/colors.dart';
 import 'package:lbef/screen/student/class_routines/class_routines.dart';
 import 'package:lbef/screen/student/dashboard/display_security.dart';
 import 'package:lbef/screen/student/notice/notice.dart';
+import 'package:lbef/screen/student/profile/changePassword/change_password.dart';
 import 'package:lbef/screen/student/profile/profile.dart';
 import 'package:lbef/screen/student/profile/recover_password/recover_password.dart';
 import 'package:lbef/screen/student/view_my_profile/view_my_profile.dart';
@@ -493,7 +494,7 @@ class _DashboardHeadState extends State<DashboardHead> {
                                                 pageBuilder: (context,
                                                         animation,
                                                         secondaryAnimation) =>
-                                                    const RecoverPassword(),
+                                                    const ChangePassword(),
                                                 transitionsBuilder: (context,
                                                     animation,
                                                     secondaryAnimation,
