@@ -395,185 +395,151 @@ class _DashboardHeadState extends State<DashboardHead> {
                         if (card.containsKey('alert') == true) {
                           showDialog(
                             context: context,
-                            builder: (context) => DisplaySecurity(
-                                text: 'Security options',
-                                show: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const SizedBox(height: 20),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
+                            builder: (context) =>
+                                DisplaySecurity(
+                                    text: 'Security options',
+                                    show:
+                                    Column(
+                                      mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        InkWell(
-                                          onTap: () {
-                                            Navigator.of(context).push(
-                                              PageRouteBuilder(
-                                                pageBuilder: (context,
-                                                        animation,
-                                                        secondaryAnimation) =>
+                                        const SizedBox(height: 20),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            InkWell(
+                                              onTap: () {
+                                                Navigator.of(context).push(
+                                                  PageRouteBuilder(
+                                                    pageBuilder: (context, animation, secondaryAnimation) =>
                                                     const RecoverPassword(),
-                                                transitionsBuilder: (context,
-                                                    animation,
-                                                    secondaryAnimation,
-                                                    child) {
-                                                  const begin =
-                                                      Offset(1.0, 0.0);
-                                                  const end = Offset.zero;
-                                                  const curve =
-                                                      Curves.easeInOut;
-                                                  var tween = Tween(
-                                                          begin: begin,
-                                                          end: end)
-                                                      .chain(CurveTween(
-                                                          curve: curve));
-                                                  var offsetAnimation =
-                                                      animation.drive(tween);
-                                                  return SlideTransition(
-                                                    position: offsetAnimation,
-                                                    child: child,
-                                                  );
-                                                },
-                                              ),
-                                            );
-                                          },
-                                          child: Column(
-                                            children: [
-                                              Container(
-                                                height: 80,
-                                                width: 80,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                  border: Border.all(
-                                                    color:
-                                                        const Color(0xff868484),
-                                                    width: 0.4,
+                                                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                                      const begin = Offset(1.0, 0.0);
+                                                      const end = Offset.zero;
+                                                      const curve = Curves.easeInOut;
+                                                      var tween =
+                                                      Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                                      var offsetAnimation = animation.drive(tween);
+                                                      return SlideTransition(
+                                                        position: offsetAnimation,
+                                                        child: child,
+                                                      );
+                                                    },
                                                   ),
-                                                  color: Colors.white,
-                                                ),
-                                                child: const Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Icon(
-                                                        Icons.lock_reset,
-                                                        size: 33,
+                                                );
+                                              },
+                                              child: Column(
+                                                children: [
+                                                  Container(
+                                                    height: 80,
+                                                    width: 80,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(8),
+                                                      border: Border.all(
+                                                        color: const Color(0xff868484),
+                                                        width: 0.4,
                                                       ),
-                                                    ],
+                                                      color: Colors.white,
+                                                    ),
+                                                    child:  Padding(
+                                                      padding: EdgeInsets.all(8.0),
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          Icon(
+                                                            Icons.lock_reset,
+                                                            size: 33,
+                                                            color: AppColors.primary,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
+                                                  const SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 70,
+                                                    child: Text(
+                                                      'Recover Password',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                          fontSize: 11, fontWeight: FontWeight.bold),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                              const SizedBox(
-                                                height: 5,
-                                              ),
-                                              const SizedBox(
-                                                width: 70,
-                                                child: Text(
-                                                  'Recover Password',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      fontSize: 11,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        InkWell(
-                                          onTap: () {
-                                            Navigator.of(context).push(
-                                              PageRouteBuilder(
-                                                pageBuilder: (context,
-                                                        animation,
-                                                        secondaryAnimation) =>
+                                            ),
+                                            InkWell(
+                                              onTap: () {
+                                                Navigator.of(context).push(
+                                                  PageRouteBuilder(
+                                                    pageBuilder: (context, animation, secondaryAnimation) =>
                                                     const ChangePassword(),
-                                                transitionsBuilder: (context,
-                                                    animation,
-                                                    secondaryAnimation,
-                                                    child) {
-                                                  const begin =
-                                                      Offset(1.0, 0.0);
-                                                  const end = Offset.zero;
-                                                  const curve =
-                                                      Curves.easeInOut;
-                                                  var tween = Tween(
-                                                          begin: begin,
-                                                          end: end)
-                                                      .chain(CurveTween(
-                                                          curve: curve));
-                                                  var offsetAnimation =
-                                                      animation.drive(tween);
-                                                  return SlideTransition(
-                                                    position: offsetAnimation,
-                                                    child: child,
-                                                  );
-                                                },
-                                              ),
-                                            );
-                                          },
-                                          child: Column(
-                                            children: [
-                                              Container(
-                                                height: 80,
-                                                width: 80,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                  border: Border.all(
-                                                    color:
-                                                        const Color(0xff868484),
-                                                    width: 0.4,
+                                                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                                      const begin = Offset(1.0, 0.0);
+                                                      const end = Offset.zero;
+                                                      const curve = Curves.easeInOut;
+                                                      var tween =
+                                                      Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                                      var offsetAnimation = animation.drive(tween);
+                                                      return SlideTransition(
+                                                        position: offsetAnimation,
+                                                        child: child,
+                                                      );
+                                                    },
                                                   ),
-                                                  color: Colors.white,
-                                                ),
-                                                child: const Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Icon(
-                                                        Icons.lock_clock_sharp,
-                                                        size: 33,
+                                                );
+                                              },
+                                              child: Column(
+                                                children: [
+                                                  Container(
+                                                    height: 80,
+                                                    width: 80,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(8),
+                                                      border: Border.all(
+                                                        color: const Color(0xff868484),
+                                                        width: 0.4,
                                                       ),
-                                                    ],
+                                                      color: Colors.white,
+                                                    ),
+                                                    child:  Padding(
+                                                      padding: const EdgeInsets.all(8.0),
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          Icon(
+                                                            Icons.lock_clock_sharp,
+                                                            color: AppColors.primary,
+                                                            size: 33,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
+                                                  const SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 70,
+                                                    child: Text(
+                                                      'Change Password',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                          fontSize: 11, fontWeight: FontWeight.bold),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                              const SizedBox(
-                                                height: 5,
-                                              ),
-                                              const SizedBox(
-                                                width: 70,
-                                                child: Text(
-                                                  'Change Password',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      fontSize: 11,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
+
                                       ],
-                                    ),
-                                  ],
-                                )),
-                          ); // Show alert dialog
+                                    )),
+                          );// Show alert dialog
                         } else if (card.containsKey('className')) {
                           Navigator.of(context).push(
                             SlideRightRoute(page: card['className']),
@@ -593,4 +559,5 @@ class _DashboardHeadState extends State<DashboardHead> {
       ],
     );
   }
+
 }

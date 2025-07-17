@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:lbef/model/fee_model.dart';
 import 'package:lbef/utils/parse_date.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../../resource/colors.dart';
+import '../../../../../view_model/theme_provider.dart';
 import '../../../../../widgets/display_dialog/display_dialog.dart';
 import '../../../../../widgets/no_data/no_data_widget.dart';
 import '../dialog_content/credit_note_content.dart';
 
 Widget buildCreditNotesSection(List<CreditNotes> note, BuildContext context) {
   final size = MediaQuery.of(context).size;
+  final themeProvider=   Provider.of<ThemeProvider>(context, listen: false);
 
   return Column(
     children: note.map((note) {
@@ -29,7 +32,7 @@ Widget buildCreditNotesSection(List<CreditNotes> note, BuildContext context) {
           );
         },
         child: Card(
-          color: Colors.white,
+          color:themeProvider.isDarkMode?Colors.black: Colors.white,
           margin: const EdgeInsets.only(bottom: 10),
           elevation: 2,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

@@ -6,6 +6,7 @@ import 'package:lbef/widgets/form_widget/custom_button.dart';
 import 'package:lbef/widgets/form_widget/custom_textarea.dart';
 import 'package:provider/provider.dart';
 import '../../../resource/colors.dart';
+import '../../../view_model/theme_provider.dart';
 import '../../../widgets/form_widget/btn/outlned_btn.dart';
 
 class EditApplication extends StatefulWidget {
@@ -90,11 +91,12 @@ class _EditApplicationState extends State<EditApplication> {
 
   Future<bool?> showUpdateConfirmationDialog(BuildContext context) async {
     final size = MediaQuery.of(context).size;
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
 
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: themeProvider.isDarkMode ? Colors.black : Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
@@ -139,6 +141,7 @@ class _EditApplicationState extends State<EditApplication> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
@@ -181,7 +184,10 @@ class _EditApplicationState extends State<EditApplication> {
             const SizedBox(height: 4),
             Container(
               decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
+                  border: Border.all(
+                      color: themeProvider.isDarkMode
+                          ? Colors.white
+                          : Colors.black),
                   borderRadius: BorderRadius.circular(4)),
               child: ListTile(
                 title: Text(startDate != null
@@ -207,7 +213,10 @@ class _EditApplicationState extends State<EditApplication> {
             const SizedBox(height: 4),
             Container(
               decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
+                  border: Border.all(
+                      color: themeProvider.isDarkMode
+                          ? Colors.white
+                          : Colors.black),
                   borderRadius: BorderRadius.circular(4)),
               child: ListTile(
                 title: Text(endDate != null

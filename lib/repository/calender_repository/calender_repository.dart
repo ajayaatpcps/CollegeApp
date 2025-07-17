@@ -7,6 +7,7 @@ import 'package:lbef/data/network/NetworkApiService.dart';
 import 'package:lbef/endpoints/notice_board_endpoints.dart';
 import 'package:lbef/model/event_model.dart';
 import 'package:logger/logger.dart';
+import '../../data/api_exception.dart';
 import '../../utils/utils.dart';
 
 class CalendarRepository {
@@ -45,6 +46,10 @@ class CalendarRepository {
       Utils.noInternet('No internet connection. Please try again later.');
       throw Exception("No internet connection");
     } catch (error, stack) {
+      if (error is NoDataException ) {
+        _logger.w("404 Error: $error");
+        return {};
+      }
       _logger.w('Error fetching calendar', error: error, stackTrace: stack);
       Utils.flushBarErrorMessage('$error', context);
       throw Exception("No internet connection");
@@ -82,6 +87,10 @@ class CalendarRepository {
       Utils.noInternet('No internet connection. Please try again later.');
       throw Exception("No internet connection");
     } catch (error, stack) {
+      if (error is NoDataException ) {
+        _logger.w("404 Error: $error");
+        return {};
+      }
       _logger.w('Error fetching calendar', error: error, stackTrace: stack);
       Utils.flushBarErrorMessage('$error', context);
       throw Exception("No internet connection");
@@ -104,6 +113,7 @@ class CalendarRepository {
       Utils.noInternet("No internet connection. Please try again later.");
       throw Exception("No internet connection");
     } catch (error) {
+
       _logger.w(error);
       Utils.flushBarErrorMessage("$error", context);
       throw Exception("Error : $error ");

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:logger/logger.dart';
+import '../../data/api_exception.dart';
 import '../../data/api_response.dart';
 import '../../data/network/AuthNetworkService.dart';
 import '../../data/network/BaseApiService.dart';
@@ -55,6 +56,11 @@ class AuthRepository {
       Utils.flushBarErrorMessage("No internet connection. Please try again later.", context);
       return false;
     } catch (e) {
+      if (e is NoDataException) {
+        logger.w("404 Error: $e");
+         Utils.flushBarNOdata(e.toString(), context);
+         return false;
+      }
       logger.e('changePassword error: $e');
       Utils.flushBarErrorMessage(e.toString(), context);
       return false;

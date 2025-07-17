@@ -53,9 +53,7 @@ class _RecoverPasswordState extends State<RecoverPassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: const Text(
           "Recover Password",
           style: TextStyle(fontFamily: 'poppins', fontSize: 18),
@@ -107,7 +105,6 @@ class _RecoverPasswordState extends State<RecoverPassword> {
                   Text(
                     "Date of Birth",
                     style: TextStyle(
-                      color: Colors.black,
                       fontFamily: 'poppins',
                       fontWeight: FontWeight.bold,
                       fontSize: 14,

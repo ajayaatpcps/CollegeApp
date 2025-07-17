@@ -8,6 +8,7 @@ import 'package:table_calendar/table_calendar.dart';
 
 import '../../../data/status.dart';
 import '../../../model/event_model.dart';
+import '../../../resource/colors.dart';
 import '../../../view_model/calender/event_calender_view_model.dart';
 import 'calender_widget.dart';
 import 'display_dialog_calender.dart';
@@ -34,7 +35,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   void _fetchMonthlyEvents(EventCalenderViewModel viewModel, String date) {
-    print('Fetching events for month: $date'); // Debug log
     viewModel.fetchMonthly(
       'monthly',
       date,
@@ -56,10 +56,26 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     selectedDateStr)
             .toList();
 
-
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Event Calendar'),
+            title: const Text(
+              "Event Calender",
+              style: TextStyle(fontFamily: 'poppins', fontSize: 18),
+            ),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back_ios, color: AppColors.primary),
+              onPressed: () => Navigator.pop(context),
+              iconSize: 18,
+            ),
+            actions: const [
+              Image(
+                image: AssetImage('assets/images/lbef.png'),
+                width: 70,
+                height: 50,
+                fit: BoxFit.contain,
+              ),
+              SizedBox(width: 14),
+            ],
           ),
           body: Column(
             children: [
@@ -137,9 +153,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
               Expanded(
                 child: viewModel.isLoading
                     ? const ShimmerWidget()
-                    : viewModel.userData.status == Status.ERROR
+                    : selectedDayEvents.isEmpty
                         ? Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -153,67 +168,41 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               ),
                               BuildNoData(
                                 MediaQuery.of(context).size,
-                                "Error loading events",
-                                Icons.error_outline,
+                                "No event on the selected date!",
+                                Icons.calendar_month_outlined,
                               ),
                             ],
                           )
-                        : selectedDayEvents.isEmpty
-                            ? Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 8),
-                                    child: Row(
-                                      children: [
-                                        const Icon(
-                                            Icons.calendar_month_outlined),
-                                        Text(
-                                            parseDate(_selectedDay.toString())),
-                                      ],
-                                    ),
-                                  ),
-                                  BuildNoData(
-                                    MediaQuery.of(context).size,
-                                    "No event on the selected date!",
-                                    Icons.calendar_month_outlined,
-                                  ),
-                                ],
-                              )
-                            : ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: selectedDayEvents.length,
-                                itemBuilder: (context, index) {
-                                  final event = selectedDayEvents[index];
-                                  return InkWell(
-                                    onTap: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) =>
-                                            DisplayDialogCalender(
-                                                id: event.eventId.toString() ??
-                                                    '',
-                                                text: 'Event Details',
-                                                show:
-                                                    const CalenderViewDetails()),
-                                      );
-                                    },
-                                    child: CalenderWidget(
-                                      title:
-                                          event.eventName ?? 'Untitled Event',
-                                      organizerName: event.organizerName ??
-                                          'Unknown Organizer',
-                                      date: event.eventType ?? 'No Type',
-                                      color: _parseColor(
-                                          event.colorCode ?? 'grey'),
-                                      dateTime: event.startDate != null ||
-                                              event.startDate != ''
-                                          ? parseDate(event.startDate ?? '')
-                                          : "", location:  event.location??'',
-                                    ),
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: selectedDayEvents.length,
+                            itemBuilder: (context, index) {
+                              final event = selectedDayEvents[index];
+                              return InkWell(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => DisplayDialogCalender(
+                                        id: event.eventId.toString() ?? '',
+                                        text: 'Event Details',
+                                        show: const CalenderViewDetails()),
                                   );
                                 },
-                              ),
+                                child: CalenderWidget(
+                                  title: event.eventName ?? 'Untitled Event',
+                                  organizerName: event.organizerName ??
+                                      'Unknown Organizer',
+                                  date: event.eventType ?? 'No Type',
+                                  color: _parseColor(event.colorCode ?? 'grey'),
+                                  dateTime: event.startDate != null ||
+                                          event.startDate != ''
+                                      ? parseDate(event.startDate ?? '')
+                                      : "",
+                                  location: event.location ?? '',
+                                ),
+                              );
+                            },
+                          ),
               ),
             ],
           ),

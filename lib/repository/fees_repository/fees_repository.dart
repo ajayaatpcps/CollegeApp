@@ -4,6 +4,7 @@ import 'package:lbef/data/network/NetworkApiService.dart';
 import 'package:lbef/endpoints/fees_endpoints.dart';
 import 'package:lbef/model/fee_model.dart';
 import 'package:logger/logger.dart';
+import '../../data/api_exception.dart';
 import '../../utils/utils.dart';
 
 class FeesRepository {
@@ -23,6 +24,10 @@ class FeesRepository {
       throw Exception("No internet connection");
     } catch (error) {
       logger.w(error);
+      if (error is NoDataException) {
+        logger.w("404 Error: $error");
+        return Utils.flushBarNOdata("$error", context);
+      }
       Utils.flushBarErrorMessage("$error", context);
       throw Exception("Error : $error ");
     }

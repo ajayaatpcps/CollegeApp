@@ -4,8 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:lbef/data/network/NetworkApiService.dart';
 import 'package:lbef/endpoints/routine_endpoints.dart';
 import 'package:lbef/model/routine_model.dart';
-import 'package:lbef/model/user_model.dart';
 import 'package:logger/logger.dart';
+import '../../data/api_exception.dart';
 import '../../utils/utils.dart';
 
 class ClassRoutineRepository {
@@ -25,6 +25,11 @@ class ClassRoutineRepository {
       return Utils.noInternet(
           "No internet connection. Please try again later.");
     } catch (error) {
+      if (error is NoDataException) {
+        logger.w("404 Error: $error");
+        Utils.flushBarNOdata(error.toString(), context);
+         throw NoDataException(error.toString());
+      }
       logger.w(error);
       return Utils.flushBarErrorMessage("$error", context);
     }

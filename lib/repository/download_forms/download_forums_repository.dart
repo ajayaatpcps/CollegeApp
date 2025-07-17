@@ -6,6 +6,7 @@ import 'package:lbef/data/network/NetworkApiService.dart';
 import 'package:lbef/endpoints/download_forms_endpoints.dart';
 import 'package:lbef/model/downloadModel.dart';
 import 'package:logger/logger.dart';
+import '../../data/api_exception.dart';
 import '../../utils/utils.dart';
 
 class DownloadForumsRepository {
@@ -30,6 +31,11 @@ class DownloadForumsRepository {
       return Utils.noInternet(
           "No internet connection. Please try again later.");
     } catch (error) {
+      if (error is NoDataException) {
+        logger.w("404 Error: $error");
+        return Utils.flushBarNOdata("$error", context);
+
+      }
       logger.w(error);
       return Utils.flushBarErrorMessage("$error", context);
     }

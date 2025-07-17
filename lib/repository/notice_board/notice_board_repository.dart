@@ -131,7 +131,7 @@ class NoticeBoardRepository {
     } catch (error) {
       if (error is NoDataException ) {
         logger.w("404 Error: $error");
-        return Utils.flushBarNOdata(error.toString(), context);
+        return {};
       }
       logger.w(error);
       return Utils.flushBarErrorMessage("$error", context);

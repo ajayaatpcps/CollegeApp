@@ -12,6 +12,7 @@ import '../../../resource/colors.dart';
 import '../../../utils/format_time.dart';
 import '../../../utils/utils.dart';
 import '../../../view_model/notice_board/email_view_model.dart';
+import '../../../view_model/theme_provider.dart';
 
 class ViewEmail extends StatefulWidget {
   final EmailNoticeModel emailData;
@@ -43,10 +44,11 @@ class _ViewEmailState extends State<ViewEmail> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: themeProvider.isDarkMode ? Colors.black : Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: const Text(
           "Email Details",
           style: TextStyle(fontFamily: 'poppins'),
@@ -85,67 +87,69 @@ class _ViewEmailState extends State<ViewEmail> {
             if (isLoading) {
               return _buildLoadingSkeleton();
             }
-            return Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 12,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Text(
-                      email.subject ?? 'No Subject',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
+            return Consumer<ThemeProvider>(builder: (context, provider, child) {
+              return Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: provider.isDarkMode ? Colors.black : Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 12,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Text(
+                        email.subject ?? 'No Subject',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: provider.isDarkMode
+                              ? Colors.white
+                              : AppColors.primary,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Center(
-                    child: Text(
-                      'Sent on $date at $time',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey[600],
+                    const SizedBox(height: 8),
+                    Center(
+                      child: Text(
+                        'Sent on $date at $time',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey[600],
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'From: ${email.mailFromname ?? 'Unknown'} <${email.mailFrom ?? ''}>',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[800],
-                      fontFamily: 'poppins',
+                    const SizedBox(height: 16),
+                    Text(
+                      'From: ${email.mailFromname ?? 'Unknown'} <${email.mailFrom ?? ''}>',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontFamily: 'poppins',
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'To: ${email.mailToname ?? 'Unknown'} <${email.mailTo ?? ''}>',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[800],
-                      fontFamily: 'poppins',
+                    const SizedBox(height: 8),
+                    Text(
+                      'To: ${email.mailToname ?? 'Unknown'} <${email.mailTo ?? ''}>',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontFamily: 'poppins',
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  _parseTextWithLinks(stripHtmlTags(
-                      email.emailText ?? 'No content available.')),
-                ],
-              ),
-            );
+                    const SizedBox(height: 24),
+                    _parseTextWithLinks(stripHtmlTags(
+                        email.emailText ?? 'No content available.')),
+                  ],
+                ),
+              );
+            });
           },
         ),
       ),
@@ -185,7 +189,6 @@ class _ViewEmailState extends State<ViewEmail> {
               fontSize: 16,
               height: 1.6,
               fontFamily: 'poppins',
-              color: Colors.black,
             ),
           ));
         }

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../../model/fee_model.dart';
+import '../../../../../view_model/theme_provider.dart';
 
-Widget buildReceiptCard(Receipts note) {
+Widget buildReceiptCard(Receipts note, BuildContext context) {
+  final themeProvider=   Provider.of<ThemeProvider>(context, listen: false);
+
   return Card(
-    color: Colors.white,
+    color:themeProvider.isDarkMode?Colors.black: Colors.white,
     margin: const EdgeInsets.only(bottom: 10),
     elevation: 2,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

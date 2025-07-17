@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lbef/resource/colors.dart';
+import 'package:provider/provider.dart';
+
+import '../../../../view_model/theme_provider.dart';
 
 class ApplicationWidget extends StatelessWidget {
   final Color iconColor, textColor,btnColor;
@@ -8,6 +11,8 @@ class ApplicationWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider=   Provider.of<ThemeProvider>(context, listen: false);
+
     final size = MediaQuery.of(context).size;
     return Container(
       width: size.width,
@@ -20,7 +25,7 @@ class ApplicationWidget extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             width: size.width,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: themeProvider.isDarkMode?Colors.black:Colors.white,
               border: Border.all(color: Colors.transparent),
               borderRadius: BorderRadius.circular(5),
             ),
