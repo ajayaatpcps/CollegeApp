@@ -30,7 +30,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void initState() {
     super.initState();
     final viewModel =
-        Provider.of<EventCalenderViewModel>(context, listen: false);
+    Provider.of<EventCalenderViewModel>(context, listen: false);
     _fetchMonthlyEvents(viewModel, DateFormat('yyyy-MM').format(_focusedDay));
   }
 
@@ -48,13 +48,22 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Consumer<EventCalenderViewModel>(
       builder: (context, viewModel, child) {
         final selectedDateStr = DateFormat('yyyy-MM-dd').format(_selectedDay);
-        final selectedDayEvents = viewModel.events
-            .where((event) =>
-                event.startDate != null &&
-                DateFormat('yyyy-MM-dd')
-                        .format(DateTime.parse(event.startDate!)) ==
-                    selectedDateStr)
-            .toList();
+        final selectedDayEvents = viewModel.events.where((event) {
+          if (event.startDate == null) return false;
+
+          final start = DateTime.parse(event.startDate!);
+          final end =
+          event.endDate != null ? DateTime.parse(event.endDate!) : start;
+
+          final selected =
+          DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day);
+          final startOnly = DateTime(start.year, start.month, start.day);
+          final endOnly = DateTime(end.year, end.month, end.day);
+
+          return selected.isAtSameMomentAs(startOnly) ||
+              selected.isAtSameMomentAs(endOnly) ||
+              (selected.isAfter(startOnly) && selected.isBefore(endOnly));
+        }).toList();
 
         return Scaffold(
           appBar: AppBar(
@@ -69,7 +78,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             ),
             actions: const [
               Image(
-                image: AssetImage('assets/images/lbef.png'),
+                image: AssetImage('assets/images/pcpsLogo.png'),
                 width: 70,
                 height: 50,
                 fit: BoxFit.contain,
@@ -91,7 +100,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     _focusedDay = focusedDay;
                   });
                   final selectedMonth =
-                      DateFormat('yyyy-MM').format(selectedDay);
+                  DateFormat('yyyy-MM').format(selectedDay);
                   if (selectedMonth !=
                       DateFormat('yyyy-MM').format(_focusedDay)) {
                     _fetchMonthlyEvents(viewModel, selectedMonth);
@@ -105,16 +114,24 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   );
                 },
                 eventLoader: (day) {
-                  final dayStr = DateFormat('yyyy-MM-dd').format(day);
-                  final events = viewModel.events
-                      .where((event) =>
-                          event.startDate != null &&
-                          DateFormat('yyyy-MM-dd')
-                                  .format(DateTime.parse(event.startDate!)) ==
-                              dayStr)
-                      .toList();
+                  return viewModel.events.where((event) {
+                    if (event.startDate == null) return false;
 
-                  return events;
+                    final start = DateTime.parse(event.startDate!);
+                    final end = event.endDate != null
+                        ? DateTime.parse(event.endDate!)
+                        : start;
+
+                    final dayOnly = DateTime(day.year, day.month, day.day);
+                    final startOnly =
+                    DateTime(start.year, start.month, start.day);
+                    final endOnly = DateTime(end.year, end.month, end.day);
+
+                    return dayOnly.isAtSameMomentAs(startOnly) ||
+                        dayOnly.isAtSameMomentAs(endOnly) ||
+                        (dayOnly.isAfter(startOnly) &&
+                            dayOnly.isBefore(endOnly));
+                  }).toList();
                 },
                 calendarBuilders: CalendarBuilders(
                   markerBuilder: (context, date, events) {
@@ -154,55 +171,62 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 child: viewModel.isLoading
                     ? const ShimmerWidget()
                     : selectedDayEvents.isEmpty
-                        ? Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 8),
-                                child: Row(
-                                  children: [
-                                    const Icon(Icons.calendar_month_outlined),
-                                    Text(parseDate(_selectedDay.toString())),
-                                  ],
-                                ),
-                              ),
-                              BuildNoData(
-                                MediaQuery.of(context).size,
-                                "No event on the selected date!",
-                                Icons.calendar_month_outlined,
-                              ),
-                            ],
-                          )
-                        : ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: selectedDayEvents.length,
-                            itemBuilder: (context, index) {
-                              final event = selectedDayEvents[index];
-                              return InkWell(
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => DisplayDialogCalender(
-                                        id: event.eventId.toString() ?? '',
-                                        text: 'Event Details',
-                                        show: const CalenderViewDetails()),
-                                  );
-                                },
-                                child: CalenderWidget(
-                                  title: event.eventName ?? 'Untitled Event',
-                                  organizerName: event.organizerName ??
-                                      'Unknown Organizer',
-                                  date: event.eventType ?? 'No Type',
-                                  color: _parseColor(event.colorCode ?? 'grey'),
-                                  dateTime: event.startDate != null ||
-                                          event.startDate != ''
-                                      ? parseDate(event.startDate ?? '')
-                                      : "",
-                                  location: event.location ?? '',
-                                ),
-                              );
-                            },
-                          ),
+                    ? Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 8),
+                      child: Row(
+                        children: [
+                          const Icon(
+                              Icons.calendar_month_outlined),
+                          Text(
+                              parseDate(_selectedDay.toString())),
+                        ],
+                      ),
+                    ),
+                    BuildNoData(
+                      MediaQuery.of(context).size,
+                      "No event on the selected date!",
+                      Icons.calendar_month_outlined,
+                    ),
+                  ],
+                )
+                    : ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: selectedDayEvents.length,
+                  itemBuilder: (context, index) {
+                    final event = selectedDayEvents[index];
+                    return InkWell(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) =>
+                              DisplayDialogCalender(
+                                  id: event.eventId.toString() ??
+                                      '',
+                                  text: 'Event Details',
+                                  show:
+                                  const CalenderViewDetails()),
+                        );
+                      },
+                      child: CalenderWidget(
+                        title:
+                        event.eventName ?? 'Untitled Event',
+                        organizerName: event.organizerName ??
+                            'Unknown Organizer',
+                        date: event.eventType ?? 'No Type',
+                        color: _parseColor(
+                            event.colorCode ?? 'grey'),
+                        dateTime: event.startDate != null &&
+                            event.startDate != ''
+                            ? parseDate(event.startDate ?? '')
+                            : "",
+                        location: event.location ?? '',
+                      ),
+                    );
+                  },
+                ),
               ),
             ],
           ),
@@ -219,6 +243,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
         return Colors.red;
       case 'green':
         return Colors.green;
+      case 'yellow':
+        return Colors.yellow;
       default:
         return Colors.grey;
     }
