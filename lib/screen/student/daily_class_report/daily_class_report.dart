@@ -36,7 +36,6 @@ class _DailyClassReportState extends State<DailyClassReport> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: const Text(
           "Daily Class Reports",
           style: TextStyle(fontFamily: 'poppins', fontSize: 18),

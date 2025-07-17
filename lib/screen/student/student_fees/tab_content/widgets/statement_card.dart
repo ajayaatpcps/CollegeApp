@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../../model/fee_model.dart';
 import '../../../../../utils/parse_date.dart';
+import '../../../../../view_model/theme_provider.dart';
 
 class StatementCard extends StatelessWidget {
   final Dues note;
@@ -17,6 +19,8 @@ class StatementCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider=   Provider.of<ThemeProvider>(context, listen: false);
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedOpacity(
@@ -30,7 +34,7 @@ class StatementCard extends StatelessWidget {
           ),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: themeProvider.isDarkMode?Colors.black: Colors.white,
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
@@ -87,10 +91,10 @@ class StatementCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     "${note.particular} ${note.description}" ?? '',
-                    style: const TextStyle(
+                    style:  TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black87,
+                      color:themeProvider.isDarkMode? Colors.white: Colors.black87,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -109,16 +113,16 @@ class StatementCard extends StatelessWidget {
                       _buildInfoColumn(
                           'Debit',
                           "${note.currencySymbol == "&#163;" ? decodeHtmlCurrencySymbol(note.currencySymbol ?? '') : note.currencySymbol} ${note.amount != null ? double.parse(note.amount ?? '').toInt() : "N/A"}" ??
-                              ''),
+                              '',context),
                       _buildInfoColumn(
                           'Credit',
                           "${note.currencySymbol == "&#163;" ? decodeHtmlCurrencySymbol(note.currencySymbol ?? '') : note.currencySymbol} ${note.amountPaid != null ? double.parse(note.amountPaid ?? '').toInt() : "N/A"}" ??
-                              ''),
+                              '',context),
                       _buildInfoColumn(
                           'Balance',
                           "${note.currencySymbol == "&#163;" ? decodeHtmlCurrencySymbol(note.currencySymbol ?? '') : note.currencySymbol} ${note.amount != null ? double.parse(note.amount ?? '0').toInt() - double.parse(note.amountPaid ?? '0').toInt() : "N/A"}" ??
                               '' ??
-                              ''),
+                              '',context),
                     ],
                   ),
                   const SizedBox(height: 8),
@@ -152,7 +156,9 @@ class StatementCard extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoColumn(String label, String value) {
+  Widget _buildInfoColumn(String label, String value,BuildContext context) {
+    final themeProvider=  Provider.of<ThemeProvider>(context, listen: false);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -167,10 +173,10 @@ class StatementCard extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           value,
-          style: const TextStyle(
+          style:  TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color:themeProvider.isDarkMode? Colors.white: Colors.black87,
           ),
         ),
       ],

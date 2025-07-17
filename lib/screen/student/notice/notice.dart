@@ -52,7 +52,6 @@ class _NoticeBoardState extends State<NoticeBoard>
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: const Text(
           "Notices",
           style: TextStyle(fontFamily: 'poppins', fontSize: 20),

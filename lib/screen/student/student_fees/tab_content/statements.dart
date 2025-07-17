@@ -4,7 +4,9 @@ import 'package:lbef/model/fee_model.dart';
 import 'package:lbef/screen/student/student_fees/tab_content/dialog_content/statement_dialog.dart';
 import 'package:lbef/screen/student/student_fees/pay_khalti.dart';
 import 'package:lbef/screen/student/student_fees/tab_content/widgets/statement_card.dart';
+import 'package:provider/provider.dart';
 
+import '../../../../view_model/theme_provider.dart';
 import '../../../../widgets/display_dialog/display_dialog.dart';
 import '../../../../widgets/no_data/no_data_widget.dart';
 
@@ -22,19 +24,19 @@ class _StatementsState extends State<Statements> {
 
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final themeProvider=   Provider.of<ThemeProvider>(context, listen: false);
 
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
-          const Text(
+           Text(
             'Your Statement',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: themeProvider.isDarkMode?Colors.white: Colors.black87,
             ),
           ),
           const SizedBox(height: 16),

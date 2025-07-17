@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lbef/model/fee_model.dart';
 import 'package:lbef/utils/parse_date.dart';
+import 'package:provider/provider.dart';
+
+import '../../../../../view_model/theme_provider.dart';
 
 class StatementDetailsContent extends StatelessWidget {
   final Dues note;
@@ -14,45 +17,58 @@ class StatementDetailsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 16),
-        _buildDetailRow('Serial Number', serialNumber.toString()),
+        _buildDetailRow('Serial Number', serialNumber.toString(), context,
+            valueColor: themeProvider.isDarkMode ? Colors.white : Colors.black),
+        const SizedBox(height: 12),
+        _buildDetailRow('Particular',
+            "${note.particular} ${note.description}" ?? '', context,
+            valueColor: themeProvider.isDarkMode ? Colors.white : Colors.black),
         const SizedBox(height: 12),
         _buildDetailRow(
-            'Particular', "${note.particular} ${note.description}" ?? ''),
-        const SizedBox(height: 12),
-        _buildDetailRow('Date', parseDate(note.paymentDate.toString()) ?? ''),
+            'Date', parseDate(note.paymentDate.toString()) ?? '', context,
+            valueColor: themeProvider.isDarkMode ? Colors.white : Colors.black),
         const SizedBox(height: 12),
         _buildDetailRow(
             'Debit',
             "${note.currencySymbol == "&#163;" ? decodeHtmlCurrencySymbol(note.currencySymbol ?? '') : note.currencySymbol} ${note.amount != null ? double.parse(note.amount ?? '').toInt() : "N/A"}" ??
-                ''),
+                '',
+            context,
+            valueColor: themeProvider.isDarkMode ? Colors.white : Colors.black),
         const SizedBox(height: 12),
         _buildDetailRow(
             'Credit',
             "${note.currencySymbol == "&#163;" ? decodeHtmlCurrencySymbol(note.currencySymbol ?? '') : note.currencySymbol} ${note.amountPaid != null ? double.parse(note.amountPaid ?? '').toInt() : "N/A"}" ??
-                ''),
+                '',
+            context,
+            valueColor: themeProvider.isDarkMode ? Colors.white : Colors.black),
         const SizedBox(height: 12),
         _buildDetailRow(
             'Balance',
             "${note.currencySymbol == "&#163;" ? decodeHtmlCurrencySymbol(note.currencySymbol ?? '') : note.currencySymbol} ${note.amount != null ? double.parse(note.amount ?? '0').toInt() - double.parse(note.amountPaid ?? '0').toInt() : "N/A"}" ??
                 '' ??
-                ''),
+                '',
+            context,
+            valueColor: themeProvider.isDarkMode ? Colors.white : Colors.black),
         const SizedBox(height: 12),
         _buildDetailRow(
           'Status',
           note.status == "paid" ? 'Paid' : 'Unpaid',
+          context,
           valueColor: note.status == "paid" ? Colors.green : Colors.red,
         ),
         const SizedBox(height: 12),
-        const Text(
+        Text(
           'Remarks',
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: Colors.black87,
+            color: themeProvider.isDarkMode ? Colors.white : Colors.black,
           ),
         ),
         const SizedBox(height: 6),
@@ -67,16 +83,18 @@ class StatementDetailsContent extends StatelessWidget {
           child: Text(
             "  ${note.remarks ?? ''} ${note.creditRemarks ?? ''}",
             style: const TextStyle(
-              fontSize: 14,
-              color: Colors.black87,
-            ),
+                fontSize: 14,
+                color: Colors.black87),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildDetailRow(String label, String value, {Color? valueColor}) {
+  Widget _buildDetailRow(String label, String value, BuildContext context,
+      {Color? valueColor}) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -87,7 +105,9 @@ class StatementDetailsContent extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: Colors.grey.shade700,
+              color: themeProvider.isDarkMode
+                  ? Colors.white
+                  : Colors.grey.shade700,
             ),
           ),
         ),

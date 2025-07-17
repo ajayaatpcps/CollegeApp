@@ -10,6 +10,7 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import '../../../../resource/colors.dart';
 import '../../../../utils/format_time.dart';
+import '../../../../view_model/theme_provider.dart';
 import '../../../../widgets/no_data/no_data_widget.dart';
 import '../shimmer/class_card_shimmer.dart';
 import '../shimmer/report_shimmer.dart';
@@ -112,11 +113,9 @@ class _ReportsState extends State<Reports> {
               child: Consumer<DcrDetailViewModel>(
                 builder: (context, viewModel, child) {
                   final data = viewModel.currentDetails;
-
                   if (viewModel.isLoading) {
                     return const ReportsShimmer();
                   }
-
                   if (data == null ||
                       data.classReport == null ||
                       data.classReport!.isEmpty) {

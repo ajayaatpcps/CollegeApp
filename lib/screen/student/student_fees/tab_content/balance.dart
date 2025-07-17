@@ -5,6 +5,9 @@ import 'package:lbef/screen/student/student_fees/tab_content/widgets/balance_car
 import 'package:lbef/screen/student/student_fees/tab_content/widgets/buildCreditSettlement.dart';
 import 'package:lbef/screen/student/student_fees/tab_content/widgets/credit_notes.dart';
 import 'package:lbef/widgets/no_data/no_data_widget.dart';
+import 'package:provider/provider.dart';
+
+import '../../../../view_model/theme_provider.dart';
 
 class Balance extends StatefulWidget {
   final List<CreditNotes>? credit;
@@ -53,6 +56,7 @@ class _BalanceState extends State<Balance> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final totals = calculateTotals();
+    final themeProvider=   Provider.of<ThemeProvider>(context, listen: false);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(15),
@@ -73,13 +77,14 @@ class _BalanceState extends State<Balance> {
                   title: 'Total Due',
                   amountRs: 'Rs. ${totals['totalDueNPR']!.toStringAsFixed(0)}',
                   amountPound: '£ ${totals['totalDueGBP']!.toStringAsFixed(0)}',
-                  color: Colors.red[100],
+                  color: Colors.red[100], context: context,
                 ),
               ),
               const SizedBox(width: 6),
               Expanded(
                 child: buildBalanceCard(
                   icon: Icons.payment,
+                  context: context,
                   title: 'Total Paid',
                   amountRs: 'Rs. ${totals['totalPaidNPR']!.toStringAsFixed(0)}',
                   amountPound: '£ ${totals['totalPaidGBP']!.toStringAsFixed(0)}',
@@ -90,6 +95,7 @@ class _BalanceState extends State<Balance> {
               Expanded(
                 child: buildBalanceCard(
                   icon: Icons.account_balance,
+                  context: context,
                   title: 'Balance',
                   amountRs: 'Rs. ${totals['balanceNPR']!.toStringAsFixed(0)}',
                   amountPound: '£ ${totals['balanceGBP']!.toStringAsFixed(0)}',

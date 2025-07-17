@@ -8,7 +8,7 @@ import 'package:lbef/screen/student/profile/profile.dart';
 import 'package:lbef/screen/student/student_fees/student_fees.dart';
 import 'package:lbef/widgets/Dialog/alert.dart';
 import 'package:provider/provider.dart';
-
+import '../../view_model/theme_provider.dart';
 import '../../view_model/user_view_model/current_user_model.dart';
 import '../student/application/application.dart';
 
@@ -68,103 +68,110 @@ class _StudentNavbarState extends State<StudentNavbar> {
         return shouldExit ?? false;
       },
       child: Scaffold(
-        body: PageView(
-          controller: _pageController,
-          onPageChanged: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-          children: _pages,
-        ),
-        bottomNavigationBar: CurvedNavigationBar(
-          index: _selectedIndex,
-          backgroundColor: Colors.transparent,
-          color: Colors.white,
-          buttonBackgroundColor: Colors.white,
-          height: 70,
-          animationCurve: Curves.easeInOut,
-          animationDuration: const Duration(milliseconds: 400),
-          items: [
-            CurvedNavigationBarItem(
-              child: SizedBox(
-                height: 35,
-                width: 35,
-                child: Icon(
-                  Icons.dashboard,
-                  color: _selectedIndex == 0 ? Colors.blue : Colors.black,
-                  size: 24,
+          body: PageView(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
+            children: _pages,
+          ),
+          bottomNavigationBar:
+              Consumer<ThemeProvider>(builder: (context, provider, child) {
+            return CurvedNavigationBar(
+              index: _selectedIndex,
+              backgroundColor: Colors.transparent,
+              color: provider.isDarkMode ? Colors.black : Colors.white,
+              buttonBackgroundColor: Colors.white,
+              height: 70,
+              animationCurve: Curves.easeInOut,
+              animationDuration: const Duration(milliseconds: 400),
+              items: [
+                CurvedNavigationBarItem(
+                  child: SizedBox(
+                    height: 35,
+                    width: 35,
+                    child: Icon(
+                      Icons.dashboard,
+                      color: _selectedIndex == 0 ? Colors.blue : (provider.isDarkMode? Colors.white:Colors.black)
+                    ),
+                  ),
+                  label: 'Home',
+                  labelStyle: TextStyle(
+                      fontSize: 12,
+                      color: provider.isDarkMode ? Colors.white : Colors.black),
                 ),
-              ),
-              label: 'Home',
-              labelStyle: const TextStyle(
-                fontSize: 12,
-              ),
-            ),
-            CurvedNavigationBarItem(
-              child: SizedBox(
-                height: 35,
-                width: 35,
-                child: Icon(
-                  Icons.assignment_outlined,
-                  color: _selectedIndex == 1 ? Colors.blue : Colors.black,
-                  size: 24,
-                ),
-              ),
-              label: 'DCR',
-              labelStyle: const TextStyle(
-                fontSize: 12,
-              ),
-            ),
-            CurvedNavigationBarItem(
-              child: SizedBox(
-                height: 35,
-                width: 35,
-                child: Icon(
-                  Icons.outgoing_mail,
-                  color: _selectedIndex == 2 ? Colors.blue : Colors.black,
-                  size: 25,
-                ),
-              ),
-              label: 'Application',
-              labelStyle: const TextStyle(fontSize: 12, height: 1.2),
-            ),
-            CurvedNavigationBarItem(
-              child: SizedBox(
-                height: 35,
-                width: 35,
-                child: Icon(
-                  Icons.payments_outlined,
-                  color: _selectedIndex == 3 ? Colors.blue : Colors.black,
-                  size: 25,
-                ),
-              ),
-              label: 'Fees',
-              labelStyle: const TextStyle(fontSize: 12, height: 1.2),
-            ),
-            CurvedNavigationBarItem(
-              child: SizedBox(
-                height: 35,
-                width: 35,
-                child: Icon(
-                  Icons.person_outline,
-                  color: _selectedIndex == 4 ? Colors.blue : Colors.black,
-                  size: 25,
-                ),
-              ),
-              label: 'Profile',
-              labelStyle: const TextStyle(fontSize: 12, height: 1.2),
-            ),
-          ],
-          onTap: (index) {
-            _pageController.animateToPage(
-              index,
-              duration: const Duration(milliseconds: 400),
-              curve: Curves.easeInOut,
+                CurvedNavigationBarItem(
+                    child: SizedBox(
+                      height: 35,
+                      width: 35,
+                      child: Icon(
+                        Icons.assignment_outlined,
+                        color: _selectedIndex == 1 ? Colors.blue : (provider.isDarkMode? Colors.white:Colors.black),
+                        size: 24,
+                      ),
+                    ),
+                    label: 'DCR',
+                    labelStyle: TextStyle(
+                        fontSize: 12,
+                        color:
+                            provider.isDarkMode ? Colors.white : Colors.black)),
+                CurvedNavigationBarItem(
+                    child: SizedBox(
+                      height: 35,
+                      width: 35,
+                      child: Icon(
+                        Icons.outgoing_mail,
+                        color: _selectedIndex == 2 ? Colors.blue : (provider.isDarkMode? Colors.white:Colors.black),
+                        size: 25,
+                      ),
+                    ),
+                    label: 'Application',
+                    labelStyle: TextStyle(
+                        fontSize: 12,
+                        color:
+                            provider.isDarkMode ? Colors.white : Colors.black)),
+                CurvedNavigationBarItem(
+                    child: SizedBox(
+                      height: 35,
+                      width: 35,
+                      child: Icon(
+                        Icons.payments_outlined,
+                        color: _selectedIndex == 3 ? Colors.blue : (provider.isDarkMode? Colors.white:Colors.black),
+                        size: 25,
+                      ),
+                    ),
+                    label: 'Fees',
+                    labelStyle: TextStyle(
+                        fontSize: 12,
+                        color:
+                            provider.isDarkMode ? Colors.white : Colors.black)),
+                CurvedNavigationBarItem(
+                    child: SizedBox(
+                      height: 35,
+                      width: 35,
+                      child: Icon(
+                        Icons.person_outline,
+                        color: _selectedIndex == 4 ? Colors.blue : (provider.isDarkMode? Colors.white:Colors.black),
+                        size: 25,
+                      ),
+                    ),
+                    label: 'Profile',
+                    labelStyle: TextStyle(
+                        fontSize: 12,
+                        color:
+                            provider.isDarkMode ? Colors.white : Colors.black)),
+              ],
+              onTap: (index) {
+                _pageController.animateToPage(
+                  index,
+                  duration: const Duration(milliseconds: 400),
+                  curve: Curves.easeInOut,
+                );
+              },
             );
-          },
-        ),
-      ),
+          })),
     );
   }
 }

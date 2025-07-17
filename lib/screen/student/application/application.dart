@@ -10,6 +10,7 @@ import 'package:lbef/widgets/no_data/no_data_widget.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import '../../../utils/navigate_to.dart';
+import '../../../view_model/theme_provider.dart';
 
 class Application extends StatefulWidget {
   const Application({super.key});
@@ -38,7 +39,6 @@ class _ApplicationState extends State<Application> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: const Text(
           "Applications",
           style: TextStyle(fontFamily: 'poppins', fontSize: 20),
@@ -128,7 +128,7 @@ class _ApplicationState extends State<Application> {
                       ? parseDate(application.appEndDate.toString())
                       : "";
                   return InkWell(
-                    onTap: (){
+                    onTap: () {
                       Navigator.of(context).push(
                         SlideRightRoute(
                           page: ViewApplicationPage(
@@ -141,13 +141,15 @@ class _ApplicationState extends State<Application> {
                       iconColor:
                           getIconColor(application.applicationStatus ?? ''),
                       textColor: Colors.white,
-                      btnColor: getIconColor(application.applicationStatus ?? ''),
+                      btnColor:
+                          getIconColor(application.applicationStatus ?? ''),
                       status: application.applicationStatus ?? '',
                       title: application.applicationType ?? '',
                       subBody: startDate,
-                      endDate: endDate, appdate:  application.applicationDate != null
-                        ? parseDate(application.applicationDate.toString())
-                        : "",
+                      endDate: endDate,
+                      appdate: application.applicationDate != null
+                          ? parseDate(application.applicationDate.toString())
+                          : "",
                     ),
                   );
                 },

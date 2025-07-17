@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../resource/colors.dart';
+import '../../../../view_model/theme_provider.dart';
 
 class ReportDetail extends StatelessWidget {
   final String head, value;
@@ -9,6 +11,8 @@ class ReportDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider=   Provider.of<ThemeProvider>(context, listen: false);
+
     return  IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -38,7 +42,7 @@ class ReportDetail extends StatelessWidget {
               padding: const EdgeInsets.only(left: 10.0,right: 1,bottom:8),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: themeProvider.isDarkMode?Colors.black:Colors.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 padding: const EdgeInsets.all(15),

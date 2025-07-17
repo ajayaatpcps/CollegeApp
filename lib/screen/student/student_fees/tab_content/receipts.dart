@@ -33,7 +33,7 @@ class _ReceiptsState extends State<ReceiptsPage> {
                   size, "No receipts available!", Icons.do_not_disturb),
             )
           ] else ...[
-            ...widget.receipts!.map((note) => buildReceiptCard(note)),
+            ...widget.receipts!.map((note) => buildReceiptCard(note,context)),
           ]
 
         ],

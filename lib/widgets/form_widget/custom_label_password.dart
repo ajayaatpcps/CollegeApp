@@ -51,7 +51,6 @@ class _PasswordTextfieldState extends State<PasswordTextfield> {
           Text(
             widget.text,
             style: const TextStyle(
-              color: Colors.black,
               fontFamily: 'poppins',
               fontWeight: FontWeight.bold,
               fontSize: 14,
@@ -95,7 +94,6 @@ class _PasswordTextfieldState extends State<PasswordTextfield> {
                   isPasswordVisible
                       ? Icons.visibility_off
                       : Icons.visibility,
-                  color: Colors.black,
                 ),
                 onPressed: () {
                   setState(() {

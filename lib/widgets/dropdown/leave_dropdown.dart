@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../resource/colors.dart';
+import '../../view_model/theme_provider.dart';
 
 class LeaveDropdown extends StatefulWidget {
   final String label;
@@ -53,6 +55,8 @@ class _DropDownFieldState extends State<LeaveDropdown> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider=   Provider.of<ThemeProvider>(context, listen: false);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -71,7 +75,7 @@ class _DropDownFieldState extends State<LeaveDropdown> {
           child: DropdownButtonFormField<String>(
             decoration: InputDecoration(
               filled: true,
-              fillColor: Colors.white,
+              fillColor: themeProvider.isDarkMode?Colors.black: Colors.white,
               enabledBorder: widget.border,
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(

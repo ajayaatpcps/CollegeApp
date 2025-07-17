@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lbef/resource/colors.dart';
-import 'package:lbef/screen/navbar/student_navbar.dart';
 import 'package:lbef/screen/student/dashboard/widgets/dashboard_head.dart';
 import 'package:lbef/screen/student/notice/notice.dart';
 import 'package:lbef/view_model/notice_board/notice_board_view_model.dart';

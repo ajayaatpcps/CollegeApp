@@ -8,6 +8,7 @@ import '../../../../resource/colors.dart';
 import '../../../../utils/navigate_to.dart';
 import '../../../../utils/utils.dart';
 import '../../../../view_model/application_files/application_view_model.dart';
+import '../../../../view_model/theme_provider.dart';
 
 class ViewApplicationPage extends StatefulWidget {
   final ApplicationModel applicationData;
@@ -42,11 +43,12 @@ class _ViewApplicationPageState extends State<ViewApplicationPage> {
   Future<bool?> showDeleteConfirmationDialog(BuildContext context) async {
     final deviceWidth = MediaQuery.of(context).size.width;
     final deviceHeight = MediaQuery.of(context).size.height;
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
 
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: themeProvider.isDarkMode ? Colors.black : Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
@@ -91,10 +93,10 @@ class _ViewApplicationPageState extends State<ViewApplicationPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: const Text(
           "Application Details",
           style: TextStyle(fontFamily: 'poppins'),
@@ -175,10 +177,12 @@ class _ViewApplicationPageState extends State<ViewApplicationPage> {
                 const SizedBox(height: 12),
                 _buildDetailRow(Icons.date_range, "Start Date",
                     provider.currentDetails?.appStartDate ?? '',
-                    valueColor: Colors.black),
+                    valueColor:
+                        themeProvider.isDarkMode ? Colors.white : Colors.black),
                 _buildDetailRow(Icons.date_range_sharp, "End Date",
                     provider.currentDetails?.appEndDate ?? '',
-                    valueColor: Colors.black),
+                    valueColor:
+                        themeProvider.isDarkMode ? Colors.white : Colors.black),
                 _buildDetailRow(Icons.label, "Status",
                     provider.currentDetails?.applicationStatus ?? '',
                     valueColor: _getStatusColor(
@@ -244,11 +248,10 @@ class _ViewApplicationPageState extends State<ViewApplicationPage> {
           Icon(icon, size: 18, color: Colors.grey.shade700),
           const SizedBox(width: 10),
           Text(
-            "$label: ",
+            "$label : ",
             style: const TextStyle(
               fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
+              fontWeight: FontWeight.w800,
             ),
           ),
           Expanded(

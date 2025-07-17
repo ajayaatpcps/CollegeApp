@@ -4,6 +4,7 @@ import 'package:lbef/data/network/NetworkApiService.dart';
 import 'package:lbef/endpoints/profile_endpoints.dart';
 import 'package:lbef/model/profile_model.dart';
 import 'package:logger/logger.dart';
+import '../../data/api_exception.dart';
 import '../../utils/utils.dart';
 
 class ProfileRepository {
@@ -59,6 +60,10 @@ class ProfileRepository {
       return false;
     } catch (e) {
       _logger.e('changePassword error: $e');
+      if (e is NoDataException) {
+        _logger.w("404 Error: $e");
+        return Utils.flushBarNOdata("$e", context);
+      }
       Utils.flushBarErrorMessage(e.toString(), context);
       return false;
     }

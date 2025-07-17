@@ -84,10 +84,7 @@ class _FlashScreenState extends State<FlashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final deviceHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Center(
         child: Image.asset(
           'assets/images/lbefHd.jpg',

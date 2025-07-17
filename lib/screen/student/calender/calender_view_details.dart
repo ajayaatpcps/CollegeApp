@@ -144,6 +144,7 @@ class _CalenderViewDetailsState extends State<CalenderViewDetails> {
                     child: Text(
                       "${event.eventContactEmail}",
                       style: const TextStyle(
+                        color: Colors.black,
                         fontSize: 14,
                       ),
                     ),
@@ -174,6 +175,8 @@ class _CalenderViewDetailsState extends State<CalenderViewDetails> {
                   child: Text(
                     "${event.organizerEmail}",
                     style: const TextStyle(
+                      color: Colors.black,
+
                       fontSize: 14,
                     ),
                   ),
@@ -204,6 +207,8 @@ class _CalenderViewDetailsState extends State<CalenderViewDetails> {
                       "${event.description}",
                       style: const TextStyle(
                         fontSize: 14,
+                        color: Colors.black,
+
                       ),
                     ),
                   ),

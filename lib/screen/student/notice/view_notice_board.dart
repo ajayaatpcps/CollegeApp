@@ -12,6 +12,7 @@ import '../../../resource/colors.dart';
 import '../../../utils/format_time.dart';
 import '../../../utils/utils.dart';
 import '../../../view_model/notice_board/notice_board_view_model.dart';
+import '../../../view_model/theme_provider.dart';
 
 class ViewNoticeBoard extends StatefulWidget {
   final NoticeModel noticeData;
@@ -43,10 +44,11 @@ class _ViewNoticeBoardState extends State<ViewNoticeBoard> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: themeProvider.isDarkMode ? Colors.black : Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: const Text(
           "Notice Details",
           style: TextStyle(fontFamily: 'poppins'),
@@ -78,7 +80,7 @@ class _ViewNoticeBoardState extends State<ViewNoticeBoard> {
             return Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: themeProvider.isDarkMode ? Colors.black : Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
@@ -98,7 +100,9 @@ class _ViewNoticeBoardState extends State<ViewNoticeBoard> {
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
+                        color: themeProvider.isDarkMode
+                            ? Colors.white
+                            : AppColors.primary,
                       ),
                     ),
                   ),
@@ -149,6 +153,7 @@ class _ViewNoticeBoardState extends State<ViewNoticeBoard> {
     final String unescapedText = unescape.convert(htmlText);
     final document = html_parser.parse(unescapedText);
     final List<TextSpan> spans = [];
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
 
     void parseNode(dom.Node node) {
       if (node is dom.Text) {
@@ -156,11 +161,11 @@ class _ViewNoticeBoardState extends State<ViewNoticeBoard> {
         if (node.text.trim().isNotEmpty) {
           spans.add(TextSpan(
             text: node.text,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               height: 1.6,
               fontFamily: 'poppins',
-              color: Colors.black,
+              color: themeProvider.isDarkMode ? Colors.white : Colors.black,
             ),
           ));
         }

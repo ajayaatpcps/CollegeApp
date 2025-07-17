@@ -4,6 +4,7 @@ import 'package:lbef/utils/permission.dart';
 import 'package:lbef/screen/student/daily_class_report/shimmer/class_card_shimmer.dart';
 import 'package:lbef/utils/parse_date.dart';
 import 'package:lbef/view_model/download_forms/download_forms_view_model.dart';
+import 'package:lbef/view_model/theme_provider.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:dio/dio.dart';
@@ -93,10 +94,8 @@ class _DownloadForumsState extends State<DownloadForums> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: const Text(
           "Download Forms",
           style: TextStyle(fontFamily: 'poppins', fontSize: 18),

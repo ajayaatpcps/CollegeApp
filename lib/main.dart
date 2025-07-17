@@ -11,6 +11,7 @@ import 'package:lbef/view_model/download_forms/download_forms_view_model.dart';
 import 'package:lbef/view_model/notice_board/email_view_model.dart';
 import 'package:lbef/view_model/notice_board/notice_board_view_model.dart';
 import 'package:lbef/view_model/notice_board/sms_view_model.dart';
+import 'package:lbef/view_model/theme_provider.dart';
 import 'package:lbef/view_model/user_view_model/auth_view_model.dart';
 import 'package:lbef/view_model/user_view_model/current_user_model.dart';
 import 'package:lbef/view_model/user_view_model/user_view_model.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => AuthViewModel()),
         ChangeNotifierProvider(create: (_) => ApplicationViewModel()),
         ChangeNotifierProvider(create: (_) => ClassRoutineViewModel()),
@@ -47,16 +49,54 @@ class MyApp extends StatelessWidget {
             data: MediaQuery.of(context).copyWith(
               textScaler: TextScaler.noScaling,
             ),
-            child: MaterialApp(
-              title: 'LBEF',
-              theme: ThemeData(
-                colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
-                useMaterial3: true,
-                fontFamily: 'Poppins',
-              ),
-              debugShowCheckedModeBanner: false,
-              initialRoute: RoutesName.flash,
-              onGenerateRoute: Routes.generateRoute,
+            child: Consumer<ThemeProvider>(
+              builder: (context, themeProvider, child) {
+                return MaterialApp(
+                  title: 'LBEF',
+                  debugShowCheckedModeBanner: false,
+                  themeMode: themeProvider.themeMode,
+                  theme: ThemeData(
+                    useMaterial3: true,
+                    fontFamily: 'Poppins',
+                    brightness: Brightness.light,
+                    colorScheme: ColorScheme.fromSeed(
+                      seedColor: Colors.red,
+                      brightness: Brightness.light,
+                    ),
+                    scaffoldBackgroundColor: Colors.white,
+                    appBarTheme: const AppBarTheme(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      elevation: 0,
+                    ),
+                    iconTheme: const IconThemeData(color: Colors.black),
+                    textTheme: const TextTheme(
+                      bodyMedium: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  darkTheme: ThemeData(
+                    useMaterial3: true,
+                    fontFamily: 'Poppins',
+                    brightness: Brightness.dark,
+                    colorScheme: ColorScheme.fromSeed(
+                      seedColor: Colors.red,
+                      brightness: Brightness.dark,
+                    ),
+                    scaffoldBackgroundColor: const Color(0xFF121212),
+                    appBarTheme: const AppBarTheme(
+                      backgroundColor: Color(0xFF1F1F1F),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                    ),
+                    iconTheme: const IconThemeData(color: Colors.white),
+                    textTheme: const TextTheme(
+                      bodyMedium: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  initialRoute: RoutesName.flash,
+                  onGenerateRoute: Routes.generateRoute,
+                );
+              },
             ),
           );
         },
