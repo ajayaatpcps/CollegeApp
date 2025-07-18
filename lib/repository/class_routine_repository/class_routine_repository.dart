@@ -27,8 +27,7 @@ class ClassRoutineRepository {
     } catch (error) {
       if (error is NoDataException) {
         logger.w("404 Error: $error");
-        Utils.flushBarNOdata(error.toString(), context);
-         throw NoDataException(error.toString());
+        throw Exception("Error : $error ");
       }
       logger.w(error);
       return Utils.flushBarErrorMessage("$error", context);

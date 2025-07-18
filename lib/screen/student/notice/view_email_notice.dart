@@ -130,22 +130,28 @@ class _ViewEmailState extends State<ViewEmail> {
                     const SizedBox(height: 16),
                     Text(
                       'From: ${email.mailFromname ?? 'Unknown'} <${email.mailFrom ?? ''}>',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
+                        color:
+                            provider.isDarkMode ? Colors.white : Colors.black,
                         fontFamily: 'poppins',
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'To: ${email.mailToname ?? 'Unknown'} <${email.mailTo ?? ''}>',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
+                        color:
+                            provider.isDarkMode ? Colors.white : Colors.black,
                         fontFamily: 'poppins',
                       ),
                     ),
                     const SizedBox(height: 24),
-                    _parseTextWithLinks(stripHtmlTags(
-                        email.emailText ?? 'No content available.')),
+                    _parseTextWithLinks(
+                        stripHtmlTags(
+                            email.emailText ?? 'No content available.'),
+                        context),
                   ],
                 ),
               );
@@ -173,7 +179,11 @@ class _ViewEmailState extends State<ViewEmail> {
     );
   }
 
-  Widget _parseTextWithLinks(String htmlText) {
+  Widget _parseTextWithLinks(String htmlText, BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final isDarkMode = themeProvider.isDarkMode;
+    final textColor = isDarkMode ? Colors.white : Colors.black;
+
     final unescape = HtmlUnescape();
     final String unescapedText = unescape.convert(htmlText);
     final document = html_parser.parse(unescapedText);
@@ -181,19 +191,18 @@ class _ViewEmailState extends State<ViewEmail> {
 
     void parseNode(dom.Node node) {
       if (node is dom.Text) {
-        // Handle plain text
         if (node.text.trim().isNotEmpty) {
           spans.add(TextSpan(
             text: node.text,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               height: 1.6,
               fontFamily: 'poppins',
+              color: textColor,
             ),
           ));
         }
       } else if (node is dom.Element && node.localName == 'a') {
-        // Handle anchor tags
         final linkUrl = node.attributes['href'] ?? '';
         final linkText = node.text.isNotEmpty ? node.text : linkUrl;
 
@@ -219,15 +228,12 @@ class _ViewEmailState extends State<ViewEmail> {
             },
         ));
       } else if (node.hasChildNodes()) {
-        // Fixed: Added parentheses
-        // Recursively process child nodes
         for (var child in node.nodes) {
           parseNode(child);
         }
       }
     }
 
-    // Parse all nodes in the document body
     for (var node in document.body?.nodes ?? []) {
       parseNode(node);
     }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lbef/data/status.dart';
 import 'package:lbef/model/dcr_detail_model.dart';
 import 'package:lbef/screen/student/daily_class_report/reports/stacked_reports.dart';
 import 'package:lbef/screen/student/daily_class_report/widgets/attendence_bar.dart';
@@ -10,9 +9,7 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import '../../../../resource/colors.dart';
 import '../../../../utils/format_time.dart';
-import '../../../../view_model/theme_provider.dart';
 import '../../../../widgets/no_data/no_data_widget.dart';
-import '../shimmer/class_card_shimmer.dart';
 import '../shimmer/report_shimmer.dart';
 
 class Reports extends StatefulWidget {
@@ -252,10 +249,20 @@ class _ReportsState extends State<Reports> {
 
   double _calculateAttendancePercentage(Attendance attendance) {
     try {
+      var logger = Logger();
       final present = double.parse(attendance.present ?? '0');
+      final leave = double.parse(attendance.leave ?? '0');
+      final late = double.parse(attendance.late ?? '0');
+
       final total = double.parse(attendance.totalPeriod ?? '1');
+      logger.wtf("present $present");
+      logger.wtf("present $leave");
+      logger.wtf("present $total");
+
       if (total == 0) return 0.0;
-      final percentage = (present / total) * 100;
+      final percentage = ((present + leave + late) / total) * 100;
+      logger.d("percentage $total");
+
       return double.parse(percentage.toStringAsFixed(2));
     } catch (e) {
       _logger.e('Error calculating attendance percentage: $e');

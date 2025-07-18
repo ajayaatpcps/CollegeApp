@@ -58,7 +58,7 @@ class NoticeBoardRepository {
       return Utils.noInternet(
           "No internet connection. Please try again later.");
     } catch (error) {
-      if (error is NoDataException ) {
+      if (error is NoDataException) {
         logger.w("404 Error: $error");
         return {};
       }
@@ -66,6 +66,7 @@ class NoticeBoardRepository {
       return Utils.flushBarErrorMessage("$error", context);
     }
   }
+
   Future<EmailNoticeModel> emailDetails(
       String emailId, BuildContext context) async {
     try {
@@ -84,11 +85,9 @@ class NoticeBoardRepository {
       throw Exception("No internet connection");
     } catch (error) {
       logger.w(error);
-
-      if (error is NoDataException ) {
+      if (error is NoDataException) {
         logger.w("404 Error: $error");
         throw Exception("Error : $error ");
-
       }
       Utils.flushBarErrorMessage("$error", context);
       throw Exception("Error : $error ");
@@ -101,11 +100,11 @@ class NoticeBoardRepository {
     }
     try {
       dynamic response =
-      await _apiServices.getApiResponse(NoticeBoardEndpoints.fetchEmail);
+          await _apiServices.getApiResponse(NoticeBoardEndpoints.fetchEmail);
       if (response is List) {
         //todo change the model over herr
         List<EmailNoticeModel> notices =
-        response.map((e) => EmailNoticeModel.fromJson(e)).toList();
+            response.map((e) => EmailNoticeModel.fromJson(e)).toList();
         logger.d("notices List $notices");
         return {"notices": notices};
       } else {
@@ -115,35 +114,7 @@ class NoticeBoardRepository {
       return Utils.noInternet(
           "No internet connection. Please try again later.");
     } catch (error) {
-      logger.w(error);
-      if (error is NoDataException ) {
-        logger.w("404 Error: $error");
-        return {};
-      }
-      return Utils.flushBarErrorMessage("$error", context);
-    }
-  }
-  Future<Map<String, dynamic>> fetchSms(BuildContext context) async {
-    if (kDebugMode) {
-      logger.d(NoticeBoardEndpoints.fetchSms);
-    }
-    try {
-      dynamic response =
-      await _apiServices.getApiResponse(NoticeBoardEndpoints.fetchSms);
-      if (response is List) {
-        //todo change the model over herr
-        List<SmsModel> notices =
-        response.map((e) => SmsModel.fromJson(e)).toList();
-        logger.d("notices List $notices");
-        return {"notices": notices};
-      } else {
-        throw Exception("Unexpected response format: $response");
-      }
-    } on TimeoutException {
-      return Utils.noInternet(
-          "No internet connection. Please try again later.");
-    } catch (error) {
-      if (error is NoDataException ) {
+      if (error is NoDataException) {
         logger.w("404 Error: $error");
         return {};
       }
@@ -152,4 +123,32 @@ class NoticeBoardRepository {
     }
   }
 
+  Future<Map<String, dynamic>> fetchSms(BuildContext context) async {
+    if (kDebugMode) {
+      logger.d(NoticeBoardEndpoints.fetchSms);
+    }
+    try {
+      dynamic response =
+          await _apiServices.getApiResponse(NoticeBoardEndpoints.fetchSms);
+      if (response is List) {
+        //todo change the model over herr
+        List<SmsModel> notices =
+            response.map((e) => SmsModel.fromJson(e)).toList();
+        logger.d("notices List $notices");
+        return {"notices": notices};
+      } else {
+        throw Exception("Unexpected response format: $response");
+      }
+    } on TimeoutException {
+      return Utils.noInternet(
+          "No internet connection. Please try again later.");
+    } catch (error) {
+      if (error is NoDataException) {
+        logger.w("404 Error: $error");
+        return {};
+      }
+      logger.w(error);
+      return Utils.flushBarErrorMessage("$error", context);
+    }
+  }
 }
