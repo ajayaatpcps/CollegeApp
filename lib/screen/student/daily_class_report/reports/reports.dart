@@ -254,9 +254,7 @@ class _ReportsState extends State<Reports> {
     try {
       final present = double.parse(attendance.present ?? '0');
       final total = double.parse(attendance.totalPeriod ?? '1');
-
       if (total == 0) return 0.0;
-
       final percentage = (present / total) * 100;
       return double.parse(percentage.toStringAsFixed(2));
     } catch (e) {

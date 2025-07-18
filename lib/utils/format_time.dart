@@ -2,14 +2,25 @@ import 'package:html_unescape/html_unescape.dart';
 import 'package:intl/intl.dart';
 
 String formatTimeRange(String start, String end) {
-  final inputFormat = DateFormat("HH:mm:ss");
-  final outputFormat = DateFormat("h:mm a");
+  try {
+    DateTime parseTime(String time) {
+      try {
+        return DateFormat("HH:mm:ss").parse(time);
+      } catch (_) {
+        return DateFormat("HH:mm").parse(time);
+      }
+    }
 
-  final startTime = inputFormat.parse(start);
-  final endTime = inputFormat.parse(end);
+    final startTime = parseTime(start);
+    final endTime = parseTime(end);
 
-  return "${outputFormat.format(startTime)} - ${outputFormat.format(endTime)}";
+    return "${DateFormat("h:mm a").format(startTime)} - ${DateFormat("h:mm a").format(endTime)}";
+  } catch (e) {
+    return 'Invalid time';
+  }
 }
+
+
 String stripHtmlTags(String htmlText) {
   return htmlText
       .replaceAll(RegExp(r'<\s*br\s*/?>', caseSensitive: false), '')
