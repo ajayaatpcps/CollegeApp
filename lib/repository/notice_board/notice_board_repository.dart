@@ -58,6 +58,10 @@ class NoticeBoardRepository {
       return Utils.noInternet(
           "No internet connection. Please try again later.");
     } catch (error) {
+      if (error is NoDataException ) {
+        logger.w("404 Error: $error");
+        return {};
+      }
       logger.w(error);
       return Utils.flushBarErrorMessage("$error", context);
     }
@@ -80,6 +84,12 @@ class NoticeBoardRepository {
       throw Exception("No internet connection");
     } catch (error) {
       logger.w(error);
+
+      if (error is NoDataException ) {
+        logger.w("404 Error: $error");
+        throw Exception("Error : $error ");
+
+      }
       Utils.flushBarErrorMessage("$error", context);
       throw Exception("Error : $error ");
     }
@@ -106,6 +116,10 @@ class NoticeBoardRepository {
           "No internet connection. Please try again later.");
     } catch (error) {
       logger.w(error);
+      if (error is NoDataException ) {
+        logger.w("404 Error: $error");
+        return {};
+      }
       return Utils.flushBarErrorMessage("$error", context);
     }
   }
