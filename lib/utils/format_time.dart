@@ -3,17 +3,23 @@ import 'package:intl/intl.dart';
 
 String formatTimeRange(String start, String end) {
   try {
-    final inputFormat = DateFormat("HH:mm"); // Matches "06:30"
-    final outputFormat = DateFormat("h:mm a"); // e.g., "6:30 AM"
+    DateTime parseTime(String time) {
+      try {
+        return DateFormat("HH:mm:ss").parse(time);
+      } catch (_) {
+        return DateFormat("HH:mm").parse(time);
+      }
+    }
 
-    final startTime = inputFormat.parse(start);
-    final endTime = inputFormat.parse(end);
+    final startTime = parseTime(start);
+    final endTime = parseTime(end);
 
-    return "${outputFormat.format(startTime)} - ${outputFormat.format(endTime)}";
+    return "${DateFormat("h:mm a").format(startTime)} - ${DateFormat("h:mm a").format(endTime)}";
   } catch (e) {
-    return 'Invalid time'; // fallback in case of bad input
+    return 'Invalid time';
   }
 }
+
 
 String stripHtmlTags(String htmlText) {
   return htmlText
