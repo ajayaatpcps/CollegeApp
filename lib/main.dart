@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lbef/resource/routes.dart';
 import 'package:lbef/resource/routes_name.dart';
+import 'package:lbef/screen/faculty/faculty_dcr/attendence.dart';
+import 'package:lbef/screen/faculty/faculty_routine/faculty_routine.dart';
+import 'package:lbef/screen/navbar/faculty_navbar.dart';
 import 'package:lbef/view_model/application_files/application_view_model.dart';
 import 'package:lbef/view_model/calender/event_calender_view_model.dart';
 import 'package:lbef/view_model/class_routine/class_routine_view_model.dart';
@@ -93,8 +96,9 @@ class MyApp extends StatelessWidget {
                       bodyMedium: TextStyle(color: Colors.white),
                     ),
                   ),
-                  initialRoute: RoutesName.flash,
-                  onGenerateRoute: Routes.generateRoute,
+                  // initialRoute: RoutesName.flash,
+                  // onGenerateRoute: Routes.generateRoute,
+                  home: FacultyNavbar(),
                 );
               },
             ),
