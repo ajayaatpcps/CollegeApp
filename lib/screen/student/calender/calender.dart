@@ -28,7 +28,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void initState() {
     super.initState();
     final viewModel =
-        Provider.of<EventCalenderViewModel>(context, listen: false);
+    Provider.of<EventCalenderViewModel>(context, listen: false);
     _fetchMonthlyEvents(viewModel, DateFormat('yyyy-MM').format(_focusedDay));
   }
 
@@ -51,10 +51,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
           final start = DateTime.parse(event.startDate!);
           final end =
-              event.endDate != null ? DateTime.parse(event.endDate!) : start;
+          event.endDate != null ? DateTime.parse(event.endDate!) : start;
 
           final selected =
-              DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day);
+          DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day);
           final startOnly = DateTime(start.year, start.month, start.day);
           final endOnly = DateTime(end.year, end.month, end.day);
 
@@ -98,7 +98,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     _focusedDay = focusedDay;
                   });
                   final selectedMonth =
-                      DateFormat('yyyy-MM').format(selectedDay);
+                  DateFormat('yyyy-MM').format(selectedDay);
                   if (selectedMonth !=
                       DateFormat('yyyy-MM').format(_focusedDay)) {
                     _fetchMonthlyEvents(viewModel, selectedMonth);
@@ -122,7 +122,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
                     final dayOnly = DateTime(day.year, day.month, day.day);
                     final startOnly =
-                        DateTime(start.year, start.month, start.day);
+                    DateTime(start.year, start.month, start.day);
                     final endOnly = DateTime(end.year, end.month, end.day);
 
                     return dayOnly.isAtSameMomentAs(startOnly) ||
@@ -135,39 +135,29 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   markerBuilder: (context, date, events) {
                     if (events.isEmpty) return const SizedBox.shrink();
 
-                    final eventColors = events
-                        .take(2)
-                        .map((event) =>
-                        _parseColor((event as EventModel).colorCode ?? 'grey'))
+                    // Extract unique color codes from event list
+                    final uniqueColorCodes = events
+                        .map((e) => (e as EventModel).colorCode?.toLowerCase() ?? 'grey')
+                        .toSet()
                         .toList();
 
-                    final extraCount = events.length - 2;
+                    final uniqueColors = uniqueColorCodes.map(_parseColor).toList();
 
                     return Padding(
                       padding: const EdgeInsets.only(top: 2),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ...eventColors.map(
-                                (color) => Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 1.0),
-                              width: 6,
-                              height: 6,
-                              decoration: BoxDecoration(
-                                color: color,
-                                shape: BoxShape.circle,
-                              ),
+                        children: uniqueColors.map((color) {
+                          return Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 1.0),
+                            width: 6,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              color: color,
+                              shape: BoxShape.circle,
                             ),
-                          ),
-                          if (extraCount > 0)
-                            Padding(
-                              padding: const EdgeInsets.only(left: 2),
-                              child: Text(
-                                '+$extraCount',
-                                style: const TextStyle(fontSize: 10),
-                              ),
-                            ),
-                        ],
+                          );
+                        }).toList(),
                       ),
                     );
                   },
@@ -188,63 +178,63 @@ class _CalendarScreenState extends State<CalendarScreen> {
               Expanded(
                 child: viewModel.isLoading
                     ? const ShimmerWidget()
-                        : selectedDayEvents.isEmpty
-                            ? Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 8),
-                                    child: Row(
-                                      children: [
-                                        const Icon(
-                                            Icons.calendar_month_outlined),
-                                        Text(
-                                            parseDate(_selectedDay.toString())),
-                                      ],
-                                    ),
-                                  ),
-                                  BuildNoData(
-                                    MediaQuery.of(context).size,
-                                    "No event on the selected date!",
-                                    Icons.calendar_month_outlined,
-                                  ),
-                                ],
-                              )
-                            : ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: selectedDayEvents.length,
-                                itemBuilder: (context, index) {
-                                  final event = selectedDayEvents[index];
-                                  return InkWell(
-                                    onTap: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) =>
-                                            DisplayDialogCalender(
-                                                id: event.eventId.toString() ??
-                                                    '',
-                                                text: 'Event Details',
-                                                show:
-                                                    const CalenderViewDetails()),
-                                      );
-                                    },
-                                    child: CalenderWidget(
-                                      title:
-                                          event.eventName ?? 'Untitled Event',
-                                      organizerName: event.organizerName ??
-                                          'Unknown Organizer',
-                                      date: event.eventType ?? 'No Type',
-                                      color: _parseColor(
-                                          event.colorCode ?? 'grey'),
-                                      dateTime: event.startDate != null &&
-                                              event.startDate != ''
-                                          ? parseDate(event.startDate ?? '')
-                                          : "",
-                                      location: event.location ?? '',
-                                    ),
-                                  );
-                                },
-                              ),
+                    : selectedDayEvents.isEmpty
+                    ? Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 8),
+                      child: Row(
+                        children: [
+                          const Icon(
+                              Icons.calendar_month_outlined),
+                          Text(
+                              parseDate(_selectedDay.toString())),
+                        ],
+                      ),
+                    ),
+                    BuildNoData(
+                      MediaQuery.of(context).size,
+                      "No event on the selected date!",
+                      Icons.calendar_month_outlined,
+                    ),
+                  ],
+                )
+                    : ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: selectedDayEvents.length,
+                  itemBuilder: (context, index) {
+                    final event = selectedDayEvents[index];
+                    return InkWell(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) =>
+                              DisplayDialogCalender(
+                                  id: event.eventId.toString() ??
+                                      '',
+                                  text: 'Event Details',
+                                  show:
+                                  const CalenderViewDetails()),
+                        );
+                      },
+                      child: CalenderWidget(
+                        title:
+                        event.eventName ?? 'Untitled Event',
+                        organizerName: event.organizerName ??
+                            'Unknown Organizer',
+                        date: event.eventType ?? 'No Type',
+                        color: _parseColor(
+                            event.colorCode ?? 'grey'),
+                        dateTime: event.startDate != null &&
+                            event.startDate != ''
+                            ? parseDate(event.startDate ?? '')
+                            : "",
+                        location: event.location ?? '',
+                      ),
+                    );
+                  },
+                ),
               ),
             ],
           ),

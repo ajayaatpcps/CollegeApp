@@ -78,7 +78,6 @@ class TableData extends StatelessWidget {
                                 Text(room, style: TextStyle(color: textColor, fontSize: 13)),
                               ],
                             ),
-                            const SizedBox(height: 5),
                             Row(
                               children: [
                                 Icon(Icons.person, size: 18, color: textColor),

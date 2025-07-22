@@ -9,49 +9,26 @@ class Sunday extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Column(
       children: [
-        Row(
-          children: [
-            SizedBox(
-              width: 80,
-              child: Center(
-                child: Text(
-                  "Time",
-                  style: TextStyle(
-                      color: Colors.grey, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Center(
-                child: Text(
-                  "Courses",
-                  style: TextStyle(
-                      color: Colors.grey, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 20),
         FacultyTableData(
-            timeStart: '7:00 AM',
-            timeEnd: '9:00 AM',
-            title: 'OBJECT ORIENTED PROGRAMMING AND ',
-            lecture: 'Lecture 2 : Data Management Sql',
-            room: "Room 3 404",
-            teacher: 'Nujan Shrestha',
-            color: Color(0xff97E793),
-            textColor: Colors.black),
+          timeStart: '7:00',
+          timeEnd: '9:00',
+          title: 'OBJECT ORIENTED PROGRAMMING AND ',
+          lecture: 'Lecture 2 : Data Management Sql',
+          room: "Room 3 404",
+          teacher: 'Nujan Shrestha',
+          textColor: Colors.black,
+          schedule: 'Morning',
+        ),
         SizedBox(height: 15),
         FacultyTableData(
-            timeStart: '10:00 AM',
-            timeEnd: '12:00 AM',
+            timeStart: '10:00',
+            timeEnd: '12:00',
             title: 'Mobile Application Development',
             lecture: 'Lecture 2 : Flutter',
             room: "Room 01 204",
             teacher: 'Season Maharjan',
-            color: Color(0xffDCFF7D),
-            textColor: Color(0xffE32D2D)),
+            textColor: Colors.black,
+            schedule: 'Morning'),
       ],
     );
   }

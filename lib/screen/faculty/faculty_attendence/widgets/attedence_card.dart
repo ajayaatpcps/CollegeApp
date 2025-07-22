@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../resource/colors.dart';
-import '../../../../widgets/custom_shimmer.dart';
 import '../raw_data.dart';
 import 'custom_remark.dart';
 
@@ -84,23 +83,24 @@ class StudentAttendanceCard extends StatelessWidget {
                             width: 40,
                             child: ClipOval(
                               child: Image.network(
-                                'image', // You can replace with actual image field
+                                students[index]['image'] ?? 'https://via.placeholder.com/40',
                                 fit: BoxFit.cover,
                                 loadingBuilder: (context, child, progress) {
                                   if (progress == null) return child;
-                                  return CustomShimmerLoading(
-                                    width: 40.0,
-                                    height: 40.0,
-                                    baseColor: Colors.grey[300]!,
-                                    highlightColor: Colors.grey[100]!,
+                                  return Container(
+                                    width: 40,
+                                    height: 40,
+                                    color: Colors.grey[300],
+                                    child: const Center(
+                                      child: Icon(Icons.person, color: Colors.grey),
+                                    ),
                                   );
                                 },
-                                errorBuilder: (_, __, ___) => Container(
+                                errorBuilder: (context, error, stackTrace) => Container(
                                   width: 40,
                                   height: 40,
                                   color: AppColors.primary,
-                                  child: const Icon(Icons.school,
-                                      color: Colors.white, size: 24),
+                                  child: const Icon(Icons.school, color: Colors.white, size: 24),
                                 ),
                               ),
                             ),
@@ -137,17 +137,14 @@ class StudentAttendanceCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
+            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   buildStatusButton("Present", 0, Colors.blue),
-                  const SizedBox(width: 5),
                   buildStatusButton("Leave", 1, Colors.green),
-                  const SizedBox(width: 5),
                   buildStatusButton("Late", 2, Colors.yellow[700]!),
-                  const SizedBox(width: 5),
                   buildStatusButton("Absent", 3, Colors.red),
                 ],
               ),

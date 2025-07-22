@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lbef/screen/faculty/faculty_dcr/raw_data.dart';
-import 'package:lbef/screen/faculty/faculty_dcr/widgets/attedence_card.dart';
-import 'package:lbef/screen/faculty/faculty_dcr/widgets/attendenceCardHead.dart';
-import 'package:lbef/screen/faculty/faculty_dcr/widgets/custom_search.dart';
+import 'package:lbef/screen/faculty/faculty_attendence/raw_data.dart';
+import 'package:lbef/screen/faculty/faculty_attendence/widgets/attedence_card.dart';
+import 'package:lbef/screen/faculty/faculty_attendence/widgets/attendenceCardHead.dart';
+import 'package:lbef/screen/faculty/faculty_attendence/widgets/custom_search.dart';
 import '../../../resource/colors.dart';
 import '../../../widgets/form_widget/modern_btn_widget.dart';
 
@@ -14,9 +14,9 @@ class Attendence extends StatefulWidget {
 }
 
 class _AttendenceState extends State<Attendence> {
-  List<int?> selectedStatusIndices = List<int?>.filled(students.length, null);
-  List<bool> showRemarksList = List<bool>.filled(students.length, false);
-  List<TextEditingController> remarksControllers = [];
+  List<int?> selectedStatusIndices = [];
+  List<bool> showRemarksList = [];
+  List<TextEditingController?> remarksControllers = [];
   final TextEditingController _searchController = TextEditingController();
 
   int presentCount = 0;
@@ -27,10 +27,10 @@ class _AttendenceState extends State<Attendence> {
   @override
   void initState() {
     super.initState();
-    remarksControllers = List.generate(
-      students.length,
-          (index) => TextEditingController(),
-    );
+    // Direct initialization instead of post-frame
+    selectedStatusIndices = List<int?>.filled(students.length, null);
+    showRemarksList = List<bool>.filled(students.length, false);
+    remarksControllers = List<TextEditingController?>.filled(students.length, null);
   }
 
   void updateStats() {
@@ -38,14 +38,26 @@ class _AttendenceState extends State<Attendence> {
     leaveCount = selectedStatusIndices.where((status) => status == 1).length;
     lateCount = selectedStatusIndices.where((status) => status == 2).length;
     absentCount = selectedStatusIndices.where((status) => status == 3).length;
-    setState(() {});
+    setState(() {}); // Direct call is safe here
+  }
+
+  TextEditingController getOrCreateController(int index) {
+    if (index >= remarksControllers.length) {
+      remarksControllers.addAll(
+        List.generate(index - remarksControllers.length + 1, (_) => null),
+      );
+    }
+    if (remarksControllers[index] == null) {
+      remarksControllers[index] = TextEditingController();
+    }
+    return remarksControllers[index]!;
   }
 
   @override
   void dispose() {
     _searchController.dispose();
-    for (var controller in remarksControllers) {
-      controller.dispose();
+    for (var controller in remarksControllers.where((c) => c != null)) {
+      controller!.dispose();
     }
     super.dispose();
   }
@@ -118,7 +130,7 @@ class _AttendenceState extends State<Attendence> {
                   onPressed: () {
                     for (int i = 0; i < students.length; i++) {
                       print(
-                          'Student: ${students[i]['name']}, Status: ${selectedStatusIndices[i]}, Remarks: ${remarksControllers[i].text}');
+                          'Student: ${students[i]['name']}, Status: ${selectedStatusIndices[i]}, Remarks: ${remarksControllers[i]?.text ?? ''}');
                     }
                   },
                 ),
@@ -146,18 +158,16 @@ class _AttendenceState extends State<Attendence> {
               margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      buildCompactStat("Total Students", "40",Colors.blue ),
-                      buildCompactStat("Present", presentCount.toString(), Colors.green),
-                      buildCompactStat("Absent", absentCount.toString(), Colors.red),
-                      buildCompactStat("Late", lateCount.toString(), Colors.orange),
-                      buildCompactStat("Leave", leaveCount.toString(), Colors.purple),
-                    ],
-                  ),
+                child: Wrap(
+                  spacing: 12,
+                  runSpacing: 8,
+                  children: [
+                    buildCompactStat("Total", students.length.toString(), Colors.blue),
+                    buildCompactStat("Present", presentCount.toString(), Colors.green),
+                    buildCompactStat("Absent", absentCount.toString(), Colors.red),
+                    buildCompactStat("Late", lateCount.toString(), Colors.orange),
+                    buildCompactStat("Leave", leaveCount.toString(), Colors.purple),
+                  ],
                 ),
               ),
             ),
@@ -175,31 +185,34 @@ class _AttendenceState extends State<Attendence> {
             ),
             const SizedBox(height: 10),
             Expanded(
-              child: SingleChildScrollView(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: students.length,
-                  itemBuilder: (context, index) {
-                    return StudentAttendanceCard(
-                      index: index,
-                      selectedStatus: selectedStatusIndices[index],
-                      onStatusChanged: (status) {
-                        setState(() {
-                          selectedStatusIndices[index] = status;
-                          updateStats();
-                        });
-                      },
-                      showRemarks: showRemarksList[index],
-                      onToggleRemarks: () {
-                        setState(() {
-                          showRemarksList[index] = !showRemarksList[index];
-                        });
-                      },
-                      remarksController: remarksControllers[index],
-                    );
-                  },
-                ),
+              child: students.isEmpty
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                cacheExtent: 1000,
+                itemCount: students.length,
+                itemBuilder: (context, index) {
+                  return StudentAttendanceCard(
+                    key: ValueKey(students[index]['id']),
+                    index: index,
+                    selectedStatus: selectedStatusIndices[index],
+                    onStatusChanged: (status) {
+                      setState(() {
+                        selectedStatusIndices[index] = status;
+                        updateStats();
+                      });
+                    },
+                    showRemarks: showRemarksList[index],
+                    onToggleRemarks: () {
+                      setState(() {
+                        showRemarksList[index] = !showRemarksList[index];
+                        if (showRemarksList[index]) {
+                          getOrCreateController(index);
+                        }
+                      });
+                    },
+                    remarksController: getOrCreateController(index),
+                  );
+                },
               ),
             ),
           ],

@@ -59,19 +59,13 @@ class _FacultyRoutineState extends State<FacultyRoutine> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Class Routines",
-          style: TextStyle(fontFamily: 'poppins'),
+          "My Schedule",
+          style: TextStyle(fontFamily: 'poppins', fontSize: 18),
         ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: AppColors.primary),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          iconSize: 18,
-        ),
+        automaticallyImplyLeading: false,
         actions: const [
           Image(
-            image: AssetImage('assets/images/lbef.png'),
+            image: AssetImage('assets/images/pcpsLogo.png'),
             width: 70,
             height: 50,
             fit: BoxFit.contain,

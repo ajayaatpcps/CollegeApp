@@ -13,6 +13,7 @@ import 'package:lbef/widgets/Dialog/alert.dart';
 import 'package:provider/provider.dart';
 import '../../view_model/theme_provider.dart';
 import '../../view_model/user_view_model/current_user_model.dart';
+import '../faculty/faculty_allocation/faculty_allocation.dart';
 import '../faculty/faculty_dashboard/faculty_dashboard.dart';
 import '../student/application/application.dart';
 
@@ -51,7 +52,7 @@ class _FacultyNavbarState extends State<FacultyNavbar> {
     FacultyDashboard(),
     FacultyClassReport(),
     FacultyRoutine(),
-    FacultyRoutine(),
+    FacultyAllocation(),
     FacultyProfile()
   ];
 
@@ -82,7 +83,7 @@ class _FacultyNavbarState extends State<FacultyNavbar> {
             children: _pages,
           ),
           bottomNavigationBar:
-          Consumer<ThemeProvider>(builder: (context, provider, child) {
+              Consumer<ThemeProvider>(builder: (context, provider, child) {
             return CurvedNavigationBar(
               index: _selectedIndex,
               backgroundColor: Colors.transparent,
@@ -100,8 +101,8 @@ class _FacultyNavbarState extends State<FacultyNavbar> {
                         color: _selectedIndex == 0
                             ? Colors.blue
                             : (provider.isDarkMode
-                            ? Colors.white
-                            : Colors.black)),
+                                ? Colors.white
+                                : Colors.black)),
                   ),
                   label: 'Home',
                   labelStyle: TextStyle(
@@ -117,8 +118,8 @@ class _FacultyNavbarState extends State<FacultyNavbar> {
                         color: _selectedIndex == 1
                             ? Colors.blue
                             : (provider.isDarkMode
-                            ? Colors.white
-                            : Colors.black),
+                                ? Colors.white
+                                : Colors.black),
                         size: 24,
                       ),
                     ),
@@ -126,26 +127,26 @@ class _FacultyNavbarState extends State<FacultyNavbar> {
                     labelStyle: TextStyle(
                         fontSize: 12,
                         color:
-                        provider.isDarkMode ? Colors.white : Colors.black)),
+                            provider.isDarkMode ? Colors.white : Colors.black)),
                 CurvedNavigationBarItem(
                     child: SizedBox(
                       height: 35,
                       width: 35,
                       child: Icon(
-                        Icons.outgoing_mail,
+                        Icons.schedule,
                         color: _selectedIndex == 2
                             ? Colors.blue
                             : (provider.isDarkMode
-                            ? Colors.white
-                            : Colors.black),
+                                ? Colors.white
+                                : Colors.black),
                         size: 25,
                       ),
                     ),
-                    label: 'Application',
+                    label: 'My Schedule',
                     labelStyle: TextStyle(
                         fontSize: 12,
                         color:
-                        provider.isDarkMode ? Colors.white : Colors.black)),
+                            provider.isDarkMode ? Colors.white : Colors.black)),
                 CurvedNavigationBarItem(
                     child: SizedBox(
                       height: 35,
@@ -155,16 +156,16 @@ class _FacultyNavbarState extends State<FacultyNavbar> {
                         color: _selectedIndex == 3
                             ? Colors.blue
                             : (provider.isDarkMode
-                            ? Colors.white
-                            : Colors.black),
+                                ? Colors.white
+                                : Colors.black),
                         size: 25,
                       ),
                     ),
-                    label: 'Fees',
+                    label: 'Allocation',
                     labelStyle: TextStyle(
                         fontSize: 12,
                         color:
-                        provider.isDarkMode ? Colors.white : Colors.black)),
+                            provider.isDarkMode ? Colors.white : Colors.black)),
                 CurvedNavigationBarItem(
                     child: SizedBox(
                       height: 35,
@@ -174,8 +175,8 @@ class _FacultyNavbarState extends State<FacultyNavbar> {
                         color: _selectedIndex == 4
                             ? Colors.blue
                             : (provider.isDarkMode
-                            ? Colors.white
-                            : Colors.black),
+                                ? Colors.white
+                                : Colors.black),
                         size: 25,
                       ),
                     ),
@@ -183,7 +184,7 @@ class _FacultyNavbarState extends State<FacultyNavbar> {
                     labelStyle: TextStyle(
                         fontSize: 12,
                         color:
-                        provider.isDarkMode ? Colors.white : Colors.black)),
+                            provider.isDarkMode ? Colors.white : Colors.black)),
               ],
               onTap: (index) {
                 _pageController.animateToPage(
