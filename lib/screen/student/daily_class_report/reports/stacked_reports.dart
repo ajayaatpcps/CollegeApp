@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lbef/screen/student/daily_class_report/widgets/report_detail.dart';
-import 'package:provider/provider.dart';
-
-import '../../../../view_model/theme_provider.dart';
-
 class StackedReports extends StatefulWidget {
   final String date,
       time,

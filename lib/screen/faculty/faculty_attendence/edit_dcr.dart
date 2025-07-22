@@ -242,7 +242,6 @@ class _EditDcrState extends State<EditDcr> {
         Expanded(
           child: ListView.builder(
             itemCount: students.length,
-            itemExtent: 100,
             itemBuilder: (context, index) {
               return StudentAttendanceCard(
                 key: ValueKey(students[index]['id']),

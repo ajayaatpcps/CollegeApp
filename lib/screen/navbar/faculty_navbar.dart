@@ -3,19 +3,14 @@ import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:flutter/material.dart';
 import 'package:lbef/resource/colors.dart';
 import 'package:lbef/screen/faculty/faculty_class_report/faculty_class_report.dart';
-import 'package:lbef/screen/faculty/faculty_profile/faculty_profile.dart';
 import 'package:lbef/screen/faculty/faculty_routine/faculty_routine.dart';
-import 'package:lbef/screen/student/daily_class_report/daily_class_report.dart';
-import 'package:lbef/screen/student/dashboard/dashboard.dart';
-import 'package:lbef/screen/student/profile/profile.dart';
-import 'package:lbef/screen/student/student_fees/student_fees.dart';
 import 'package:lbef/widgets/Dialog/alert.dart';
 import 'package:provider/provider.dart';
 import '../../view_model/theme_provider.dart';
 import '../../view_model/user_view_model/current_user_model.dart';
 import '../faculty/faculty_allocation/faculty_allocation.dart';
 import '../faculty/faculty_dashboard/faculty_dashboard.dart';
-import '../student/application/application.dart';
+import '../faculty/faculty_profile/faculty_profile.dart';
 
 class FacultyNavbar extends StatefulWidget {
   final int? index;
@@ -53,7 +48,7 @@ class _FacultyNavbarState extends State<FacultyNavbar> {
     FacultyClassReport(),
     FacultyRoutine(),
     FacultyAllocation(),
-    FacultyProfile()
+    FacultyProfilePage()
   ];
 
   @override

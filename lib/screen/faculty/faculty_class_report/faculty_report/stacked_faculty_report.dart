@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lbef/screen/student/daily_class_report/widgets/report_detail.dart';
 
-class StackedFacultyReport extends StatefulWidget {
+import '../../../../resource/colors.dart';
+class FacultyStackedReports extends StatefulWidget {
   final String date,
       time,
       room,
@@ -15,7 +16,7 @@ class StackedFacultyReport extends StatefulWidget {
       teacher,
       attendenceScore,
       attendence;
-  const StackedFacultyReport(
+  const FacultyStackedReports(
       {super.key,
         required this.date,
         required this.time,
@@ -31,13 +32,14 @@ class StackedFacultyReport extends StatefulWidget {
         required this.attendence, required this.teacher});
 
   @override
-  State<StackedFacultyReport> createState() => _StackedFacultyReportState();
+  State<FacultyStackedReports> createState() => _FacultyStackedReportsState();
 }
 
-class _StackedFacultyReportState extends State<StackedFacultyReport> {
+class _FacultyStackedReportsState extends State<FacultyStackedReports> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+
     return Column(
       children: [
         Row(
@@ -63,6 +65,41 @@ class _StackedFacultyReportState extends State<StackedFacultyReport> {
               widget.time,
               style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
             ),
+          ],
+        ),
+        const SizedBox(
+          height: 6,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(8), // Rounded corners
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min, // Only wrap content size
+                children: [
+                  Text(
+                    'Attendance',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                  ),
+                  SizedBox(width: 6), // Spacing between text and icon
+                  Icon(
+                    Icons.mark_unread_chat_alt_sharp,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                ],
+              ),
+            ),
+
           ],
         ),
         const SizedBox(
