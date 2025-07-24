@@ -63,6 +63,7 @@ dependencies:
   internet_connection_checker: ^1.0.0+1
   loading_indicator: ^3.1.1
   path_provider: ^2.1.5
+  barcode_widget: ^2.0.4
 dev_dependencies:
   flutter_test:
     sdk: flutter

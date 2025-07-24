@@ -22,46 +22,29 @@ class DayDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    // Check if the day is not in the days list
+    // If this day doesn't exist in the list
     if (!days.any((dayItem) => dayItem.day == day)) {
-      return BuildNoData(size, "No class routine available for this day", Icons.calendar_month);
+      return BuildNoData(
+        size,
+        "No class routine available for this day",
+        Icons.calendar_month,
+      );
     }
 
     final dayDetails = detail[day] as Map<String, dynamic>?;
+
     if (times.isEmpty || dayDetails == null || dayDetails.isEmpty) {
-      return _buildNoDataView(size, day == 'Saturday' ? "No class routine for today!" : "No Routine available");
+      return _buildNoDataView(
+        size,
+        day == 'Saturday' ? "No class routine for today!" : "No Routine available",
+      );
     }
 
     return Column(
       children: [
         _buildTableHeader(),
         const SizedBox(height: 20),
-        ...times.asMap().entries.map((entry) {
-          final index = entry.key;
-          final time = entry.value;
-          final timeKey = "${time.startTime}-${time.endTime}";
-          final detailString = dayDetails[timeKey] as String?;
-
-          if (detailString == null || detailString.isEmpty) {
-            return const SizedBox();
-          }
-
-          final parts = detailString.split('<br>');
-          final course = parts.isNotEmpty ? parts[0] : 'Unknown Course';
-          final teacher = parts.length > 1 ? parts[1] : 'Unknown Teacher';
-          final room = parts.length > 2 ? parts[2] : 'Unknown Room';
-
-          return TableData(
-            timeStart: time.startTime,
-            timeEnd: time.endTime,
-            title: course,
-            lecture: '',
-            room: room,
-            teacher: teacher,
-            color: const Color(0xff97E793),
-            textColor: Colors.black,
-          );
-        }),
+        ..._buildRoutineRows(dayDetails),
       ],
     );
   }
@@ -97,6 +80,55 @@ class DayDetails extends StatelessWidget {
   }
 
   Widget _buildNoDataView(Size size, String message) {
-    return SizedBox();
+    return SizedBox(); // Replace with custom no data widget if needed
+  }
+
+  List<Widget> _buildRoutineRows(Map<String, dynamic> dayDetails) {
+    final nonEmptyEntries = times
+        .where((time) {
+      final timeKey = "${time.startTime}-${time.endTime}";
+      final detailString = dayDetails[timeKey] as String?;
+      return detailString != null && detailString.isNotEmpty;
+    })
+        .toList();
+
+    final List<Color> rowColors = [
+      const Color(0xff97E793), // Green
+      const Color(0xffE0E0E0), // Light Grey
+      const Color(0xffAED9E0), // Light Blue
+    ];
+
+    return times.asMap().entries.map((entry) {
+      final index = entry.key;
+      final time = entry.value;
+      final timeKey = "${time.startTime}-${time.endTime}";
+      final detailString = dayDetails[timeKey] as String?;
+
+      if (detailString == null || detailString.isEmpty) {
+        return const SizedBox();
+      }
+
+      final parts = detailString.split('<br>');
+      final course = parts.isNotEmpty ? parts[0] : 'Unknown Course';
+      final teacher = parts.length > 1 ? parts[1] : 'Unknown Teacher';
+      final room = parts.length > 2 ? parts[2] : 'Unknown Room';
+
+      final nonEmptyIndex = nonEmptyEntries.indexOf(time);
+
+      final Color rowColor = nonEmptyEntries.length == 1
+          ? rowColors[0]
+          : rowColors[nonEmptyIndex % rowColors.length];
+
+      return TableData(
+        timeStart: time.startTime,
+        timeEnd: time.endTime,
+        title: course,
+        lecture: '',
+        room: room,
+        teacher: teacher,
+        color: rowColor,
+        textColor: Colors.black,
+      );
+    }).toList();
   }
 }

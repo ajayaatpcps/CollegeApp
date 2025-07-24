@@ -265,7 +265,6 @@ class _ReportsState extends State<Reports> {
       if (total == 0) return 0.0;
       final percentage = ((present + leave+late) / total) * 100;
       logger.d("percentage $total");
-
       return double.parse(percentage.toStringAsFixed(2));
     } catch (e) {
       _logger.e('Error calculating attendance percentage: $e');
