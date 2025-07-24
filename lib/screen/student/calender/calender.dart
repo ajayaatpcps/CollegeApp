@@ -76,7 +76,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             ),
             actions: const [
               Image(
-                image: AssetImage('assets/images/pcpsLogo.png'),
+                image: AssetImage('assets/images/lbef.png'),
                 width: 70,
                 height: 50,
                 fit: BoxFit.contain,
@@ -135,40 +135,32 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   markerBuilder: (context, date, events) {
                     if (events.isEmpty) return const SizedBox.shrink();
 
-                    final eventColors = events
-                        .take(2)
-                        .map((event) => _parseColor(
-                            (event as EventModel).colorCode ?? 'grey'))
+                    // Extract unique color codes from event list
+                    final uniqueColorCodes = events
+                        .map((e) =>
+                            (e as EventModel).colorCode?.toLowerCase() ??
+                            'grey')
+                        .toSet()
                         .toList();
 
-                    final extraCount = events.length - 2;
+                    final uniqueColors =
+                        uniqueColorCodes.map(_parseColor).toList();
 
                     return Padding(
                       padding: const EdgeInsets.only(top: 2),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ...eventColors.map(
-                            (color) => Container(
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 1.0),
-                              width: 6,
-                              height: 6,
-                              decoration: BoxDecoration(
-                                color: color,
-                                shape: BoxShape.circle,
-                              ),
+                        children: uniqueColors.map((color) {
+                          return Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 1.0),
+                            width: 6,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              color: color,
+                              shape: BoxShape.circle,
                             ),
-                          ),
-                          if (extraCount > 0)
-                            Padding(
-                              padding: const EdgeInsets.only(left: 2),
-                              child: Text(
-                                '+$extraCount',
-                                style: const TextStyle(fontSize: 10),
-                              ),
-                            ),
-                        ],
+                          );
+                        }).toList(),
                       ),
                     );
                   },

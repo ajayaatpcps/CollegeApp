@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:lbef/view_model/theme_provider.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -85,11 +86,17 @@ class _FlashScreenState extends State<FlashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Image.asset(
-          'assets/images/lbefHd.jpg',
-          height: 300,
-        ),
+      body: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return Center(
+            child: Image.asset(
+              themeProvider.isDarkMode
+                  ? 'assets/images/lbef_white.png'
+                  : 'assets/images/lbefHd.jpg',
+              height: 300,
+            ),
+          );
+        },
       ),
     );
   }
