@@ -14,34 +14,7 @@ class StatementsShimmer extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Shimmer for PayKhalti button
-          Shimmer.fromColors(
-            baseColor: AppColors.primary.withOpacity(0.7),
-            highlightColor: Colors.purple[100]!,
-            period: const Duration(milliseconds: 1200),
-            child: Container(
-              width: size.width * 0.4,
-              height: 48, // Assumed height for PayKhalti button
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          // Shimmer for "Your Statement" text
-          Shimmer.fromColors(
-            baseColor: Colors.grey[200]!,
-            highlightColor: Colors.grey[50]!,
-            period: const Duration(milliseconds: 1200),
-            child: Container(
-              width: size.width * 0.5,
-              height: 20,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 16),
-          // Shimmer for StatementCard list
+
           Expanded(
             child: SingleChildScrollView(
               child: Column(

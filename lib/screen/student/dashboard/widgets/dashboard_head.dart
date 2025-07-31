@@ -66,17 +66,18 @@ class _DashboardHeadState extends State<DashboardHead> {
       'icon': Icons.calendar_month,
       'className': const CalendarScreen()
     },
-    // {'text': 'Breo', 'icon': Icons.web, 'link': 'https://breo.beds.ac.uk/'},
+    {'text': 'Ap space', 'icon': Icons.web, 'link': 'https://apspace.apu.edu.my/login'},
+
     {
       'text': "Download forms",
       'icon': Icons.assignment,
       'className': const DownloadForums()
     },
-    // {
-    //   'text': 'E-vision',
-    //   'icon': Icons.laptop,
-    //   'link': 'https://evision.beds.ac.uk/'
-    // },
+    {
+      'text': 'University Moodle',
+      'icon': Icons.laptop,
+      'link': 'https://lms2.apiit.edu.my/'
+    },
     {'text': 'Security', 'icon': Icons.lock, 'alert': true},
   ];
 

@@ -16,6 +16,7 @@ import '../../../constant/base_url.dart';
 import '../../../resource/colors.dart';
 import '../../../view_model/theme_provider.dart';
 import '../../../view_model/user_view_model/current_user_model.dart';
+import '../../../widgets/Dialog/alert.dart';
 import '../../../widgets/custom_shimmer.dart';
 import 'changePassword/change_password.dart';
 
@@ -212,37 +213,53 @@ class ProfilePage extends StatelessWidget {
                           .push(_buildSlideRoute(const ClassRoutines()));
                     }),
 
-                    // buildListTile(Icons.laptop, 'E-vision access', context,
-                    //     () async {
-                    //   final shouldExit = await showDialog<bool>(
-                    //     context: context,
-                    //     builder: (context) => Alert(
-                    //       icon: Icons.web,
-                    //       iconColor: AppColors.primary,
-                    //       title: 'E-vision Access',
-                    //       content: 'Are you sure you want to open E-vision?',
-                    //       buttonText: 'Yes',
-                    //     ),
-                    //   );
-                    //   if (shouldExit ?? false) {
-                    //     _launchUrl('https://evision.beds.ac.uk/');
-                    //   }
-                    // }),
-                    // buildListTile(Icons.web, 'Breo access', context, () async {
-                    //   final shouldExit = await showDialog<bool>(
-                    //     context: context,
-                    //     builder: (context) => Alert(
-                    //       icon: Icons.web,
-                    //       iconColor: AppColors.primary,
-                    //       title: 'Breo Access',
-                    //       content: 'Are you sure you want to open Breo?',
-                    //       buttonText: 'Yes',
-                    //     ),
-                    //   );
-                    //   if (shouldExit == true) {
-                    //     _launchUrl('https://breo.beds.ac.uk/');
-                    //   }
-                    // }),
+                    buildListTile(Icons.laptop, 'Apspace', context,
+                        () async {
+                      final shouldExit = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => Alert(
+                          icon: Icons.web,
+                          iconColor: AppColors.primary,
+                          title: 'E-vision Access',
+                          content: 'Are you sure you want to open E-vision?',
+                          buttonText: 'Yes',
+                        ),
+                      );
+                      if (shouldExit ?? false) {
+                        _launchUrl('https://apspace.apu.edu.my/login');
+                      }
+                    }),
+                    buildListTile(Icons.laptop, 'University E-library', context,
+                            () async {
+                          final shouldExit = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => Alert(
+                              icon: Icons.web,
+                              iconColor: AppColors.primary,
+                              title: 'E-libraries Access',
+                              content: 'Are you sure you want to open E-libraries?',
+                              buttonText: 'Yes',
+                            ),
+                          );
+                          if (shouldExit ?? false) {
+                            _launchUrl('https://library.apu.edu.my/apu-e-databases/');
+                          }
+                        }),
+                    buildListTile(Icons.web, 'University Moodle', context, () async {
+                      final shouldExit = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => Alert(
+                          icon: Icons.web,
+                          iconColor: AppColors.primary,
+                          title: 'University Moodle',
+                          content: 'Are you sure you want to open University Moodle?',
+                          buttonText: 'Yes',
+                        ),
+                      );
+                      if (shouldExit == true) {
+                        _launchUrl('https://lms2.apiit.edu.my/');
+                      }
+                    }),
                     // buildListTile(Icons.event, 'Events', () {
                     //   Navigator.of(context)
                     //       .push(_buildSlideRoute(const Event()));
