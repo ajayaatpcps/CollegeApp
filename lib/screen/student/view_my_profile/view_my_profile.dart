@@ -3,14 +3,11 @@ import 'package:lbef/resource/colors.dart';
 import 'package:lbef/screen/student/profile/profile_shimmer.dart';
 import 'package:lbef/view_model/theme_provider.dart';
 import 'package:provider/provider.dart';
-
 import '../../../constant/base_url.dart';
 import '../../../view_model/user_view_model/current_user_model.dart';
 
-
 class ViewProfilePage extends StatefulWidget {
   const ViewProfilePage({super.key});
-
   @override
   State<ViewProfilePage> createState() => _ViewProfilePageState();
 }
@@ -29,7 +26,7 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
           Padding(
             padding: EdgeInsets.only(right: 16),
             child: Image(
-              image: AssetImage('assets/images/pcpsLogo.png'),
+              image: AssetImage('assets/images/lbef.png'),
               width: 70,
               fit: BoxFit.contain,
             ),
@@ -57,7 +54,7 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
                             backgroundColor: Colors.grey.shade200,
                             backgroundImage: NetworkImage(image),
                             onBackgroundImageError: (_, __) =>
-                            const Icon(Icons.school, size: 60),
+                                const Icon(Icons.school, size: 60),
                           ),
                           const SizedBox(height: 10),
                           Text(
@@ -129,29 +126,29 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
                     const SizedBox(height: 20),
                     _sectionHeader(Icons.menu_book, 'Current Subjects'),
                     ...user.subjects?.map((subject) => Padding(
-                      padding: const EdgeInsets.only(bottom: 6.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(Icons.book,
-                              color: AppColors.primary, size: 20),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              '${subject.subjectName} (${subject.subjectCode})',
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: provider.isDarkMode
-                                      ? Colors.white
-                                      : Colors.black),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                              softWrap: true,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )) ??
+                              padding: const EdgeInsets.only(bottom: 6.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Icon(Icons.book,
+                                      color: AppColors.primary, size: 20),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      '${subject.subjectName} (${subject.subjectCode})',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: provider.isDarkMode
+                                              ? Colors.white
+                                              : Colors.black),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                      softWrap: true,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )) ??
                         [const Text('No subjects available')],
                   ],
                 );
@@ -160,7 +157,6 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
           })),
     );
   }
-
   Widget _sectionHeader(IconData icon, String title) {
     final provider = Provider.of<ThemeProvider>(context, listen: false);
     return Column(
@@ -182,7 +178,6 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
       ],
     );
   }
-
   Widget _buildInfoRow(IconData icon, String label, String value) {
     final provider = Provider.of<ThemeProvider>(context, listen: false);
 
@@ -201,7 +196,6 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
                     style: TextStyle(
                       fontSize: 15,
                       color: provider.isDarkMode ? Colors.white : Colors.black,
-
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -210,7 +204,6 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
                     style: TextStyle(
                       fontSize: 15,
                       color: provider.isDarkMode ? Colors.white : Colors.black,
-
                     ),
                   ),
                 ],
