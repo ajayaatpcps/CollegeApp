@@ -15,7 +15,6 @@ String stripHtmlTags(String htmlText) {
       .replaceAll(RegExp(r'<\s*br\s*/?>', caseSensitive: false), '')
       .replaceAll(RegExp(r'<\s*/?\s*p\s*>', caseSensitive: false), '')
       .replaceAll(RegExp(r'&nbsp', caseSensitive: false), '')
-
       .trim();
 }
 
@@ -27,19 +26,15 @@ String formatTimeTo12Hour(String time) {
       return 'Invalid time';
     }
 
-    // Parse hours, minutes, seconds
     int hours = int.parse(parts[0]);
     int minutes = int.parse(parts[1]);
     int seconds = int.parse(parts[2]);
 
-    // Determine AM/PM
     String period = hours >= 12 ? 'PM' : 'AM';
 
-    // Convert to 12-hour format
     int displayHours = hours % 12;
     displayHours = displayHours == 0 ? 12 : displayHours; // Handle midnight/noon
 
-    // Format with leading zeros
     String formattedTime = '${displayHours.toString().padLeft(2, '0')}:'
         '${minutes.toString().padLeft(2, '0')}:'
         '${seconds.toString().padLeft(2, '0')} $period';

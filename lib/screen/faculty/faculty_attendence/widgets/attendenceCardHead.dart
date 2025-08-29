@@ -1,33 +1,36 @@
 import 'package:flutter/material.dart';
 
 class AttendenceCardHead extends StatelessWidget {
-  final String className,subject,image,classDate, time;
-  const AttendenceCardHead({super.key, required this.className, required this.image, required this.classDate, required this.time, required this.subject, });
+  final String className, subject, image, classDate, time;
+
+  const AttendenceCardHead({
+    super.key,
+    required this.className,
+    required this.image,
+    required this.classDate,
+    required this.time,
+    required this.subject,
+  });
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final bool isSmallScreen = size.width < 400;
 
-    return  Stack(
+    return Stack(
       children: [
         Container(
           width: size.width,
-          height: 65,
+          height: isSmallScreen ? 80 : 120,
           decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(
-              color: Colors.grey,
-              width: 1.0,
-            ),
+            border: Border.all(color: Colors.grey, width: 1.0),
             borderRadius: BorderRadius.circular(8),
           ),
-          child:ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(8),
-              topRight: Radius.circular(8),
-            ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
             child: Image.asset(
-              'assets/images/mountain.jpg',
+              image,
               fit: BoxFit.cover,
             ),
           ),
@@ -38,43 +41,47 @@ class AttendenceCardHead extends StatelessWidget {
           right: 10,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(height: 4),
               Text(
                 className,
-                style: const TextStyle(
-                  fontSize: 15,
+                style: TextStyle(
+                  fontSize: isSmallScreen ? 12 : 16,
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 4),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(
-                    width: 240,
+                  Flexible(
+                    flex: 2,
                     child: Text(
                       classDate,
-                      style: const TextStyle(
-                        fontSize: 14,
+                      style: TextStyle(
+                        fontSize: isSmallScreen ? 11 : 14,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  Text(
-                    time,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                  Flexible(
+                    flex: 1,
+                    child: Text(
+                      time,
+                      style: TextStyle(
+                        fontSize: isSmallScreen ? 10 : 12,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.end,
                     ),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),

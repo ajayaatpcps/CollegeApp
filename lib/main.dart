@@ -19,10 +19,8 @@ import 'package:provider/provider.dart';
 void main() {
   runApp(const MyApp());
 }
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -56,7 +54,7 @@ class MyApp extends StatelessWidget {
                   themeMode: themeProvider.themeMode,
                   theme: ThemeData(
                     useMaterial3: true,
-                    fontFamily: 'Poppins',
+                    fontFamily: 'poppins',
                     brightness: Brightness.light,
                     colorScheme: ColorScheme.fromSeed(
                       seedColor: Colors.red,

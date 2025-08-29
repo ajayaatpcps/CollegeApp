@@ -90,55 +90,68 @@ class _AttendenceState extends State<Attendence> {
       bottomNavigationBar: BottomAppBar(
         color: Colors.white,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: ModernButton(
-                  icon: const Icon(Icons.check_circle_outline, size: 14),
-                  text: "All Present",
-                  color: Colors.green,
-                  onPressed: () {
-                    setState(() {
-                      selectedStatusIndices = List<int?>.filled(students.length, 0);
-                      updateStats();
-                    });
-                  },
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: ModernButton(
-                  icon: const Icon(Icons.cancel_outlined, size: 14),
-                  text: "All Absent",
-                  color: Colors.green,
-                  onPressed: () {
-                    setState(() {
-                      selectedStatusIndices = List<int?>.filled(students.length, 3);
-                      updateStats();
-                    });
-                  },
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: ModernButton(
-                  icon: const Icon(Icons.check, size: 14),
-                  text: "Submit",
-                  color: AppColors.primary,
-                  onPressed: () {
-                    for (int i = 0; i < students.length; i++) {
-                      print(
-                          'Student: ${students[i]['name']}, Status: ${selectedStatusIndices[i]}, Remarks: ${remarksControllers[i]?.text ?? ''}');
-                    }
-                  },
-                ),
-              ),
-            ],
+          padding: const EdgeInsets.all(8.0),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              double width = constraints.maxWidth;
+              bool isSmall = width < 400; // breakpoint for smaller devices
+              double btnWidth = isSmall ? width * 0.28 : width * 0.3;
+              double fontSize = isSmall ? 12 : 14;
+
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SizedBox(
+                    width: btnWidth,
+                    child: ModernButton(
+                      text: "All Present",
+                      color: Colors.green,
+                      fontSize: fontSize,
+                      onPressed: () {
+                        setState(() {
+                          selectedStatusIndices =
+                          List<int?>.filled(students.length, 0);
+                          updateStats();
+                        });
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    width: btnWidth,
+                    child: ModernButton(
+                      text: "All Absent",
+                      color: Colors.red,
+                      fontSize: fontSize,
+                      onPressed: () {
+                        setState(() {
+                          selectedStatusIndices =
+                          List<int?>.filled(students.length, 3);
+                          updateStats();
+                        });
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    width: btnWidth,
+                    child: ModernButton(
+                      text: "Submit",
+                      color: AppColors.primary,
+                      fontSize: fontSize,
+                      onPressed: () {
+                        for (int i = 0; i < students.length; i++) {
+                          print(
+                              'Student: ${students[i]['name']}, Status: ${selectedStatusIndices[i]}, Remarks: ${remarksControllers[i]?.text ?? ''}');
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),
+
       body: Container(
         width: size.width,
         padding: const EdgeInsets.all(12.0),
