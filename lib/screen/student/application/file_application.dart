@@ -71,145 +71,148 @@ class _FileApplicationState extends State<FileApplication> {
           SizedBox(width: 14),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            LeaveDropdown(
-              label: 'Application Type',
-              wid: size.width,
-              onChanged: (value) => setState(() => applicationType = value),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              "Start Date",
-              style: TextStyle(
-                fontSize: 14,
-                fontFamily: 'poppins',
-                fontWeight: FontWeight.bold,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              LeaveDropdown(
+                label: 'Application Type',
+                wid: size.width,
+                onChanged: (value) => setState(() => applicationType = value),
               ),
-            ),
-            // Start Date
-            const SizedBox(height: 4),
-            const Text(
-              'Note: Please select the date when your leave begins',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
+              const SizedBox(height: 10),
+              const Text(
+                "Start Date",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontFamily: 'poppins',
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            const SizedBox(height: 4),
-
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black, width: 1),
-                borderRadius: BorderRadius.circular(4),
+              // Start Date
+              const SizedBox(height: 4),
+              const Text(
+                'Note: Please select the date when your leave begins',
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
-              child: ListTile(
-                title: Text(startDate != null
-                    ? formatDate(startDate)
-                    : 'Select when your leave starts'),
-                trailing: const Icon(Icons.calendar_month),
-                onTap: () => pickStartDate(context),
+              const SizedBox(height: 4),
+
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black, width: 1),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: ListTile(
+                  title: Text(startDate != null
+                      ? formatDate(startDate)
+                      : 'Select when your leave starts'),
+                  trailing: const Icon(Icons.calendar_month),
+                  onTap: () => pickStartDate(context),
+                ),
               ),
-            ),
 
-            const SizedBox(height: 10),
-            const Text(
-              "End Date",
-              style: TextStyle(
-                fontSize: 14,
-                fontFamily: 'poppins',
-                fontWeight: FontWeight.bold,
+              const SizedBox(height: 10),
+              const Text(
+                "End Date",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontFamily: 'poppins',
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            // End Date
-            const SizedBox(height: 4),
-            const Text(
-              'Note: Please select the date when your leave ends (optional)',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
+              // End Date
+              const SizedBox(height: 4),
+              const Text(
+                'Note: Please select the date when your leave ends (optional)',
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
-            ),
-            const SizedBox(height: 4),
+              const SizedBox(height: 4),
 
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black, width: 1),
-                borderRadius: BorderRadius.circular(4),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black, width: 1),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: ListTile(
+                  title: Text(endDate != null
+                      ? formatDate(endDate)
+                      : 'Select when your leave ends'),
+                  trailing: const Icon(Icons.calendar_today),
+                  onTap: () => pickEndDate(context),
+                ),
               ),
-              child: ListTile(
-                title: Text(endDate != null
-                    ? formatDate(endDate)
-                    : 'Select when your leave ends'),
-                trailing: const Icon(Icons.calendar_today),
-                onTap: () => pickEndDate(context),
+              const SizedBox(height: 4),
+
+              CustomTextArea(
+                hintText: 'Enter reason',
+                outlinedColor: Colors.black,
+                focusedColor: AppColors.primary,
+                width: size.width,
+                label: 'Reason',
+                textController: reasonController,
               ),
-            ),
-            const SizedBox(height: 4),
+              const SizedBox(height: 10),
 
-            CustomTextArea(
-              hintText: 'Enter reason',
-              outlinedColor: Colors.black,
-              focusedColor: AppColors.primary,
-              width: size.width,
-              label: 'Reason',
-              textController: reasonController,
-            ),
-            const SizedBox(height: 10),
+              if (error.isNotEmpty)
+                Text(error,
+                    style: const TextStyle(color: Colors.red, fontSize: 12)),
 
-            if (error.isNotEmpty)
-              Text(error,
-                  style: const TextStyle(color: Colors.red, fontSize: 12)),
+              const SizedBox(height: 20),
+              CustomButton(
+                text: 'Submit',
+                isLoading: false,
+                onPressed: () async {
+                  final reason = reasonController.text.trim();
+                  final start = formatDate(startDate);
+                  final end = formatDate(endDate);
 
-            const SizedBox(height: 20),
-            CustomButton(
-              text: 'Submit',
-              isLoading: false,
-              onPressed: () async {
-                final reason = reasonController.text.trim();
-                final start = formatDate(startDate);
-                final end = formatDate(endDate);
+                  if (applicationType == null) {
+                    Utils.flushBarErrorMessage(
+                        "Select an application type", context);
+                    return;
+                  }
+                  if (start.isEmpty) {
+                    Utils.flushBarErrorMessage("Start date required", context);
+                    return;
+                  }
 
-                if (applicationType == null) {
-                  Utils.flushBarErrorMessage(
-                      "Select an application type", context);
-                  return;
-                }
-                if (start.isEmpty) {
-                  Utils.flushBarErrorMessage("Start date required", context);
-                  return;
-                }
+                  if (reason.isEmpty) {
+                    Utils.flushBarErrorMessage(
+                        "Reason cannot be empty", context);
+                    return;
+                  }
 
-                if (reason.isEmpty) {
-                  Utils.flushBarErrorMessage("Reason cannot be empty", context);
-                  return;
-                }
+                  final payload = {
+                    "app_start_date": start,
+                    "app_end_date": end.isEmpty ? "0000-00-00" : end,
+                    "application_type": applicationType,
+                    "application_request": reason,
+                  };
 
-                final payload = {
-                  "app_start_date": start,
-                  "app_end_date": end.isEmpty ? "0000-00-00" : end,
-                  "application_type": applicationType,
-                  "application_request": reason,
-                };
-
-                final check = await Provider.of<ApplicationViewModel>(context,
-                        listen: false)
-                    .createApplication(payload, context);
-                if (check) {
-                  await Provider.of<ApplicationViewModel>(context,
+                  final check = await Provider.of<ApplicationViewModel>(context,
                           listen: false)
-                      .fetch(context);
-                  reasonController.text = '';
-                  setState(() {});
-                }
-              },
-            ),
-          ],
+                      .createApplication(payload, context);
+                  if (check) {
+                    await Provider.of<ApplicationViewModel>(context,
+                            listen: false)
+                        .fetch(context);
+                    reasonController.text = '';
+                    setState(() {});
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

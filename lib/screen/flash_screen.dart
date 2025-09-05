@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:lbef/screen/auth/login_page.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,7 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../data/status.dart';
 import '../resource/routes_name.dart';
 import '../view_model/user_view_model/current_user_model.dart';
+import '../widgets/no_internet_wrapper.dart';
 import 'introduction_screen/introduction_screen.dart';
+import 'navbar/student_navbar.dart';
 
 class FlashScreen extends StatefulWidget {
   const FlashScreen({super.key});
@@ -43,13 +46,13 @@ class _FlashScreenState extends State<FlashScreen> {
       Navigator.of(context).push(
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>
-          const MyCollegeIntroScreen(),
+              const MyCollegeIntroScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             const begin = Offset(1.0, 0.0);
             const end = Offset.zero;
             const curve = Curves.easeInOut;
             var tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
             var offsetAnimation = animation.drive(tween);
             return SlideTransition(
               position: offsetAnimation,
@@ -67,19 +70,38 @@ class _FlashScreenState extends State<FlashScreen> {
       final user = userDataViewModel.currentUser;
 
       if (userDataViewModel.userData.status == Status.ERROR || user == null) {
-        _navigateTo(RoutesName.login);
+        _navigateTo(const LoginPage());
       } else {
-        _navigateTo(RoutesName.student);
+        _navigateTo(const StudentNavbar());
       }
     } else {
-      _navigateTo(RoutesName.login);
+      _navigateTo(const LoginPage());
     }
   }
 
-  void _navigateTo(String route) {
-    Future.microtask(() {
-      Navigator.pushReplacementNamed(context, route);
-    });
+  void _navigateTo(Widget route) {
+    // Future.microtask(() {
+    //   Navigator.pushReplacementNamed(context, route);
+    // });
+    Navigator.of(context).pushAndRemoveUntil(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            NoInternetWrapper(child: route),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOut;
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          var offsetAnimation = animation.drive(tween);
+          return SlideTransition(
+            position: offsetAnimation,
+            child: child,
+          );
+        },
+      ),
+      (route) => false, // Remove all previous routes
+    );
   }
 
   @override

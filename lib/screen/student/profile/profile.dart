@@ -346,7 +346,7 @@ class ProfilePage extends StatelessWidget {
                                       children: [
                                         ListTile(
                                           leading: const Icon(Icons.light_mode),
-                                          title: const Text('Light Mode'),
+                                          title: const Text('Light Mode',),
                                           onTap: () {
                                             themeProvider
                                                 .setTheme(ThemeMode.light);
