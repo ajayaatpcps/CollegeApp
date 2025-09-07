@@ -175,19 +175,7 @@ class _StudentIdCardState extends State<StudentIdCard> {
                         ),
                       ],
                     ),
-                    const Text(
-                      "Expiry Date: 2026-01-15",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.black,
 
-                        fontWeight: FontWeight.w600,
-                      ),
-                      softWrap: true,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.visible,
-                      maxLines: null,
-                    ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Row(
@@ -231,7 +219,7 @@ class _StudentIdCardState extends State<StudentIdCard> {
                     Container(
                       color: Colors.red,
                       width: double.infinity,
-                      padding: EdgeInsets.symmetric(vertical: 8),
+                      padding: const EdgeInsets.symmetric(vertical: 8),
                       child: const Column(
                         children: [
                           Text(

@@ -52,24 +52,29 @@ class ClassCard extends StatelessWidget {
                             ),
                             const SizedBox(height: 6),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  "Subject Code : $code",
-                                  style: const TextStyle(
-                                    fontSize: 12,
+                                Expanded(
+                                  child: Text(
+                                    "Subject Code : $code",
+                                    overflow: TextOverflow.ellipsis, // prevents overflow
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                    ),
                                   ),
-                                  softWrap: true,
                                 ),
-                                Text(
-                                  faculty,
-                                  style: const TextStyle(
-                                    fontSize: 12,
+                                Expanded(
+                                  child: Text(
+                                    faculty,
+                                    overflow: TextOverflow.ellipsis, // prevents overflow
+                                    textAlign: TextAlign.end, // keep aligned to right
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                    ),
                                   ),
-                                  softWrap: true,
                                 ),
                               ],
-                            ),
+                            )
+
                           ],
                         ),
                       ),

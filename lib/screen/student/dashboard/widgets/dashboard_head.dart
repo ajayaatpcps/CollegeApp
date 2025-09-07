@@ -52,9 +52,9 @@ class _DashboardHeadState extends State<DashboardHead> {
       'className': const ClassRoutines()
     },
     {
-      'text': 'Profile',
+      'text': 'Identity Card',
       'icon': Icons.badge,
-      'className': const ViewProfilePage()
+      'className': const StudentIdCard()
     },
     {
       'text': 'Notice',
