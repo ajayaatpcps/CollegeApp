@@ -28,6 +28,13 @@ class ApplicationWidget extends StatelessWidget {
               color: themeProvider.isDarkMode?Colors.black:Colors.white,
               border: Border.all(color: Colors.transparent),
               borderRadius: BorderRadius.circular(5),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1), // shadow color
+                  blurRadius: 8, // softness of the shadow
+                  offset: const Offset(0, 4), // vertical shift of shadow
+                ),
+              ],
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,

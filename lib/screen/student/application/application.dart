@@ -10,7 +10,6 @@ import 'package:lbef/widgets/no_data/no_data_widget.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import '../../../utils/navigate_to.dart';
-import '../../../view_model/theme_provider.dart';
 
 class Application extends StatefulWidget {
   const Application({super.key});

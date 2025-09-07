@@ -25,7 +25,7 @@ Widget buildCreditNotesSection(List<CreditNotes> note, BuildContext context) {
                 date: parseDate(note.issueDate.toString()),
                 noteNo: note.creditNoteNo.toString(),
                 description: "${note.particular} ",
-                amount: "Rs. ${note.amount}" ?? '',
+                amount: "Rs. ${double.parse(note.amount ?? '0').toInt()}" ?? '',
                 status: note.status!,
               ),
             ),
@@ -52,7 +52,7 @@ Widget buildCreditNotesSection(List<CreditNotes> note, BuildContext context) {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Rs. ${ double.parse(note.amount ?? '0').toInt()}",
+                    Text("Rs. ${double.parse(note.amount ?? '0').toInt()}",
                         style: const TextStyle(fontWeight: FontWeight.bold)),
                     Container(
                       padding: const EdgeInsets.symmetric(

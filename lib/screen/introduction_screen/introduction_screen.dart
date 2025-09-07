@@ -39,7 +39,6 @@ class _MyCollegeIntroScreenState extends State<MyCollegeIntroScreen> {
       imagePadding: EdgeInsets.only(top: 40.0),
       pageColor: Colors.white,
     );
-
     return SafeArea(
       child: IntroductionScreen(
         key: introKey,

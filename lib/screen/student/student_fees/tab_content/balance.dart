@@ -56,14 +56,13 @@ class _BalanceState extends State<Balance> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final totals = calculateTotals();
-    final themeProvider=   Provider.of<ThemeProvider>(context, listen: false);
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           const Text(
             'Your Balance',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -77,7 +76,8 @@ class _BalanceState extends State<Balance> {
                   title: 'Total Due',
                   amountRs: 'Rs. ${totals['totalDueNPR']!.toStringAsFixed(0)}',
                   amountPound: '£ ${totals['totalDueGBP']!.toStringAsFixed(0)}',
-                  color: Colors.red[100], context: context,
+                  color: Colors.red[100],
+                  context: context,
                 ),
               ),
               const SizedBox(width: 6),
@@ -87,7 +87,8 @@ class _BalanceState extends State<Balance> {
                   context: context,
                   title: 'Total Paid',
                   amountRs: 'Rs. ${totals['totalPaidNPR']!.toStringAsFixed(0)}',
-                  amountPound: '£ ${totals['totalPaidGBP']!.toStringAsFixed(0)}',
+                  amountPound:
+                      '£ ${totals['totalPaidGBP']!.toStringAsFixed(0)}',
                   color: Colors.green[100],
                 ),
               ),

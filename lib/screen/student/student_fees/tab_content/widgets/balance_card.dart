@@ -27,7 +27,6 @@ Widget buildBalanceCard({
           Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Text(amountRs, style: const TextStyle(fontSize: 14)),
-          Text(amountPound, style: const TextStyle(fontSize: 14)),
         ],
       ),
     ),

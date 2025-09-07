@@ -207,7 +207,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        'Designed, Built & Maintained by PCPS R&D',
+                        'Designed, Built & Maintained by LBEF R&D',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey,
