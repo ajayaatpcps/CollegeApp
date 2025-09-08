@@ -63,6 +63,7 @@ dependencies:
   internet_connection_checker: ^1.0.0+1
   loading_indicator: ^3.1.1
   path_provider: ^2.1.5
+  barcode_widget: ^2.0.4
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -73,6 +74,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
+  change_app_package_name: ^1.5.0 
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

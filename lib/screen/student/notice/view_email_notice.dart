@@ -242,4 +242,5 @@ class _ViewEmailState extends State<ViewEmail> {
       text: TextSpan(children: spans),
     );
   }
+
 }

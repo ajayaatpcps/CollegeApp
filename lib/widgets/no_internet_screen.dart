@@ -1,8 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // for Clipboard
 import 'package:lbef/screen/flash_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class NoInternetScreen extends StatelessWidget {
+class NoInternetScreen extends StatefulWidget {
   const NoInternetScreen({super.key});
+
+  @override
+  State<NoInternetScreen> createState() => _NoInternetScreenState();
+}
+
+class _NoInternetScreenState extends State<NoInternetScreen> {
+  String access = "";
+
+  void check() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedAccess = prefs.getString('access') ?? "";
+    print("Fetched WiFi password: $savedAccess"); // 🔍 Debug
+    setState(() {
+      access = savedAccess;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    check();
+  }
+
+  void copyToClipboard(String text) {
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("WiFi password copied!"),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +90,57 @@ class NoInternetScreen extends StatelessWidget {
                   elevation: 4,
                 ),
               ),
+
+              const SizedBox(height: 20),
+
+              /// Show WiFi Passkey Section
+              if (access.isNotEmpty)
+                Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  elevation: 3,
+                  color: Colors.white,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.wifi, color: Color(0xFF393A8F)),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Your WiFi Passkey",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                access,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: "monospace",
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => copyToClipboard(access),
+                          icon:
+                              const Icon(Icons.copy, color: Color(0xFF393A8F)),
+                          tooltip: "Copy Password",
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

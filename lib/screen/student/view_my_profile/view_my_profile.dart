@@ -3,6 +3,7 @@ import 'package:lbef/resource/colors.dart';
 import 'package:lbef/screen/student/profile/profile_shimmer.dart';
 import 'package:lbef/view_model/theme_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 import '../../../constant/base_url.dart';
 import '../../../view_model/user_view_model/current_user_model.dart';
 
@@ -121,8 +122,30 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
                         user.stuUnivRollNo ?? ''),
                     _buildInfoRow(
                         Icons.timeline, 'Semester:', user.semesterName ?? ''),
-                    _buildInfoRow(Icons.wifi, 'Wi-Fi Access:',
-                        user.stuWifiAccess ?? 'Not provided'),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildInfoRow(
+                            Icons.wifi,
+                            'Wi-Fi Access:',
+                            user.stuWifiAccess ?? 'Not provided',
+                          ),
+                        ),
+                        if (user.stuWifiAccess != null)
+                          IconButton(
+                            icon: const Icon(Icons.copy, size: 20),
+                            tooltip: "Copy",
+                            onPressed: () {
+                              Clipboard.setData(
+                                  ClipboardData(text: user.stuWifiAccess!));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text("Wi-Fi Access copied!")),
+                              );
+                            },
+                          ),
+                      ],
+                    ),
                     const SizedBox(height: 20),
                     _sectionHeader(Icons.menu_book, 'Current Subjects'),
                     ...user.subjects?.map((subject) => Padding(

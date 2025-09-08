@@ -34,142 +34,147 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const DashboardHead(),
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            //   child: Column(
-            //     children: [
-            //       Row(
-            //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //         children: [
-            //           const Text(
-            //             'Upcoming Events',
-            //             style: TextStyle(fontWeight: FontWeight.bold),
-            //           ),
-            //           InkWell(
-            //             onTap: () {},
-            //             child: Container(
-            //               padding: const EdgeInsets.symmetric(
-            //                   horizontal: 8, vertical: 5),
-            //               decoration: BoxDecoration(
-            //                 color: AppColors.primary,
-            //                 borderRadius: BorderRadius.circular(5),
-            //               ),
-            //               child: const Text(
-            //                 "View All",
-            //                 style: TextStyle(color: Colors.white, fontSize: 13),
-            //               ),
-            //             ),
-            //           ),
-            //         ],
-            //       ),
-            //     ],
-            //   ),
-            // ),
-            // Padding(
-            //   padding: const EdgeInsets.all(16),
-            //   child: BuildNoData(
-            //       size,
-            //       "No upcoming events at the moment. Stay tuned for future updates!",
-            //       Icons.event_busy),
-            // ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const DashboardHead(),
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              //   child: Column(
+              //     children: [
+              //       Row(
+              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //         children: [
+              //           const Text(
+              //             'Upcoming Events',
+              //             style: TextStyle(fontWeight: FontWeight.bold),
+              //           ),
+              //           InkWell(
+              //             onTap: () {},
+              //             child: Container(
+              //               padding: const EdgeInsets.symmetric(
+              //                   horizontal: 8, vertical: 5),
+              //               decoration: BoxDecoration(
+              //                 color: AppColors.primary,
+              //                 borderRadius: BorderRadius.circular(5),
+              //               ),
+              //               child: const Text(
+              //                 "View All",
+              //                 style: TextStyle(color: Colors.white, fontSize: 13),
+              //               ),
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // Padding(
+              //   padding: const EdgeInsets.all(16),
+              //   child: BuildNoData(
+              //       size,
+              //       "No upcoming events at the moment. Stay tuned for future updates!",
+              //       Icons.event_busy),
+              // ),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Latest Notices',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            SlideRightRoute(
-                              page: const NoticeBoard(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Latest Notices',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              SlideRightRoute(
+                                page: const NoticeBoard(),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary,
+                              borderRadius: BorderRadius.circular(5),
                             ),
-                          );
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 5),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: const Text(
-                            "View All",
-                            style: TextStyle(color: Colors.white, fontSize: 13),
+                            child: const Text(
+                              "View All",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 13),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Consumer<NoticeBoardViewModel>(
-                    builder: (context, viewModel, child) {
-                      if (viewModel.isLoading) {
-                        return ListView.builder(
-                          itemCount: 3,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) => const Padding(
-                            padding: EdgeInsets.only(bottom: 14),
-                            child: ApplicationShimmer(),
-                          ),
-                        );
-                      }
-
-                      final notices = viewModel.notices;
-
-                      if (notices == null || notices.isEmpty) {
-                        return BuildNoData(
-                          size,
-                          'No notices available',
-                          Icons.disabled_visible_rounded,
-                        );
-                      }
-
-                      final displayedNotices =
-                      notices.length > 3 ? notices.take(3).toList() : notices;
-
-                      return Wrap(
-                        spacing: 0,
-                        runSpacing: 14,
-                        children: displayedNotices.map((application) {
-                          return InkWell(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                SlideRightRoute(
-                                  page: ViewNoticeBoard(noticeData: application),
-                                ),
-                              );
-                            },
-                            child: NoticeWidget(
-                              published: application.noticeDate ?? '',
-                              body: application.subject ?? '',
-                              subBody: application.subject ?? '',
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Consumer<NoticeBoardViewModel>(
+                      builder: (context, viewModel, child) {
+                        if (viewModel.isLoading) {
+                          return ListView.builder(
+                            itemCount: 3,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) => const Padding(
+                              padding: EdgeInsets.only(bottom: 14),
+                              child: ApplicationShimmer(),
                             ),
                           );
-                        }).toList(),
-                      );
-                    },
-                  ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                ],
-              ),
-            )
-          ],
+                        }
+
+                        final notices = viewModel.notices;
+
+                        if (notices == null || notices.isEmpty) {
+                          return BuildNoData(
+                            size,
+                            'No notices available',
+                            Icons.disabled_visible_rounded,
+                          );
+                        }
+
+                        final displayedNotices = notices.length > 3
+                            ? notices.take(3).toList()
+                            : notices;
+
+                        return Wrap(
+                          spacing: 0,
+                          runSpacing: 14,
+                          children: displayedNotices.map((application) {
+                            return InkWell(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  SlideRightRoute(
+                                    page: ViewNoticeBoard(
+                                        noticeData: application),
+                                  ),
+                                );
+                              },
+                              child: NoticeWidget(
+                                published: application.noticeDate ?? '',
+                                body: application.subject ?? '',
+                                subBody: application.subject ?? '',
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      },
+                    ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

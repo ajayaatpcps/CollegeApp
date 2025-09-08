@@ -116,124 +116,129 @@ class _ViewApplicationPageState extends State<ViewApplicationPage> {
           SizedBox(width: 14),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Consumer<ApplicationViewModel>(
-          builder: (context, provider, child) {
-            if (provider.isLoading) {
-              // Show shimmer loading while data is loading
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Consumer<ApplicationViewModel>(
+            builder: (context, provider, child) {
+              if (provider.isLoading) {
+                // Show shimmer loading while data is loading
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 60,
+                      width: double.infinity,
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width / 2.5,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade300,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Container(
+                          width: MediaQuery.of(context).size.width / 2.5,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade300,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                );
+              }
+
               return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    height: 60,
-                    width: double.infinity,
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(8),
+                  Text(
+                    provider.currentDetails?.applicationType ?? '',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'poppins',
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width / 2.5,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade300,
-                          borderRadius: BorderRadius.circular(8),
+                  const SizedBox(height: 12),
+                  _buildDetailRow(Icons.date_range, "Start Date",
+                      provider.currentDetails?.appStartDate ?? '',
+                      valueColor: themeProvider.isDarkMode
+                          ? Colors.white
+                          : Colors.black),
+                  _buildDetailRow(Icons.date_range_sharp, "End Date",
+                      provider.currentDetails?.appEndDate ?? '',
+                      valueColor: themeProvider.isDarkMode
+                          ? Colors.white
+                          : Colors.black),
+                  _buildDetailRow(Icons.label, "Status",
+                      provider.currentDetails?.applicationStatus ?? '',
+                      valueColor: _getStatusColor(
+                          provider.currentDetails?.applicationStatus ?? '')),
+                  const Divider(height: 32),
+                  const Text(
+                    "Application Request",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    provider.currentDetails?.applicationRequest ?? '',
+                    style: const TextStyle(fontSize: 15, height: 1.5),
+                  ),
+                  const SizedBox(height: 15),
+                  if (widget.applicationData.applicationStatus == 'new') ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CustomButton(
+                          text: 'Edit',
+                          isLoading: false,
+                          btnwid: size.width / 2.5,
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              SlideRightRoute(
+                                page: EditApplication(
+                                  id: provider.currentDetails?.applicationId
+                                          .toString() ??
+                                      '',
+                                  applicationType: provider
+                                          .currentDetails?.applicationType ??
+                                      '',
+                                  startDate:
+                                      provider.currentDetails?.appStartDate ??
+                                          '',
+                                  endDate:
+                                      provider.currentDetails?.appEndDate ?? '',
+                                  reason: provider
+                                          .currentDetails?.applicationRequest ??
+                                      '',
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                      ),
-                      const SizedBox(width: 4),
-                      Container(
-                        width: MediaQuery.of(context).size.width / 2.5,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade300,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ],
-                  )
+                      ],
+                    ),
+                  ]
                 ],
               );
-            }
-
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  provider.currentDetails?.applicationType ?? '',
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'poppins',
-                  ),
-                ),
-                const SizedBox(height: 12),
-                _buildDetailRow(Icons.date_range, "Start Date",
-                    provider.currentDetails?.appStartDate ?? '',
-                    valueColor:
-                        themeProvider.isDarkMode ? Colors.white : Colors.black),
-                _buildDetailRow(Icons.date_range_sharp, "End Date",
-                    provider.currentDetails?.appEndDate ?? '',
-                    valueColor:
-                        themeProvider.isDarkMode ? Colors.white : Colors.black),
-                _buildDetailRow(Icons.label, "Status",
-                    provider.currentDetails?.applicationStatus ?? '',
-                    valueColor: _getStatusColor(
-                        provider.currentDetails?.applicationStatus ?? '')),
-                const Divider(height: 32),
-                const Text(
-                  "Application Request",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  provider.currentDetails?.applicationRequest ?? '',
-                  style: const TextStyle(fontSize: 15, height: 1.5),
-                ),
-                const SizedBox(height: 15),
-                if (widget.applicationData.applicationStatus == 'new') ...[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CustomButton(
-                        text: 'Edit',
-                        isLoading: false,
-                        btnwid: size.width / 2.5,
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            SlideRightRoute(
-                              page: EditApplication(
-                                id: provider.currentDetails?.applicationId
-                                        .toString() ??
-                                    '',
-                                applicationType:
-                                    provider.currentDetails?.applicationType ??
-                                        '',
-                                startDate:
-                                    provider.currentDetails?.appStartDate ?? '',
-                                endDate:
-                                    provider.currentDetails?.appEndDate ?? '',
-                                reason: provider
-                                        .currentDetails?.applicationRequest ??
-                                    '',
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ]
-              ],
-            );
-          },
+            },
+          ),
         ),
       ),
     );

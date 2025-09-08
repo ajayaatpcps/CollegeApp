@@ -4,7 +4,6 @@ import 'package:lbef/screen/auth/login_page.dart';
 import 'package:lbef/screen/auth/unauthorised.dart';
 import 'package:lbef/screen/flash_screen.dart';
 import 'package:lbef/screen/navbar/student_navbar.dart';
-import 'package:lbef/screen/student/dashboard/dashboard.dart';
 import 'package:lbef/widgets/no_internet_wrapper.dart';
 
 class Routes {

@@ -3,6 +3,7 @@ import 'package:lbef/data/status.dart';
 import 'package:lbef/model/profile_model.dart';
 import 'package:lbef/repository/profile_repository/profile_repository.dart';
 import 'package:lbef/utils/utils.dart';
+import 'package:lbef/view_model/user_view_model/user_view_model.dart';
 import 'package:logger/logger.dart';
 import '../../data/api_response.dart';
 import '../../resource/routes_name.dart';
@@ -30,6 +31,7 @@ class UserDataViewModel with ChangeNotifier {
     try {
       ProfileModel? user = await _myRepo.getUser(context);
       if (user != null) {
+        await UserViewModel().saveWifiAccess(user.stuWifiAccess??'');
         setUser(ApiResponse.completed(user));
       } else {
         _logger.w('getUser returned null');

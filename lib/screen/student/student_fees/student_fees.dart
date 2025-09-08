@@ -54,12 +54,17 @@ class _StudentFeesState extends State<StudentFees> {
           ],
           automaticallyImplyLeading: false,
           bottom: const TabBar(
+            labelColor: Colors.blue,
+            indicatorColor: Colors.blue,
+            labelStyle: TextStyle(fontWeight: FontWeight.w400,fontFamily: 'poppins'), // optional
             tabs: [
               Tab(text: 'Statement'),
               Tab(text: 'Balance'),
               Tab(text: 'Receipts'),
             ],
           ),
+
+
         ),
         body: Consumer<CollegeFeeViewModel>(
           builder: (context, viewModel, child) {

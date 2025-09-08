@@ -36,102 +36,104 @@ class AdmitCard extends StatelessWidget {
         onPressed: () => _exportAsPdfPreview(context),
         backgroundColor: AppColors.primary,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Card(
-          elevation: 3,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Column(
-                    children: [
-                      const CircleAvatar(
-                        radius: 40,
-                        backgroundImage: AssetImage('assets/images/new.jpg'),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'PATAN COLLEGE FOR PROFESSIONAL STUDIES',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium!
-                            .copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Behind Kandevtasthan, Kupondole, Lalitpur, Nepal',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall!
-                            .copyWith(color: Colors.grey[600]),
-                      ),
-                      const Divider(height: 24, thickness: 1.2),
-                      Text(
-                        'University End Term Examination - Dec 2024',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleSmall!
-                            .copyWith(fontWeight: FontWeight.w600),
-                      ),
-                    ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Card(
+            elevation: 3,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Column(
+                      children: [
+                        const CircleAvatar(
+                          radius: 40,
+                          backgroundImage: AssetImage('assets/images/new.jpg'),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'PATAN COLLEGE FOR PROFESSIONAL STUDIES',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium!
+                              .copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Behind Kandevtasthan, Kupondole, Lalitpur, Nepal',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(color: Colors.grey[600]),
+                        ),
+                        const Divider(height: 24, thickness: 1.2),
+                        Text(
+                          'University End Term Examination - Dec 2024',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleSmall!
+                              .copyWith(fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 24),
-                _infoRow('Name', 'Pratik Tamang'),
-                _infoRow('Course', 'BSc CSSE'),
-                _infoRow('Intake', 'Autumn 2024'),
-                _infoRow('Candidate ID', '2214130'),
-                _infoRow(
-                    'Exam Center', 'PCPS College, Kupondole, Lalitpur, Nepal'),
-                const SizedBox(height: 20),
-                const Divider(),
-                const SizedBox(height: 12),
-                Text('Exam Details',
-                    style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 12),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey[300]!),
+                  const SizedBox(height: 24),
+                  _infoRow('Name', 'Pratik Tamang'),
+                  _infoRow('Course', 'BSc CSSE'),
+                  _infoRow('Intake', 'Autumn 2024'),
+                  _infoRow('Candidate ID', '2214130'),
+                  _infoRow(
+                      'Exam Center', 'PCPS College, Kupondole, Lalitpur, Nepal'),
+                  const SizedBox(height: 20),
+                  const Divider(),
+                  const SizedBox(height: 12),
+                  Text('Exam Details',
+                      style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 12),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.grey[300]!),
+                    ),
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      children: [
+                        _detailRow('Subject',
+                            'Object Oriented Programming & Software Engineering'),
+                        _detailRow('Code', 'CIS016-2'),
+                        _detailRow('Type', 'Regular'),
+                        _detailRow('Date', '2024-12-18 1:45 PM'),
+                        _detailRow('Room', '407'),
+                      ],
+                    ),
                   ),
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    children: [
-                      _detailRow('Subject',
-                          'Object Oriented Programming & Software Engineering'),
-                      _detailRow('Code', 'CIS016-2'),
-                      _detailRow('Type', 'Regular'),
-                      _detailRow('Date', '2024-12-18 1:45 PM'),
-                      _detailRow('Room', '407'),
-                    ],
+                  const SizedBox(height: 24),
+                  Text(
+                    'Instructions',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleSmall!
+                        .copyWith(fontWeight: FontWeight.bold),
                   ),
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  'Instructions',
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleSmall!
-                      .copyWith(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                ...[
-                  'Valid admit card & college ID',
-                  'Arrive 30 min early',
-                  'Use BLACK/BLUE pen only',
-                  'Mobile phones not allowed',
-                  'No borrowing stationery',
-                  'Strict action for malpractice',
-                  'Disqualification for unfair means',
-                ].map(_instructionBullet),
-              ],
+                  const SizedBox(height: 8),
+                  ...[
+                    'Valid admit card & college ID',
+                    'Arrive 30 min early',
+                    'Use BLACK/BLUE pen only',
+                    'Mobile phones not allowed',
+                    'No borrowing stationery',
+                    'Strict action for malpractice',
+                    'Disqualification for unfair means',
+                  ].map(_instructionBullet),
+                ],
+              ),
             ),
           ),
         ),
