@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lbef/model/fee_model.dart';
-import 'package:lbef/screen/student/student_fees/pay_khalti.dart';
 import 'package:lbef/screen/student/student_fees/tab_content/widgets/balance_card.dart';
 import 'package:lbef/screen/student/student_fees/tab_content/widgets/buildCreditSettlement.dart';
 import 'package:lbef/screen/student/student_fees/tab_content/widgets/credit_notes.dart';
