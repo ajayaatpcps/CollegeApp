@@ -59,11 +59,7 @@ class _DashboardHeadState extends State<DashboardHead> {
       'icon': Icons.laptop,
       'className': const AdmitCard()
     },
-    {
-      'text': 'Identity Card',
-      'icon': Icons.badge,
-      'className': const StudentIdCard()
-    },
+
     {
       'text': 'Notice',
       'icon': Icons.notifications,
@@ -74,7 +70,7 @@ class _DashboardHeadState extends State<DashboardHead> {
       'icon': Icons.calendar_month,
       'className': const CalendarScreen()
     },
-    {'text': 'Breo', 'icon': Icons.web, 'link': 'https://breo.beds.ac.uk/'},
+
     {
       'text': "Download forms",
       'icon': Icons.assignment,
@@ -147,7 +143,7 @@ class _DashboardHeadState extends State<DashboardHead> {
                   width: size.width * 0.5,
                   height: size.height * 0.3,
                   child: Image.asset(
-                    'assets/images/pcps_bg.png',
+                    'assets/images/lbef_white.png',
                     fit: BoxFit.contain,
                   ),
                 ),

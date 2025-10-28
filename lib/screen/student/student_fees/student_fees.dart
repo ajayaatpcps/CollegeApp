@@ -44,8 +44,8 @@ class _StudentFeesState extends State<StudentFees> {
           ),
           actions: const [
             Image(
-              image: AssetImage('assets/images/pcpsLogo.png'),
-              width: 70,
+              image: AssetImage('assets/images/lbef.png'),
+              width: 80,
               height: 50,
               fit: BoxFit.contain,
             ),
