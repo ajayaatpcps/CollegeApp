@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:lbef/data/network/NetworkApiService.dart';
 import 'package:lbef/endpoints/profile_endpoints.dart';
+import 'package:lbef/model/admit_card_model.dart';
 import 'package:lbef/model/profile_model.dart';
 import 'package:logger/logger.dart';
 import '../../data/api_exception.dart';
@@ -34,7 +35,7 @@ class ProfileRepository {
       throw e;
     }
   }
-  Future<ProfileModel?> getAdmitCard(BuildContext context) async {
+  Future<AdmitCardModel?> getAdmitCard(BuildContext context) async {
     try {
       _logger.d('Fetching user from ${ProfileEndpoints.getAdmitCard}');
       final dynamic response =
@@ -46,7 +47,7 @@ class ProfileRepository {
       }
 
       _logger.d('Fetched user response: $response');
-      return ProfileModel.fromJson(response);
+      return AdmitCardModel.fromJson(response);
     } on TimeoutException {
       _logger.e('Timeout: No internet connection for fetching user');
       Utils.flushBarErrorMessage(

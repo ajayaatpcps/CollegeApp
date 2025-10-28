@@ -57,7 +57,7 @@ class _DashboardHeadState extends State<DashboardHead> {
     {
       'text': 'Admit Card',
       'icon': Icons.laptop,
-      'className': const AdmitCard()
+      'className': const AdmitCardScreen()
     },
 
     {
