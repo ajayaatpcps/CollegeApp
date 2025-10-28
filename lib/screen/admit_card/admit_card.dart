@@ -40,6 +40,7 @@ class AdmitCard extends StatelessWidget {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Card(
+            color: Colors.white,
             elevation: 3,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

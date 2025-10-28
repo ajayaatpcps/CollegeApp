@@ -34,6 +34,30 @@ class ProfileRepository {
       throw e;
     }
   }
+  Future<ProfileModel?> getAdmitCard(BuildContext context) async {
+    try {
+      _logger.d('Fetching user from ${ProfileEndpoints.getAdmitCard}');
+      final dynamic response =
+      await _apiServices.getApiResponse(ProfileEndpoints.getAdmitCard);
+      if (response == null) {
+        _logger.w('No response from getUser API');
+        Utils.flushBarErrorMessage("No response from server", context);
+        throw Exception("No response from server");
+      }
+
+      _logger.d('Fetched user response: $response');
+      return ProfileModel.fromJson(response);
+    } on TimeoutException {
+      _logger.e('Timeout: No internet connection for fetching user');
+      Utils.flushBarErrorMessage(
+          "No internet connection. Please try again later.", context);
+      throw Exception("No internet connection");
+    } catch (e) {
+      _logger.e('getUser error: $e');
+      Utils.flushBarErrorMessage('Failed to fetch user: $e', context);
+      throw e;
+    }
+  }
 
   Future<bool> changePassword(BuildContext context, dynamic body) async {
     try {

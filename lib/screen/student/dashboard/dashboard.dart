@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:lbef/resource/colors.dart';
+import 'package:lbef/screen/student/dashboard/banner_widget.dart';
 import 'package:lbef/screen/student/dashboard/widgets/dashboard_head.dart';
 import 'package:lbef/screen/student/notice/notice.dart';
+import 'package:lbef/view_model/banner_view_model.dart';
 import 'package:lbef/view_model/notice_board/notice_board_view_model.dart';
+import 'package:lbef/view_model/survery_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '../../../utils/navigate_to.dart';
@@ -22,12 +25,16 @@ class _DashboardState extends State<Dashboard> {
   void fetch() async {
     await Provider.of<NoticeBoardViewModel>(context, listen: false)
         .fetch(context);
+    await Provider.of<SurveryViewModel>(context, listen: false)
+        .fetch(context);
   }
 
   @override
   void initState() {
     super.initState();
-    fetch();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetch();
+    });
   }
 
   @override
@@ -39,45 +46,9 @@ class _DashboardState extends State<Dashboard> {
           child: Column(
             children: [
               const DashboardHead(),
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              //   child: Column(
-              //     children: [
-              //       Row(
-              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         children: [
-              //           const Text(
-              //             'Upcoming Events',
-              //             style: TextStyle(fontWeight: FontWeight.bold),
-              //           ),
-              //           InkWell(
-              //             onTap: () {},
-              //             child: Container(
-              //               padding: const EdgeInsets.symmetric(
-              //                   horizontal: 8, vertical: 5),
-              //               decoration: BoxDecoration(
-              //                 color: AppColors.primary,
-              //                 borderRadius: BorderRadius.circular(5),
-              //               ),
-              //               child: const Text(
-              //                 "View All",
-              //                 style: TextStyle(color: Colors.white, fontSize: 13),
-              //               ),
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //     ],
-              //   ),
-              // ),
-              // Padding(
-              //   padding: const EdgeInsets.all(16),
-              //   child: BuildNoData(
-              //       size,
-              //       "No upcoming events at the moment. Stay tuned for future updates!",
-              //       Icons.event_busy),
-              // ),
+              // Place this above the BannerCarousel() in your Dashboard build method
 
+              BannerCarousel(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(

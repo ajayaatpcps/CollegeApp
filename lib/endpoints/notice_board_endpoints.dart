@@ -7,5 +7,6 @@ class NoticeBoardEndpoints{
   static var fetchEmail="${BaseUrl.baseUrl}/email";
   static var fetchSms="${BaseUrl.baseUrl}/sms";
   static var fetchEvent="${BaseUrl.baseUrl}/event";
+  static var fetchBanner="${BaseUrl.baseUrl}/banner";
 
 }
