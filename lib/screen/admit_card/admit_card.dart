@@ -102,18 +102,17 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Image.asset('assets/images/pcpsLogo.png', height: 50),
-            Image.asset('assets/images/bedsLogo.png', height: 40),
+            Image.asset('assets/images/lbefHd.jpg', height: 50),
           ],
         ),
         const SizedBox(height: 10),
         const Text(
-          "PATAN COLLEGE FOR PROFESSIONAL STUDIES",
+          "Lord Buddha Education Foundation.",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           textAlign: TextAlign.center,
         ),
         const Text(
-          "Behind Kandebasthan, Kupondole, Lalitpur, Nepal",
+          "Opposite Maiti Devi Temple, Kathmandu, Nepal",
           style: TextStyle(color: Colors.grey, fontSize: 12),
           textAlign: TextAlign.center,
         ),
@@ -135,7 +134,7 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
   // ===== STUDENT INFO =====
   Widget _buildStudentInfo(AdmitCardModel data) {
     final venue = (data.venue ?? "").trim().isEmpty
-        ? "Patan College for Professional Studies"
+        ? "Lord Buddha Education Foundation"
         : data.venue!;
 
     return Row(
