@@ -9,6 +9,7 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import '../../../../resource/colors.dart';
 import '../../../../utils/format_time.dart';
+import '../../../../view_model/theme_provider.dart';
 import '../../../../widgets/no_data/no_data_widget.dart';
 import '../shimmer/report_shimmer.dart';
 
@@ -269,4 +270,5 @@ class _ReportsState extends State<Reports> {
       return 0.0;
     }
   }
+
 }

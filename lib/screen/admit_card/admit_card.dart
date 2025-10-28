@@ -1,363 +1,318 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
+import 'package:lbef/constant/base_url.dart';
+import 'package:lbef/data/status.dart';
+import 'package:lbef/view_model/user_view_model/current_user_model.dart';
+import 'package:lbef/widgets/custom_shimmer.dart';
+import 'package:lbef/widgets/no_data/no_data_widget.dart';
+import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
+import 'package:lbef/model/admit_card_model.dart';
+import 'package:lbef/resource/colors.dart';
+import 'package:lbef/view_model/user_view_model/admit_card_view_model.dart';
 
-import '../../resource/colors.dart';
+class AdmitCardScreen extends StatefulWidget {
+  const AdmitCardScreen({super.key});
 
-class AdmitCard extends StatelessWidget {
-  const AdmitCard({super.key});
+  @override
+  State<AdmitCardScreen> createState() => _AdmitCardScreenState();
+}
+
+class _AdmitCardScreenState extends State<AdmitCardScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      Provider.of<AdmitCardViewModel>(context, listen: false)
+          .getAdmitCard(context);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final admitVM = Provider.of<AdmitCardViewModel>(context);
+
+    final data = admitVM.userData.data;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Class Routines",
-            style: TextStyle(fontFamily: 'poppins')),
+        title: const Text("Admit Card", style: TextStyle(fontFamily: 'poppins')),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios, color: AppColors.primary),
           onPressed: () => Navigator.pop(context),
           iconSize: 18,
         ),
-        actions: const [
-          Image(
-            image: AssetImage('assets/images/lbef.png'),
-            width: 70,
-            height: 50,
-            fit: BoxFit.contain,
-          ),
-          SizedBox(width: 14),
-        ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
-        label: const Text('Export PDF', style: TextStyle(color: Colors.white)),
-        onPressed: () => _exportAsPdfPreview(context),
-        backgroundColor: AppColors.primary,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Card(
-          elevation: 3,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Column(
-                    children: [
-                      const CircleAvatar(
-                        radius: 40,
-                        backgroundImage: AssetImage('assets/images/new.jpg'),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'PATAN COLLEGE FOR PROFESSIONAL STUDIES',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium!
-                            .copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Behind Kandevtasthan, Kupondole, Lalitpur, Nepal',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall!
-                            .copyWith(color: Colors.grey[600]),
-                      ),
-                      const Divider(height: 24, thickness: 1.2),
-                      Text(
-                        'University End Term Examination - Dec 2024',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleSmall!
-                            .copyWith(fontWeight: FontWeight.w600),
-                      ),
-                    ],
-                  ),
+      body: SafeArea(
+        child: Builder(builder: (context) {
+          if (admitVM.isLoading ) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (admitVM.userData.status == Status.ERROR) {
+            return SizedBox(height:100,child: BuildNoData(MediaQuery.of(context).size, admitVM.userData.message??"No Data Available" , Icons.do_not_disturb_alt));
+          }
+
+          if (data == null) {
+            return const Center(
+              child: Text(
+                "Admit Card not available.",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+            );
+          }
+
+
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Card(
+              color: Colors.white,
+              elevation: 3,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(18),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildHeader(),
+                    const Divider(thickness: 1),
+                    _buildExamTitle(data),
+                    const SizedBox(height: 10),
+                    _buildStudentInfo(data),
+                    const SizedBox(height: 20),
+                    _buildSubjects(data.subjects ?? []),
+                    const SizedBox(height: 24),
+                    _buildInstructions(data.instructions ?? ""),
+                  ],
                 ),
-                const SizedBox(height: 24),
-                _infoRow('Name', 'Pratik Tamang'),
-                _infoRow('Course', 'BSc CSSE'),
-                _infoRow('Intake', 'Autumn 2024'),
-                _infoRow('Candidate ID', '2214130'),
-                _infoRow(
-                    'Exam Center', 'PCPS College, Kupondole, Lalitpur, Nepal'),
-                const SizedBox(height: 20),
-                const Divider(),
-                const SizedBox(height: 12),
-                Text('Exam Details',
-                    style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 12),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey[300]!),
-                  ),
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    children: [
-                      _detailRow('Subject',
-                          'Object Oriented Programming & Software Engineering'),
-                      _detailRow('Code', 'CIS016-2'),
-                      _detailRow('Type', 'Regular'),
-                      _detailRow('Date', '2024-12-18 1:45 PM'),
-                      _detailRow('Room', '407'),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  'Instructions',
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleSmall!
-                      .copyWith(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                ...[
-                  'Valid admit card & college ID',
-                  'Arrive 30 min early',
-                  'Use BLACK/BLUE pen only',
-                  'Mobile phones not allowed',
-                  'No borrowing stationery',
-                  'Strict action for malpractice',
-                  'Disqualification for unfair means',
-                ].map(_instructionBullet),
-              ],
+              ),
             ),
+          );
+        }),
+      ),
+    );
+  }
+
+  // ===== HEADER =====
+  Widget _buildHeader() {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Image.asset('assets/images/lbefHd.jpg', height: 50),
+          ],
+        ),
+        const SizedBox(height: 10),
+        const Text(
+          "Lord Buddha Education Foundation.",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          textAlign: TextAlign.center,
+        ),
+        const Text(
+          "Opposite Maiti Devi Temple, Kathmandu, Nepal",
+          style: TextStyle(color: Colors.grey, fontSize: 12),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  // ===== EXAM TITLE =====
+  Widget _buildExamTitle(AdmitCardModel data) {
+    return Center(
+      child: Text(
+        "Admit Card for ${data.examName}",
+        textAlign: TextAlign.center,
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+      ),
+    );
+  }
+
+  // ===== STUDENT INFO =====
+  Widget _buildStudentInfo(AdmitCardModel data) {
+    final venue = (data.venue ?? "").trim().isEmpty
+        ? "Lord Buddha Education Foundation"
+        : data.venue!;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 4,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _infoRow("Student Name", data.studentName ?? "", bold: true),
+              _infoRow("University Roll No", data.stuUnivRollNo ?? "N/A"),
+              _infoRow("Course", data.courseShortName ?? ""),
+              _infoRow("Semester", data.semesterName ?? ""),
+              _infoRow("Exam Start Date", data.examStart ?? ""),
+              _infoRow("Venue", venue),
+            ],
           ),
         ),
-      ),
+        const SizedBox(width: 10),
+        Consumer<UserDataViewModel>(
+          builder: (context, userDataViewModel, child) {
+            final user = userDataViewModel.currentUser;
+
+            String? image =
+                "${BaseUrl.imageDisplay}/html/profiles/students/${user?.stuProfilePath}/${user?.stuPhoto}";
+            var logger = Logger();
+            logger.d(image);
+            return SizedBox(
+              height: 100,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  image,
+                  width: 90,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CustomShimmerLoading(
+                        width: 90,
+                        height: 100,
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                      ),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) =>
+                      Container(
+                        width: 90,
+                        height: 100,
+                        color: Colors.white,
+                        child: Center(
+                          child: Icon(
+                            Icons.school,
+                            color: AppColors.primary,
+                            size: 40,
+                          ),
+                        ),
+                      ),
+                ),
+              ),
+            );
+          },
+        ),
+
+      ],
     );
   }
 
-  Widget _infoRow(String label, String value) {
+  Widget _infoRow(String label, String value, {bool bold = false}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [
-          Expanded(
-              flex: 2,
-              child: Text('$label:',
-                  style: const TextStyle(fontWeight: FontWeight.w600))),
-          Expanded(flex: 3, child: Text(value)),
-        ],
-      ),
-    );
-  }
-
-  Widget _detailRow(String title, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Expanded(
-              child: Text(title,
-                  style: const TextStyle(fontWeight: FontWeight.w600))),
-          Expanded(child: Text(value)),
-        ],
-      ),
-    );
-  }
-
-  Widget _instructionBullet(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('• '),
-          Expanded(child: Text(text)),
+          Expanded(
+            flex: 2,
+            child: Text(
+              "$label:",
+              style: TextStyle(
+                fontWeight: bold ? FontWeight.bold : FontWeight.w600,
+                fontSize: 13,
+              ),
+            ),
+          ),
+          Expanded(flex: 3, child: Text(value, style: const TextStyle(fontSize: 13))),
         ],
       ),
     );
   }
 
-  void _exportAsPdfPreview(BuildContext context) async {
-    final pdf = pw.Document();
+  // ===== SUBJECTS =====
+  Widget _buildSubjects(List<Subjects> subjects) {
+    if (subjects.isEmpty) {
+      return const Text("No subjects found.",
+          style: TextStyle(color: Colors.grey));
+    }
 
-    final profileImage = pw.MemoryImage(
-      (await rootBundle.load('assets/images/new.jpg')).buffer.asUint8List(),
-    );
-    final pcpsLogo = pw.MemoryImage(
-      (await rootBundle.load('assets/images/lbef.png')).buffer.asUint8List(),
-    );
-    final bedfordLogo = pw.MemoryImage(
-      (await rootBundle.load('assets/images/lbef.png')).buffer.asUint8List(),
-    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text("Exam Schedule",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        const SizedBox(height: 8),
+        ...subjects.map((sub) {
+          String date = sub.regularDate ?? sub.retakeDate ?? sub.referralDate ?? "TBA";
+          String time = sub.regularTime ?? sub.retakeTime ?? sub.referralTime ?? "TBA";
 
-    pdf.addPage(
-      pw.Page(
-        pageFormat: PdfPageFormat.a4,
-        build: (pw.Context context) {
-          return pw.Padding(
-            padding: const pw.EdgeInsets.all(20),
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
+          return Container(
+            margin: const EdgeInsets.only(bottom: 10),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey[300]!),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Image(pcpsLogo, width: 80, height: 60),
-                    pw.Column(
-                      children: [
-                        pw.Text('PATAN COLLEGE FOR PROFESSIONAL STUDIES',
-                            textAlign: pw.TextAlign.center,
-                            style: pw.TextStyle(
-                                fontSize: 14, fontWeight: pw.FontWeight.bold)),
-                        pw.Text(
-                            'Behind Kandevtasthan, Kupondole, Lalitpur, Nepal',
-                            textAlign: pw.TextAlign.center,
-                            style: pw.TextStyle(fontSize: 9)),
-                      ],
-                    ),
-                    pw.Image(bedfordLogo, width: 80, height: 60),
-                  ],
-                ),
-                pw.SizedBox(height: 8),
-                pw.Text(
-                    'Admit Card For University End Term Examination - Dec 2024',
-                    style: pw.TextStyle(
-                        fontSize: 14, fontWeight: pw.FontWeight.bold)),
-                pw.Text('Ref No: 67565b107063e-2302112085-20241217085933',
-                    style: const pw.TextStyle(fontSize: 10)),
-                pw.SizedBox(height: 12),
-                pw.Row(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Expanded(
-                      flex: 4,
-                      child: pw.Column(
-                        children: [
-                          _pdfInfoRow('Exam Year-Month', '2024-12'),
-                          _pdfInfoRow('Student Name', 'Pratik Tamang'),
-                          _pdfInfoRow('Course', 'BSc CSSE'),
-                          _pdfInfoRow('Intake Code', 'Autumn 2024'),
-                          _pdfInfoRow('Candidate ID', '2214130'),
-                          _pdfInfoRow('Exam Center',
-                              'PCPS College, Kupondole, Lalitpur, Nepal'),
-                        ],
-                      ),
-                    ),
-                    pw.Expanded(
-                      flex: 2,
-                      child: pw.Container(
-                        alignment: pw.Alignment.centerRight,
-                        child: pw.Image(profileImage, width: 80, height: 80),
-                      ),
-                    ),
-                  ],
-                ),
-                pw.SizedBox(height: 10),
-                pw.Text('Your BREO Password: ********',
-                    style: pw.TextStyle(fontSize: 10)),
-                pw.SizedBox(height: 10),
-                pw.Table.fromTextArray(
-                  headers: [
-                    'S.No',
-                    'Code',
-                    'Subject Name',
-                    'Exam Type',
-                    'Exam Date',
-                    'Room No'
-                  ],
-                  data: [
-                    [
-                      '1',
-                      'CIS016-2',
-                      'Object Oriented Programming and Software Engineering',
-                      'Regular',
-                      '2024-12-18 1:45 PM',
-                      '407'
-                    ],
-                  ],
-                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                  cellStyle: const pw.TextStyle(fontSize: 10),
-                  headerDecoration:
-                      const pw.BoxDecoration(color: PdfColors.grey300),
-                  border: pw.TableBorder.all(color: PdfColors.grey),
-                  cellAlignment: pw.Alignment.centerLeft,
-                ),
-                pw.SizedBox(height: 20),
-                pw.Text(
-                    'Important Instructions for the Examination [Please read carefully]',
-                    style: pw.TextStyle(
-                        fontSize: 11, fontWeight: pw.FontWeight.bold)),
-                pw.SizedBox(height: 8),
-                ...[
-                  'No one is allowed to enter the examination hall/presentation hall without valid admit card / College ID Card.',
-                  'You cannot enter the examination hall/presentation hall after the commencement of exam.',
-                  'Come at least 30 minutes early. Gates close after the exam starts.',
-                  'You cannot leave until 60 minutes have passed.',
-                  'Use only BLACK or BLUE pen.',
-                  'Mobile phones are not allowed.',
-                  'Possession of mobile phone (even off) = MALPRACTICE.',
-                  'No arrangements to keep mobile phones at center.',
-                  'Bring only non-programmable calculator.',
-                  'No borrowing of stationery.',
-                  'Unfair means lead to disqualification.',
-                  'Campus management’s decision is final.',
-                ].map(_pdfBullet),
-                pw.SizedBox(height: 20),
-                pw.Text('Best of Luck!',
-                    style: pw.TextStyle(color: PdfColors.green800)),
+                Text("${sub.subjectCode} - ${sub.subjectName}",
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 6),
+                _detailRow("Exam Type", sub.examType ?? ""),
+                _detailRow("Date", date),
+                _detailRow("Time", time),
+                _detailRow("Room", sub.examRoom ?? ""),
               ],
             ),
           );
-        },
-      ),
+        }),
+      ],
     );
+  }
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Scaffold(
-          appBar: AppBar(title: const Text("Admit Card PDF Preview")),
-          body: PdfPreview(build: (format) => pdf.save()),
+  Widget _detailRow(String label, String value) {
+    return Row(
+      children: [
+        Expanded(flex: 2, child: Text("$label:", style: const TextStyle(fontWeight: FontWeight.w600))),
+        Expanded(flex: 3, child: Text(value)),
+      ],
+    );
+  }
+
+  // ===== INSTRUCTIONS =====
+  Widget _buildInstructions(String instructions) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text("Important Instructions",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey[300]!),
+          ),
+          padding: const EdgeInsets.all(12),
+          child: Text(
+            (instructions.isEmpty)
+                ? "No instructions provided."
+                : instructions.trim(),
+            style: const TextStyle(fontSize: 13, height: 1.4),
+          ),
         ),
-      ),
-    );
-  }
-
-  pw.Widget _pdfInfoRow(String label, String value) {
-    return pw.Padding(
-      padding: const pw.EdgeInsets.symmetric(vertical: 2),
-      child: pw.Row(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.Expanded(
-              flex: 2,
-              child: pw.Text('$label:',
-                  style: pw.TextStyle(
-                      fontWeight: pw.FontWeight.bold, fontSize: 10))),
-          pw.Expanded(
-              flex: 3,
-              child: pw.Text(value, style: const pw.TextStyle(fontSize: 10))),
-        ],
-      ),
-    );
-  }
-
-  pw.Widget _pdfBullet(String text) {
-    return pw.Padding(
-      padding: const pw.EdgeInsets.only(bottom: 4),
-      child: pw.Row(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.Text('- ', style: const pw.TextStyle(fontSize: 10)),
-          pw.Expanded(
-              child: pw.Text(text, style: const pw.TextStyle(fontSize: 10))),
-        ],
-      ),
+        const SizedBox(height: 12),
+        const Center(
+          child: Text(
+            "Best of Luck!",
+            style: TextStyle(
+              color: Colors.green,
+              fontStyle: FontStyle.italic,
+              fontSize: 13,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

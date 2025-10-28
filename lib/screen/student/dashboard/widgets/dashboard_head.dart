@@ -3,20 +3,23 @@ import 'package:lbef/constant/base_url.dart';
 import 'package:lbef/resource/colors.dart';
 import 'package:lbef/screen/student/class_routines/class_routines.dart';
 import 'package:lbef/screen/student/dashboard/display_security.dart';
+import 'package:lbef/screen/student/identity_card/student_id_card.dart';
 import 'package:lbef/screen/student/notice/notice.dart';
 import 'package:lbef/screen/student/profile/changePassword/change_password.dart';
 import 'package:lbef/screen/student/profile/recover_password/recover_password.dart';
+import 'package:lbef/screen/student/survey/survey_page.dart';
 import 'package:lbef/screen/student/view_my_profile/view_my_profile.dart';
 import 'package:lbef/utils/navigate_to.dart';
-import 'package:lbef/view_model/theme_provider.dart';
+import 'package:lbef/view_model/survery_view_model.dart';
 import 'package:lbef/widgets/custom_shimmer.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../../../data/status.dart';
+import '../../../../view_model/theme_provider.dart';
 import '../../../../view_model/user_view_model/current_user_model.dart';
+import '../../../admit_card/admit_card.dart';
 import '../../calender/calender.dart';
 import '../../download_forums/download_forums.dart';
 import 'dashboard_card.dart';
@@ -52,10 +55,11 @@ class _DashboardHeadState extends State<DashboardHead> {
       'className': const ClassRoutines()
     },
     {
-      'text': 'Profile',
-      'icon': Icons.badge,
-      'className': const ViewProfilePage()
+      'text': 'Admit Card',
+      'icon': Icons.laptop,
+      'className': const AdmitCardScreen()
     },
+
     {
       'text': 'Notice',
       'icon': Icons.notifications,
@@ -78,6 +82,7 @@ class _DashboardHeadState extends State<DashboardHead> {
       'icon': Icons.laptop,
       'link': 'https://lms2.apiit.edu.my/'
     },
+
     {'text': 'Security', 'icon': Icons.lock, 'alert': true},
   ];
 
@@ -118,6 +123,7 @@ class _DashboardHeadState extends State<DashboardHead> {
 
     return Column(
       children: [
+
         SizedBox(
           height: 345,
           child: Stack(
@@ -138,7 +144,7 @@ class _DashboardHeadState extends State<DashboardHead> {
               ),
               Positioned(
                 top: size.height * -0.04,
-                left: size.width * 0.01,
+                left: size.width * 0.04,
                 child: SizedBox(
                   width: size.width * 0.5,
                   height: size.height * 0.3,
@@ -382,6 +388,96 @@ class _DashboardHeadState extends State<DashboardHead> {
             ],
           ),
         ),
+        const SizedBox(height: 10,),
+        Consumer<SurveryViewModel>(
+          builder: (context, viewModel, child) {
+            final totalPendingSubjects = viewModel.notices
+                ?.fold<int>(
+              0,
+                  (sum, survey) => sum + (survey.subjectsPending?.length ?? 0),
+            ) ?? 0;
+
+            if (viewModel.isLoading || totalPendingSubjects == 0) {
+              return const SizedBox.shrink(); // No pending subjects to show
+            }
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+              child: InkWell(
+                onTap: () {
+                  Navigator.of(context).push(
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                      const SurveyPage(),
+                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                        const begin = Offset(0.0, 1.0); // Slide from bottom
+                        const end = Offset.zero;
+                        const curve = Curves.easeInOut;
+
+                        var tween = Tween(begin: begin, end: end)
+                            .chain(CurveTween(curve: curve));
+                        var offsetAnimation = animation.drive(tween);
+
+                        return SlideTransition(
+                          position: offsetAnimation,
+                          child: child,
+                        );
+                      },
+                    ),
+                  );
+
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[600],
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 6,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.book,
+                        color: Colors.white,
+                        size: 28,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Feedback Survey Available",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              "$totalPendingSubjects subjects pending for feedback.",
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.85),
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: filteredCards.isEmpty
@@ -541,8 +637,7 @@ class _DashboardHeadState extends State<DashboardHead> {
                                                   color: Colors.white,
                                                 ),
                                                 child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
+                                                  padding: EdgeInsets.all(8.0),
                                                   child: Column(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment

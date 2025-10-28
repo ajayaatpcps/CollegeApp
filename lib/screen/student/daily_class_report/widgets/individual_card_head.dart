@@ -62,12 +62,11 @@ class IndividualCardHead extends StatelessWidget {
               const SizedBox(height: 4),
 
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(
-                    width: 240,
+                  Expanded(
                     child: Text(
-                     "By $tutor",
+                      "By $tutor",
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 14,
                         color: Colors.white,
@@ -75,16 +74,21 @@ class IndividualCardHead extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Text(
-                    section,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      section,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
               )
+
+
             ],
           ),
         ),

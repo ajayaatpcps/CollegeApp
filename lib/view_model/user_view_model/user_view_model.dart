@@ -18,7 +18,13 @@ class UserViewModel with ChangeNotifier {
 
     return sessionSaved;
   }
-
+  Future<bool> saveWifiAccess(String access) async {
+    var logger = Logger();
+    final SharedPreferences sp = await SharedPreferences.getInstance();
+    bool wifiAccess = await sp.setString('access', access.toString());
+    logger.d(access.toString());
+    return wifiAccess;
+  }
   Future<bool> remove(BuildContext context) async {
     final SharedPreferences sp = await SharedPreferences.getInstance();
     await sp.remove('token');

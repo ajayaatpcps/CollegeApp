@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../resource/colors.dart';
 
@@ -10,6 +11,23 @@ class UnauthorisedPage extends StatefulWidget {
 }
 
 class _UnauthorisedPageState extends State<UnauthorisedPage> {
+  String access = "";
+
+  void check() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedAccess = prefs.getString('access') ?? "";
+    print("Fetched WiFi password: $savedAccess"); // 🔍 Debug
+    setState(() {
+      access = savedAccess;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    check();
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -33,9 +51,7 @@ class _UnauthorisedPageState extends State<UnauthorisedPage> {
             height: 24,
             fit: BoxFit.cover,
           ),
-          SizedBox(
-            width: 18,
-          )
+          SizedBox(width: 18),
         ],
       ),
       body: Container(
@@ -44,15 +60,14 @@ class _UnauthorisedPageState extends State<UnauthorisedPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             Text(
               "404",
               style: TextStyle(
-                  fontSize: 55,
-                  color: AppColors.primary,
-                  fontFamily: 'poppins-semi'),
+                fontSize: 55,
+                color: AppColors.primary,
+                fontFamily: 'poppins-semi',
+              ),
             ),
             Text(
               "Page Not Found!",
@@ -62,30 +77,33 @@ class _UnauthorisedPageState extends State<UnauthorisedPage> {
                 color: AppColors.primary,
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             Text(
               "We apologize, but the page you are looking for is not available. This page is exclusively accessible to students, and is not intended for higher authorities, librarians, or staff members.",
               textAlign: TextAlign.justify,
-              style: TextStyle(
-                color: AppColors.primary,
+              style: TextStyle(color: AppColors.primary),
+            ),
+            const SizedBox(height: 10),
+
+
+            if (access.isNotEmpty) ...[
+              const Text(
+                'Your WiFi Passkey:',
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
+              Text(access, style: const TextStyle(fontSize: 16)),
+              const SizedBox(height: 20),
+            ],
+
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.error, color: AppColors.primary, size: 100),
               ],
             ),
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () => Navigator.pop(context),
               style: ButtonStyle(
                 foregroundColor: const MaterialStatePropertyAll(Colors.white),
                 minimumSize: const MaterialStatePropertyAll(
@@ -107,7 +125,7 @@ class _UnauthorisedPageState extends State<UnauthorisedPage> {
                   fontWeight: FontWeight.w400,
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

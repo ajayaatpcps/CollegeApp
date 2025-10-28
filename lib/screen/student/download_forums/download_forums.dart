@@ -102,128 +102,132 @@ class _DownloadForumsState extends State<DownloadForums> {
           SizedBox(width: 14),
         ],
       ),
-      body: Container(
-        width: size.width,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Consumer<DownloadFormsViewModel>(
-          builder: (context, viewModel, child) {
-            if (viewModel.isLoading) {
+      body: SafeArea(
+        child: Container(
+          width: size.width,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Consumer<DownloadFormsViewModel>(
+            builder: (context, viewModel, child) {
+              if (viewModel.isLoading) {
+                return GridView.count(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                  childAspectRatio: 0.85,
+                  children: List.generate(
+                    (size.height / 240).ceil(),
+                    (index) => const Padding(
+                      padding: EdgeInsets.all(4),
+                      child: ClassCardShimmer(),
+                    ),
+                  ),
+                );
+              }
+
+              if (viewModel.downloadsList.isEmpty) {
+                return SizedBox(
+                  height: 100,
+                  child: BuildNoData(
+                    size,
+                    'No forms available',
+                    Icons.disabled_visible_rounded,
+                  ),
+                );
+              }
+
               return GridView.count(
                 physics: const AlwaysScrollableScrollPhysics(),
                 crossAxisCount: 2,
                 mainAxisSpacing: 8,
                 crossAxisSpacing: 8,
                 childAspectRatio: 0.85,
-                children: List.generate(
-                  (size.height / 240).ceil(),
-                  (index) => const Padding(
-                    padding: EdgeInsets.all(4),
-                    child: ClassCardShimmer(),
-                  ),
-                ),
-              );
-            }
-
-            if (viewModel.downloadsList.isEmpty) {
-              return SizedBox(
-                height: 100,
-                child: BuildNoData(
-                  size,
-                  'No forms available',
-                  Icons.disabled_visible_rounded,
-                ),
-              );
-            }
-
-            return GridView.count(
-              physics: const AlwaysScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 8,
-              childAspectRatio: 0.85,
-              children: viewModel.downloadsList.map((report) {
-                return Consumer<ThemeProvider>(
-                  builder: (context, provider, child) {
-                    return GestureDetector(
-                      onTap: () => downloadFile(
-                        report.documentName ?? 'Untitled',
-                        report.fileLink ?? '',
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color:
-                              provider.isDarkMode ? Colors.black : Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 6,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
+                children: viewModel.downloadsList.map((report) {
+                  return Consumer<ThemeProvider>(
+                    builder: (context, provider, child) {
+                      return GestureDetector(
+                        onTap: () => downloadFile(
+                          report.documentName ?? 'Untitled',
+                          report.fileLink ?? '',
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Icon(
-                              report.fileLink?.endsWith('.pdf') ?? false
-                                  ? Icons.picture_as_pdf
-                                  : Icons.description,
-                              color: report.fileLink?.endsWith('.pdf') ?? false
-                                  ? Colors.red
-                                  : Colors.blue,
-                              size: 36,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              report.documentName ?? 'Untitled',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
-                                color: provider.isDarkMode
-                                    ? Colors.white38
-                                    : Colors.black,
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: provider.isDarkMode
+                                ? Colors.black
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 6,
+                                offset: Offset(0, 3),
                               ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              report.description ??
-                                  report.documentName ??
-                                  'No description',
-                              style: TextStyle(
-                                color: provider.isDarkMode
-                                    ? Colors.white60
-                                    : Colors.grey[800],
-                                fontSize: 11,
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(
+                                report.fileLink?.endsWith('.pdf') ?? false
+                                    ? Icons.picture_as_pdf
+                                    : Icons.description,
+                                color:
+                                    report.fileLink?.endsWith('.pdf') ?? false
+                                        ? Colors.red
+                                        : Colors.blue,
+                                size: 36,
                               ),
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const Spacer(),
-                            Text(
-                              'Published: ${report.publishOn != null && report.publishOn!.isNotEmpty ? parseDate(report.publishOn!) : "Unknown"}',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Colors.grey[600],
+                              const SizedBox(height: 8),
+                              Text(
+                                report.documentName ?? 'Untitled',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                  color: provider.isDarkMode
+                                      ? Colors.white38
+                                      : Colors.black,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            ),
-                            const Align(
-                              alignment: Alignment.bottomRight,
-                              child: Icon(Icons.download,
-                                  color: Colors.grey, size: 20),
-                            ),
-                          ],
+                              const SizedBox(height: 4),
+                              Text(
+                                report.description ??
+                                    report.documentName ??
+                                    'No description',
+                                style: TextStyle(
+                                  color: provider.isDarkMode
+                                      ? Colors.white60
+                                      : Colors.grey[800],
+                                  fontSize: 11,
+                                ),
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const Spacer(),
+                              Text(
+                                'Published: ${report.publishOn != null && report.publishOn!.isNotEmpty ? parseDate(report.publishOn!) : "Unknown"}',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                              const Align(
+                                alignment: Alignment.bottomRight,
+                                child: Icon(Icons.download,
+                                    color: Colors.grey, size: 20),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                );
-              }).toList(),
-            );
-          },
+                      );
+                    },
+                  );
+                }).toList(),
+              );
+            },
+          ),
         ),
       ),
     );

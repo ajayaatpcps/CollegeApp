@@ -175,6 +175,7 @@ class _NoticeBoardState extends State<NoticeBoard>
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             child: Consumer<EmailViewModel>(
+
               builder: (context, viewModel, child) {
                 if (viewModel.isLoading) {
                   return ListView.builder(

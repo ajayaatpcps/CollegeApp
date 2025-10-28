@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:lbef/screen/student/student_fees/tab_content/balance.dart';
 import 'package:lbef/screen/student/student_fees/tab_content/fees_skeleton.dart';
+import 'package:lbef/screen/student/student_fees/tab_content/payment_method.dart';
 import 'package:lbef/screen/student/student_fees/tab_content/receipts.dart';
 import 'package:lbef/screen/student/student_fees/tab_content/statements.dart';
 import 'package:lbef/view_model/college_fees/college_fee_view_model.dart';
 import 'package:lbef/widgets/no_data/no_data_widget.dart';
 import 'package:provider/provider.dart';
-
 import '../../../view_model/theme_provider.dart';
-
 class StudentFees extends StatefulWidget {
   const StudentFees({super.key});
 
@@ -34,7 +33,7 @@ class _StudentFeesState extends State<StudentFees> {
     final size = MediaQuery.of(context).size;
 
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           title: const Text(
@@ -46,7 +45,7 @@ class _StudentFeesState extends State<StudentFees> {
           actions: const [
             Image(
               image: AssetImage('assets/images/lbef.png'),
-              width: 70,
+              width: 80,
               height: 50,
               fit: BoxFit.contain,
             ),
@@ -54,12 +53,18 @@ class _StudentFeesState extends State<StudentFees> {
           ],
           automaticallyImplyLeading: false,
           bottom: const TabBar(
+            labelColor: Colors.blue,
+            indicatorColor: Colors.blue,
+            labelStyle: TextStyle(fontWeight: FontWeight.w400,fontFamily: 'poppins'), // optional
             tabs: [
               Tab(text: 'Statement'),
               Tab(text: 'Balance'),
               Tab(text: 'Receipts'),
+              Tab(text: 'Pay Now'),
             ],
           ),
+
+
         ),
         body: Consumer<CollegeFeeViewModel>(
           builder: (context, viewModel, child) {
@@ -97,6 +102,8 @@ class _StudentFeesState extends State<StudentFees> {
                 ),
                 ReceiptsPage(
                     receipts: viewModel.currentDetails?.receipts ?? []),
+                // const PaymentMethod()
+                const Center(child: Text('Feature will be available soon!'),)
               ],
             );
           },

@@ -180,7 +180,6 @@ class ProfilePage extends StatelessWidget {
                     const SizedBox(
                       height: 5,
                     ),
-
                     buildListTile(Icons.lock, 'Recover Password', context, () {
                       Navigator.of(context)
                           .push(_buildSlideRoute(const RecoverPassword()));
@@ -189,6 +188,22 @@ class ProfilePage extends StatelessWidget {
                     buildListTile(Icons.lock, 'Change Password', context, () {
                       Navigator.of(context)
                           .push(_buildSlideRoute(const ChangePassword()));
+                    }),
+                    buildListTile(Icons.lock_clock_outlined,
+                        'Change Breo Password', context, () async {
+                      final shouldExit = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => Alert(
+                          icon: Icons.web,
+                          iconColor: AppColors.primary,
+                          title: 'Breo Password',
+                          content: 'Are you sure you want to open Breo?',
+                          buttonText: 'Yes',
+                        ),
+                      );
+                      if (shouldExit ?? false) {
+                        _launchUrl('https://password.beds.ac.uk/');
+                      }
                     }),
                     const SizedBox(
                       height: 15,
@@ -347,7 +362,7 @@ class ProfilePage extends StatelessWidget {
                                       children: [
                                         ListTile(
                                           leading: const Icon(Icons.light_mode),
-                                          title: const Text('Light Mode'),
+                                          title: const Text('Light Mode',),
                                           onTap: () {
                                             themeProvider
                                                 .setTheme(ThemeMode.light);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lbef/resource/routes.dart';
 import 'package:lbef/resource/routes_name.dart';
 import 'package:lbef/view_model/application_files/application_view_model.dart';
+import 'package:lbef/view_model/banner_view_model.dart';
 import 'package:lbef/view_model/calender/event_calender_view_model.dart';
 import 'package:lbef/view_model/class_routine/class_routine_view_model.dart';
 import 'package:lbef/view_model/college_fees/college_fee_view_model.dart';
@@ -11,7 +12,9 @@ import 'package:lbef/view_model/download_forms/download_forms_view_model.dart';
 import 'package:lbef/view_model/notice_board/email_view_model.dart';
 import 'package:lbef/view_model/notice_board/notice_board_view_model.dart';
 import 'package:lbef/view_model/notice_board/sms_view_model.dart';
+import 'package:lbef/view_model/survery_view_model.dart';
 import 'package:lbef/view_model/theme_provider.dart';
+import 'package:lbef/view_model/user_view_model/admit_card_view_model.dart';
 import 'package:lbef/view_model/user_view_model/auth_view_model.dart';
 import 'package:lbef/view_model/user_view_model/current_user_model.dart';
 import 'package:lbef/view_model/user_view_model/user_view_model.dart';
@@ -29,6 +32,10 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => AdmitCardViewModel()),
+
+        ChangeNotifierProvider(create: (_) => BannerViewModel()),
+        ChangeNotifierProvider(create: (_) => SurveryViewModel()),
         ChangeNotifierProvider(create: (_) => AuthViewModel()),
         ChangeNotifierProvider(create: (_) => ApplicationViewModel()),
         ChangeNotifierProvider(create: (_) => ClassRoutineViewModel()),

@@ -43,10 +43,10 @@ class DcrCardImage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(
-                    width: 240,
+                  Expanded(
                     child: Text(
                       semester,
+                      overflow: TextOverflow.ellipsis, // prevent overflow
                       style: const TextStyle(
                         fontSize: 14,
                         color: Colors.white,
@@ -54,16 +54,20 @@ class DcrCardImage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Text(
-                    "Section : $section",
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                  Flexible(
+                    child: Text(
+                      "Section : $section",
+                      overflow: TextOverflow.ellipsis, // add ellipsis if text is too long
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
               )
+
             ],
           ),
         ),
