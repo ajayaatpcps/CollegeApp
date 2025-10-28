@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lbef/screen/navbar/student_navbar.dart';
 import 'package:lbef/utils/utils.dart';
 import 'package:lbef/view_model/application_files/application_view_model.dart';
 import 'package:lbef/widgets/dropdown/leave_dropdown.dart';
@@ -20,6 +21,7 @@ class _FileApplicationState extends State<FileApplication> {
   DateTime? startDate;
   DateTime? endDate;
   String error = '';
+  bool isLoading=false;
 
   Future<void> pickStartDate(BuildContext context) async {
     final picked = await showDatePicker(
@@ -72,7 +74,7 @@ class _FileApplicationState extends State<FileApplication> {
         ],
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: isLoading? const Center(child: CircularProgressIndicator()): SingleChildScrollView(
           padding: const EdgeInsets.all(14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,7 +177,9 @@ class _FileApplicationState extends State<FileApplication> {
                   final reason = reasonController.text.trim();
                   final start = formatDate(startDate);
                   final end = formatDate(endDate);
-
+   setState(() {
+     isLoading=true;
+   });
                   if (applicationType == null) {
                     Utils.flushBarErrorMessage(
                         "Select an application type", context);
@@ -203,10 +207,33 @@ class _FileApplicationState extends State<FileApplication> {
                           listen: false)
                       .createApplication(payload, context);
                   if (check) {
+
                     await Provider.of<ApplicationViewModel>(context,
                             listen: false)
                         .fetch(context);
+                    setState(() {
+isLoading=false;
+                    });
                     reasonController.text = '';
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                        const StudentNavbar(index: 2,),
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
+                          const begin = Offset(1.0, 0.0);
+                          const end = Offset.zero;
+                          const curve = Curves.easeInOut;
+                          var tween = Tween(begin: begin, end: end)
+                              .chain(CurveTween(curve: curve));
+                          var offsetAnimation = animation.drive(tween);
+                          return SlideTransition(
+                            position: offsetAnimation,
+                            child: child,
+                          );
+                        },
+                      ),
+                    );
                     setState(() {});
                   }
                 },

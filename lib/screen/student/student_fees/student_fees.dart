@@ -36,7 +36,6 @@ class _StudentFeesState extends State<StudentFees> {
       length: 4,
       child: Scaffold(
         appBar: AppBar(
-
           title: const Text(
             "College Fees",
             style: TextStyle(

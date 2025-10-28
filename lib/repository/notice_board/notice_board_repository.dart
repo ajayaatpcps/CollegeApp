@@ -66,6 +66,35 @@ class NoticeBoardRepository {
       return Utils.flushBarErrorMessage("$error", context);
     }
   }
+  Future<Map<String, dynamic>> bannerImages(BuildContext context) async {
+    if (kDebugMode) {
+      logger.d(NoticeBoardEndpoints.fetch);
+    }
+
+    try {
+      final response = await _apiServices.getApiResponse(NoticeBoardEndpoints.fetch);
+
+      if (response is List) {
+        List<String> banner = response.map((e) => e.toString()).toList();
+        logger.d("Banner List: $banner");
+        return {"banner": banner};
+      } else {
+        throw Exception("Unexpected response format: $response");
+      }
+    } on TimeoutException {
+      return Utils.noInternet(
+        "No internet connection. Please try again later.",
+      );
+    } catch (error) {
+      if (error is NoDataException) {
+        logger.w("404 Error: $error");
+        return {};
+      }
+      logger.w(error);
+      return Utils.flushBarErrorMessage("$error", context);
+    }
+  }
+
   Future<EmailNoticeModel> emailDetails(
       String emailId, BuildContext context) async {
     try {
