@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lbef/constant/base_url.dart';
 import 'package:lbef/data/status.dart';
+import 'package:lbef/utils/parse_date.dart';
 import 'package:lbef/view_model/user_view_model/current_user_model.dart';
 import 'package:lbef/widgets/custom_shimmer.dart';
 import 'package:lbef/widgets/no_data/no_data_widget.dart';
@@ -35,7 +36,8 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Admit Card", style: TextStyle(fontFamily: 'poppins')),
+        title:
+            const Text("Admit Card", style: TextStyle(fontFamily: 'poppins')),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios, color: AppColors.primary),
           onPressed: () => Navigator.pop(context),
@@ -44,12 +46,17 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
       ),
       body: SafeArea(
         child: Builder(builder: (context) {
-          if (admitVM.isLoading ) {
+          if (admitVM.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
 
           if (admitVM.userData.status == Status.ERROR) {
-            return SizedBox(height:100,child: BuildNoData(MediaQuery.of(context).size, admitVM.userData.message??"No Data Available" , Icons.do_not_disturb_alt));
+            return SizedBox(
+                height: 100,
+                child: BuildNoData(
+                    MediaQuery.of(context).size,
+                    admitVM.userData.message ?? "No Data Available",
+                    Icons.do_not_disturb_alt));
           }
 
           if (data == null) {
@@ -60,8 +67,6 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
               ),
             );
           }
-
-
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -102,20 +107,9 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Image.asset('assets/images/pcpsLogo.png', height: 50),
+            Image.asset('assets/images/pcpsLogo.png', height: 40),
             Image.asset('assets/images/bedsLogo.png', height: 40),
           ],
-        ),
-        const SizedBox(height: 10),
-        const Text(
-          "PATAN COLLEGE FOR PROFESSIONAL STUDIES",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          textAlign: TextAlign.center,
-        ),
-        const Text(
-          "Behind Kandebasthan, Kupondole, Lalitpur, Nepal",
-          style: TextStyle(color: Colors.grey, fontSize: 12),
-          textAlign: TextAlign.center,
         ),
       ],
     );
@@ -125,9 +119,9 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
   Widget _buildExamTitle(AdmitCardModel data) {
     return Center(
       child: Text(
-        "Admit Card for ${data.examName}",
+        "${data.examName}",
         textAlign: TextAlign.center,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
       ),
     );
   }
@@ -138,33 +132,38 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
         ? "Patan College for Professional Studies"
         : data.venue!;
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          flex: 4,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _infoRow("Student Name", data.studentName ?? "", bold: true),
-              _infoRow("University Roll No", data.stuUnivRollNo ?? "N/A"),
-              _infoRow("Course", data.courseShortName ?? ""),
-              _infoRow("Semester", data.semesterName ?? ""),
-              _infoRow("Exam Start Date", data.examStart ?? ""),
-              _infoRow("Venue", venue),
-            ],
-          ),
-        ),
-        const SizedBox(width: 10),
-        Consumer<UserDataViewModel>(
-          builder: (context, userDataViewModel, child) {
-            final user = userDataViewModel.currentUser;
+    return Consumer<UserDataViewModel>(
+      builder: (context, userDataViewModel, child) {
+        final user = userDataViewModel.currentUser;
 
-            String? image =
-                "${BaseUrl.imageDisplay}/html/profiles/students/${user?.stuProfilePath}/${user?.stuPhoto}";
-            var logger = Logger();
-            logger.d(image);
-            return SizedBox(
+        String? image =
+            "${BaseUrl.imageDisplay}/html/profiles/students/${user?.stuProfilePath}/${user?.stuPhoto}";
+        var logger = Logger();
+        logger.d(image);
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 4,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _infoRow("Student Name", data.studentName ?? "", bold: true),
+                  _infoRow("Student Roll No", user?.stuRollNo ?? "N/A"),
+                  _infoRow("University Roll No", data.stuUnivRollNo ?? "N/A"),
+                  _infoRow("Course", data.courseShortName ?? ""),
+                  _infoRow("Semester", data.semesterName ?? ""),
+                  _infoRow(
+                      "Exam Start Date",
+                      data.examStart != null
+                          ? parseDate(data.examStart.toString())
+                          : "Enquire with RTO Department"),
+                  _infoRow("Venue", venue),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            SizedBox(
               height: 100,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
@@ -183,26 +182,24 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
                       ),
                     );
                   },
-                  errorBuilder: (context, error, stackTrace) =>
-                      Container(
-                        width: 90,
-                        height: 100,
-                        color: Colors.white,
-                        child: Center(
-                          child: Icon(
-                            Icons.school,
-                            color: AppColors.primary,
-                            size: 40,
-                          ),
-                        ),
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    width: 90,
+                    height: 100,
+                    color: Colors.white,
+                    child: Center(
+                      child: Icon(
+                        Icons.school,
+                        color: AppColors.primary,
+                        size: 40,
                       ),
+                    ),
+                  ),
                 ),
               ),
-            );
-          },
-        ),
-
-      ],
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -222,7 +219,9 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
               ),
             ),
           ),
-          Expanded(flex: 3, child: Text(value, style: const TextStyle(fontSize: 13))),
+          Expanded(
+              flex: 3,
+              child: Text(value, style: const TextStyle(fontSize: 13))),
         ],
       ),
     );
@@ -231,19 +230,43 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
   // ===== SUBJECTS =====
   Widget _buildSubjects(List<Subjects> subjects) {
     if (subjects.isEmpty) {
-      return const Text("No subjects found.",
-          style: TextStyle(color: Colors.grey));
+      return const Text(
+        "No subjects found.",
+        style: TextStyle(color: Colors.grey),
+      );
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Exam Schedule",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        const Text(
+          "Exam Schedule",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
         const SizedBox(height: 8),
         ...subjects.map((sub) {
-          String date = sub.regularDate ?? sub.retakeDate ?? sub.referralDate ?? "TBA";
-          String time = sub.regularTime ?? sub.retakeTime ?? sub.referralTime ?? "TBA";
+          String examDate = "TBA";
+          String examTime = "TBA";
+
+          switch (sub.examType?.toLowerCase()) {
+            case "regular":
+              examDate = sub.regularDate ?? "TBA";
+              examTime = sub.regularTime ?? "TBA";
+              break;
+            case "retake":
+            case "resit":
+              examDate = sub.retakeDate ?? "TBA";
+              examTime = sub.retakeTime ?? "TBA";
+              break;
+            case "referral":
+              examDate = sub.referralDate ?? "TBA";
+              examTime = sub.referralTime ?? "TBA";
+              break;
+            default:
+              examDate = sub.regularDate ?? "TBA";
+              examTime = sub.regularTime ?? "TBA";
+              break;
+          }
 
           return Container(
             margin: const EdgeInsets.only(bottom: 10),
@@ -256,12 +279,19 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("${sub.subjectCode} - ${sub.subjectName}",
-                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  "${sub.subjectCode} - ${sub.subjectName}",
+                  style: const TextStyle(fontSize:14,fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 6),
                 _detailRow("Exam Type", sub.examType ?? ""),
-                _detailRow("Date", date),
-                _detailRow("Time", time),
+                _detailRow(
+                  "Date",
+                  (examDate.isNotEmpty && examDate.toLowerCase() != "tba")
+                      ? parseDate(examDate)
+                      : "TBA",
+                ),
+                _detailRow("Time", examTime),
                 _detailRow("Room", sub.examRoom ?? ""),
               ],
             ),
@@ -274,7 +304,10 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
   Widget _detailRow(String label, String value) {
     return Row(
       children: [
-        Expanded(flex: 2, child: Text("$label:", style: const TextStyle(fontWeight: FontWeight.w600))),
+        Expanded(
+            flex: 2,
+            child: Text("$label:",
+                style: const TextStyle(fontWeight: FontWeight.w600))),
         Expanded(flex: 3, child: Text(value)),
       ],
     );
