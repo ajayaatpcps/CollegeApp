@@ -102,8 +102,8 @@ class _StudentFeesState extends State<StudentFees> {
                 ),
                 ReceiptsPage(
                     receipts: viewModel.currentDetails?.receipts ?? []),
-                // const PaymentMethod()
-                const Center(child: Text('Feature will be available soon!'),)
+                const PaymentMethod()
+                // const Center(child: Text('Feature will be available soon!'),)
               ],
             );
           },
