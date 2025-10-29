@@ -31,7 +31,7 @@ class _StudentIdCardState extends State<StudentIdCard> {
         ),
         actions: const [
           Image(
-            image: AssetImage('assets/images/pcpsLogo.png'),
+            image: AssetImage('assets/images/lbef.png'),
             width: 70,
             height: 50,
             fit: BoxFit.contain,
@@ -61,7 +61,7 @@ class _StudentIdCardState extends State<StudentIdCard> {
                     const SizedBox(
                       width: double.infinity,
                       child: Image(
-                        image: AssetImage("assets/images/pcpsLogo.png"),
+                        image: AssetImage("assets/images/lbef.png"),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -76,7 +76,7 @@ class _StudentIdCardState extends State<StudentIdCard> {
                               flex: 1,
                               child: Padding(
                                 padding:
-                                    const EdgeInsets.symmetric(vertical: 20),
+                                const EdgeInsets.symmetric(vertical: 20),
                                 child: RotatedBox(
                                   quarterTurns: 3,
                                   child: BarcodeWidget(
@@ -119,15 +119,15 @@ class _StudentIdCardState extends State<StudentIdCard> {
                                   },
                                   errorBuilder: (context, error, stackTrace) =>
                                       Container(
-                                    color: Colors.white,
-                                    child: Center(
-                                      child: Icon(
-                                        Icons.school,
-                                        color: AppColors.primary,
-                                        size: 40,
+                                        color: Colors.white,
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.school,
+                                            color: AppColors.primary,
+                                            size: 40,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
                                 ),
                               ),
                             ),
@@ -177,14 +177,15 @@ class _StudentIdCardState extends State<StudentIdCard> {
                     ),
 
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(
-                            flex: 2,
+                          SizedBox(
+                            width:140,
                             child: Image.asset(
-                              "assets/images/bedsLogo.png",
+                              "assets/images/apu.PNG",
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -194,7 +195,7 @@ class _StudentIdCardState extends State<StudentIdCard> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 SizedBox(
-                                  width: 80,
+                                  width: 90,
                                   child: Image.asset(
                                     "assets/images/sign.png",
                                     fit: BoxFit.contain,
@@ -204,7 +205,7 @@ class _StudentIdCardState extends State<StudentIdCard> {
                                 const Text(
                                   "Signature",
                                   style: TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 16,
                                     color: Colors.black,
 
                                     fontWeight: FontWeight.w600,
@@ -223,12 +224,12 @@ class _StudentIdCardState extends State<StudentIdCard> {
                       child: const Column(
                         children: [
                           Text(
-                            "Kupondole, Lalitpur, Nepal  01-5181033",
+                            "Maiti Devi Marg, Kathmandu 44600, Nepal  980-1110200",
                             style: TextStyle(fontSize: 18, color: Colors.white),
                             textAlign: TextAlign.center,
                           ),
                           Text(
-                            "patancollege.edu.np",
+                            "lbef.org",
                             style: TextStyle(fontSize: 18, color: Colors.white),
                             textAlign: TextAlign.center,
                           ),

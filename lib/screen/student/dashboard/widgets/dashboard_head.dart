@@ -59,19 +59,22 @@ class _DashboardHeadState extends State<DashboardHead> {
       'icon': Icons.laptop,
       'className': const AdmitCardScreen()
     },
-
     {
-      'text': 'Notice',
-      'icon': Icons.notifications,
-      'className': const NoticeBoard()
+      'text': 'Student Id Card',
+      'icon': Icons.badge,
+      'className': const StudentIdCard()
     },
     {
       'text': 'Calendar',
       'icon': Icons.calendar_month,
       'className': const CalendarScreen()
     },
-    {'text': 'Ap space', 'icon': Icons.web, 'link': 'https://apspace.apu.edu.my/login'},
 
+    {
+      'text': 'Notice',
+      'icon': Icons.notifications,
+      'className': const NoticeBoard()
+    },
     {
       'text': "Download forms",
       'icon': Icons.assignment,

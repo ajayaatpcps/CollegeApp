@@ -141,54 +141,56 @@ class _ClassRoutinesState extends State<ClassRoutines> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Consumer<ClassRoutineViewModel>(
-                builder: (context, viewModel, child) {
-                  final List<Times>? times = viewModel.currentDetails?.times;
-                  final Map<String, dynamic>? detail =
-                      viewModel.currentDetails?.detail;
-                  final List<DayItem>? days = viewModel.currentDetails?.days;
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Consumer<ClassRoutineViewModel>(
+                  builder: (context, viewModel, child) {
+                    final List<Times>? times = viewModel.currentDetails?.times;
+                    final Map<String, dynamic>? detail =
+                        viewModel.currentDetails?.detail;
+                    final List<DayItem>? days = viewModel.currentDetails?.days;
 
-                  if (viewModel.isLoading) {
-                    return const SkeletonLoader();
-                  }
+                    if (viewModel.isLoading) {
+                      return const SkeletonLoader();
+                    }
 
-                  if (viewModel.currentDetails == null ||
-                      times == null ||
-                      detail == null ||
-                      days == null) {
+                    if (viewModel.currentDetails == null ||
+                        times == null ||
+                        detail == null ||
+                        days == null) {
+                      return Column(
+                        children: [
+                          _buildDayTabs(),
+                          const SizedBox(height: 10),
+                          SizedBox(
+                            height: 100,
+                            child: BuildNoData(
+                              size,
+                              "No Routine available",
+                              Icons.calendar_month,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+
                     return Column(
                       children: [
                         _buildDayTabs(),
                         const SizedBox(height: 10),
-                        SizedBox(
-                          height: 100,
-                          child: BuildNoData(
-                            size,
-                            "No Routine available",
-                            Icons.calendar_month,
-                          ),
+                        DayDetails(
+                          day: this.days[index],
+                          times: times,
+                          days: days,
+                          detail: detail,
                         ),
                       ],
                     );
-                  }
-
-                  return Column(
-                    children: [
-                      _buildDayTabs(),
-                      const SizedBox(height: 10),
-                      DayDetails(
-                        day: this.days[index],
-                        times: times,
-                        days: days,
-                        detail: detail,
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ],
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
