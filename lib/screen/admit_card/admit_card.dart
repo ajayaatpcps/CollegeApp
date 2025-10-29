@@ -51,12 +51,17 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
           }
 
           if (admitVM.userData.status == Status.ERROR) {
-            return SizedBox(
-                height: 100,
-                child: BuildNoData(
-                    MediaQuery.of(context).size,
-                    admitVM.userData.message ?? "No Data Available",
-                    Icons.do_not_disturb_alt));
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                    height: 100,
+                    child: BuildNoData(
+                        MediaQuery.of(context).size,
+                        admitVM.userData.message ?? "No Data Available",
+                        Icons.do_not_disturb_alt)),
+              ],
+            );
           }
 
           if (data == null) {
