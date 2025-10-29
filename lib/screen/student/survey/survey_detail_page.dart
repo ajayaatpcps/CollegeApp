@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:lbef/utils/parse_date.dart';
 import 'package:lbef/view_model/survery_view_model.dart';
+import 'package:lbef/widgets/form_widget/custom_button.dart';
 import 'package:provider/provider.dart';
 
 class SurveyDetailPage extends StatefulWidget {
   final String surveyKey;
   const SurveyDetailPage({super.key, required this.surveyKey});
-
   @override
   State<SurveyDetailPage> createState() => _SurveyDetailPageState();
 }
@@ -33,12 +33,29 @@ class _SurveyDetailPageState extends State<SurveyDetailPage> {
 
   Future<void> _handleSubmit() async {
     final vm = Provider.of<SurveryViewModel>(context, listen: false);
+    final surveyDetails = vm.currentDetails;
+
+    if (surveyDetails == null) return;
+
+    // ✅ Validation: ensure all questions are answered
+    final unanswered = surveyDetails.lQuestions
+        ?.where((q) => !_answers.containsKey(q.questionId.toString()) || _answers[q.questionId.toString()] == null)
+        .toList() ??
+        [];
+
+    if (unanswered.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please answer all questions before submitting."),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
     setState(() {
       _submitting = true;
     });
-
-    final surveyDetails = vm.currentDetails;
-    if (surveyDetails == null) return;
 
     final payload = {
       "survey_key": surveyDetails.surveyKey,
@@ -54,9 +71,8 @@ class _SurveyDetailPageState extends State<SurveyDetailPage> {
         _submitted = true;
       });
 
-      // Refresh survey list and current survey details
-      await vm.fetch(context); // Refresh the main survey list
-      await vm.getSurveyDetails(surveyDetails.surveyKey!, context); // Refresh current survey details
+      await vm.fetch(context);
+      await vm.getSurveyDetails(surveyDetails.surveyKey!, context);
     }
 
     setState(() {
@@ -64,9 +80,11 @@ class _SurveyDetailPageState extends State<SurveyDetailPage> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final isSmallScreen = size.width < 400;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Survey Detail"),
@@ -82,19 +100,20 @@ class _SurveyDetailPageState extends State<SurveyDetailPage> {
           }
 
           final survey = vm.currentDetails;
-
           if (survey == null) {
-            return const Center(
-              child: Text("Failed to load survey details."),
-            );
+            return const Center(child: Text("Failed to load survey details."));
           }
 
           if (_submitted) {
             return const Center(
-              child: Text(
-                "✅ Thank you! Your feedback has been submitted successfully.",
-                style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Text(
+                  "✅ Thank you! Your feedback has been submitted successfully.",
+                  style: TextStyle(
+                      color: Colors.green, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
               ),
             );
           }
@@ -112,16 +131,19 @@ class _SurveyDetailPageState extends State<SurveyDetailPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Survey Meta Info
+                // Survey Info
                 Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text("Status: ${survey.status ?? '-'}"),
                       const SizedBox(height: 4),
                       Text(
-                          "Publish: ${survey.publishDate!=null? parseDate(survey.publishDate.toString()): '-'} | Expiry: ${survey.expiryDate !=null? parseDate(survey.publishDate.toString()): '-'}"),
+                        "Publish: ${survey.publishDate != null ? parseDate(survey.publishDate.toString()) : '-'}"
+                            " | Expiry: ${survey.expiryDate != null ? parseDate(survey.expiryDate.toString()) : '-'}",
+                        style: TextStyle(fontSize: isSmallScreen ? 12 : 14),
+                      ),
                       const SizedBox(height: 8),
                       Text(
                         "Total Questions: ${survey.lQuestions?.length ?? 0}",
@@ -137,7 +159,7 @@ class _SurveyDetailPageState extends State<SurveyDetailPage> {
                   final index = entry.key;
                   final q = entry.value;
                   return Card(
-                   color: Colors.white,
+                    color: Colors.white,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8)),
                     margin: const EdgeInsets.only(bottom: 16),
@@ -148,62 +170,100 @@ class _SurveyDetailPageState extends State<SurveyDetailPage> {
                         children: [
                           Text(
                             "${index + 1}. ${q.question ?? ''}",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: isSmallScreen ? 14 : 16,
+                            ),
                           ),
                           const SizedBox(height: 12),
+
+                          // Likert 1 to 5
                           if (q.answerType == "Likert1to5")
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: List.generate(5, (i) {
-                                return Column(
-                                  children: [
-                                    Radio<int>(
-                                      value: i + 1,
-                                      groupValue: _answers[q.questionId.toString()],
-                                      onChanged: (val) =>
-                                          _handleChange(q.questionId.toString(), val),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Labels on separate lines
+                                Padding(
+                                  padding:
+                                  const EdgeInsets.symmetric(vertical: 6),
+                                  child: Text(
+                                    "Strongly Disagree → Strongly Agree",
+                                    style: TextStyle(
+                                      fontSize: isSmallScreen ? 10 : 12,
+                                      color: Colors.grey[700],
                                     ),
-                                    Text(
-                                      likertLabels[i],
-                                      style: const TextStyle(fontSize: 10),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                );
-                              }),
+                                  ),
+                                ),
+                                Wrap(
+                                  alignment: WrapAlignment.spaceBetween,
+                                  spacing: 8,
+                                  children: List.generate(5, (i) {
+                                    return Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Radio<int>(
+                                          value: i + 1,
+                                          groupValue: _answers[
+                                          q.questionId.toString()],
+                                          onChanged: (val) => _handleChange(
+                                              q.questionId.toString(), val),
+                                        ),
+                                        Text(
+                                          "${i + 1}",
+                                          style: TextStyle(
+                                              fontSize:
+                                              isSmallScreen ? 10 : 12),
+                                        ),
+                                      ],
+                                    );
+                                  }),
+                                ),
+                              ],
                             ),
+
+                          // Likert 1 to 10
                           if (q.answerType == "Likert1to10")
                             Wrap(
-                              spacing: 8,
+                              spacing: 6,
+                              runSpacing: 4,
                               children: List.generate(10, (i) {
                                 return Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Radio<int>(
                                       value: i + 1,
-                                      groupValue: _answers[q.questionId.toString()],
-                                      onChanged: (val) =>
-                                          _handleChange(q.questionId.toString(), val),
+                                      groupValue:
+                                      _answers[q.questionId.toString()],
+                                      onChanged: (val) => _handleChange(
+                                          q.questionId.toString(), val),
                                     ),
-                                    Text("${i + 1}", style: const TextStyle(fontSize: 12))
+                                    Text("${i + 1}",
+                                        style: TextStyle(
+                                            fontSize:
+                                            isSmallScreen ? 10 : 12)),
                                   ],
                                 );
                               }),
                             ),
+
+                          // Text Inputs
                           if (q.answerType == "SingleLine")
                             TextField(
                               onChanged: (val) =>
-                                  _handleChange(q.questionId.toString as String, val),
+                                  _handleChange(q.questionId.toString(), val),
                               decoration: const InputDecoration(
-                                  hintText: "Type your answer..."),
+                                hintText: "Type your answer...",
+                                border: OutlineInputBorder(),
+                              ),
                             ),
                           if (q.answerType == "MultiLine")
                             TextField(
                               onChanged: (val) =>
                                   _handleChange(q.questionId.toString(), val),
                               decoration: const InputDecoration(
-                                  hintText: "Write your answer..."),
+                                hintText: "Write your answer...",
+                                border: OutlineInputBorder(),
+                              ),
                               minLines: 3,
                               maxLines: 6,
                             ),
@@ -213,13 +273,17 @@ class _SurveyDetailPageState extends State<SurveyDetailPage> {
                   );
                 }).toList(),
 
-                // Submit button
+                const SizedBox(height: 20),
+
+                // Submit Button
                 Center(
-                  child: ElevatedButton(
-                    onPressed: _submitting ? null : _handleSubmit,
-                    child: Text(_submitting ? "Submitting..." : "Submit Feedback"),
+                  child: CustomButton(
+                    text: _submitting ? "Submitting..." : "Submit Feedback",
+                    onPressed: _submitting ? () {} : _handleSubmit,
+                    isLoading: _submitting,
+                    btnwid: isSmallScreen ? size.width * 0.9 : 300,
                   ),
-                )
+                ),
               ],
             ),
           );
