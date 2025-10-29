@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:lbef/model/admit_card_model.dart';
 import 'package:lbef/resource/colors.dart';
 import 'package:lbef/view_model/user_view_model/admit_card_view_model.dart';
+import 'package:lbef/view_model/theme_provider.dart';
 
 class AdmitCardScreen extends StatefulWidget {
   const AdmitCardScreen({super.key});
@@ -31,81 +32,91 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
   @override
   Widget build(BuildContext context) {
     final admitVM = Provider.of<AdmitCardViewModel>(context);
-
     final data = admitVM.userData.data;
 
-    return Scaffold(
-      appBar: AppBar(
-        title:
-            const Text("Admit Card", style: TextStyle(fontFamily: 'poppins')),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: AppColors.primary),
-          onPressed: () => Navigator.pop(context),
-          iconSize: 18,
-        ),
-      ),
-      body: SafeArea(
-        child: Builder(builder: (context) {
-          if (admitVM.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (admitVM.userData.status == Status.ERROR) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                    height: 100,
-                    child: BuildNoData(
-                        MediaQuery.of(context).size,
-                        admitVM.userData.message ?? "No Data Available",
-                        Icons.do_not_disturb_alt)),
-              ],
-            );
-          }
-
-          if (data == null) {
-            return const Center(
-              child: Text(
-                "Admit Card not available.",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-              ),
-            );
-          }
-
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Card(
-              color: Colors.white,
-              elevation: 3,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(18),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildHeader(),
-                    const Divider(thickness: 1),
-                    _buildExamTitle(data),
-                    const SizedBox(height: 10),
-                    _buildStudentInfo(data),
-                    const SizedBox(height: 20),
-                    _buildSubjects(data.subjects ?? []),
-                    const SizedBox(height: 24),
-                    _buildInstructions(data.instructions ?? ""),
-                  ],
-                ),
-              ),
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return Scaffold(
+          backgroundColor: themeProvider.isDarkMode ? Colors.black : Colors.white,
+          appBar: AppBar(
+            title: const Text("Admit Card", style: TextStyle(fontFamily: 'poppins')),
+            backgroundColor: themeProvider.isDarkMode ? Colors.black : Colors.white,
+            foregroundColor: themeProvider.isDarkMode ? Colors.white : AppColors.primary,
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back_ios,
+                  color: themeProvider.isDarkMode ? Colors.white : AppColors.primary),
+              onPressed: () => Navigator.pop(context),
+              iconSize: 18,
             ),
-          );
-        }),
-      ),
+          ),
+          body: SafeArea(
+            child: Builder(builder: (context) {
+              if (admitVM.isLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (admitVM.userData.status == Status.ERROR) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 100,
+                      child: BuildNoData(
+                          MediaQuery.of(context).size,
+                          admitVM.userData.message ?? "No Data Available",
+                          Icons.do_not_disturb_alt),
+                    ),
+                  ],
+                );
+              }
+
+              if (data == null) {
+                return Center(
+                  child: Text(
+                    "Admit Card not available.",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: themeProvider.isDarkMode ? Colors.white70 : Colors.black,
+                    ),
+                  ),
+                );
+              }
+
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Card(
+                  color: themeProvider.isDarkMode ? Colors.grey[900] : Colors.white,
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(18),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildHeader(),
+                        const Divider(thickness: 1),
+                        _buildExamTitle(data, themeProvider),
+                        const SizedBox(height: 10),
+                        _buildStudentInfo(data, themeProvider),
+                        const SizedBox(height: 20),
+                        _buildSubjects(data.subjects ?? [], themeProvider),
+                        const SizedBox(height: 24),
+                        _buildInstructions(data.instructions ?? "", themeProvider),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ),
+        );
+      },
     );
   }
 
-  // ===== HEADER =====
   Widget _buildHeader() {
     return Column(
       children: [
@@ -120,19 +131,21 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
     );
   }
 
-  // ===== EXAM TITLE =====
-  Widget _buildExamTitle(AdmitCardModel data) {
+  Widget _buildExamTitle(AdmitCardModel data, ThemeProvider themeProvider) {
     return Center(
       child: Text(
-        "${data.examName}",
+        data.examName ?? "",
         textAlign: TextAlign.center,
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+          color: themeProvider.isDarkMode ? Colors.white : Colors.black,
+        ),
       ),
     );
   }
 
-  // ===== STUDENT INFO =====
-  Widget _buildStudentInfo(AdmitCardModel data) {
+  Widget _buildStudentInfo(AdmitCardModel data, ThemeProvider themeProvider) {
     final venue = (data.venue ?? "").trim().isEmpty
         ? "Patan College for Professional Studies"
         : data.venue!;
@@ -143,8 +156,8 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
 
         String? image =
             "${BaseUrl.imageDisplay}/html/profiles/students/${user?.stuProfilePath}/${user?.stuPhoto}";
-        var logger = Logger();
-        logger.d(image);
+        Logger().d(image);
+
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -153,17 +166,18 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _infoRow("Student Name", data.studentName ?? "", bold: true),
-                  _infoRow("Student Roll No", user?.stuRollNo ?? "N/A"),
-                  _infoRow("University Roll No", data.stuUnivRollNo ?? "N/A"),
-                  _infoRow("Course", data.courseShortName ?? ""),
-                  _infoRow("Semester", data.semesterName ?? ""),
+                  _infoRow("Student Name", data.studentName ?? "", themeProvider, bold: true),
+                  _infoRow("Student Roll No", user?.stuRollNo ?? "N/A", themeProvider),
+                  _infoRow("University Roll No", data.stuUnivRollNo ?? "N/A", themeProvider),
+                  _infoRow("Course", data.courseShortName ?? "", themeProvider),
+                  _infoRow("Semester", data.semesterName ?? "", themeProvider),
                   _infoRow(
                       "Exam Start Date",
                       data.examStart != null
                           ? parseDate(data.examStart.toString())
-                          : "Enquire with RTO Department"),
-                  _infoRow("Venue", venue),
+                          : "Enquire with RTO Department",
+                      themeProvider),
+                  _infoRow("Venue", venue, themeProvider),
                 ],
               ),
             ),
@@ -190,7 +204,7 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
                   errorBuilder: (context, error, stackTrace) => Container(
                     width: 90,
                     height: 100,
-                    color: Colors.white,
+                    color: themeProvider.isDarkMode ? Colors.grey[700] : Colors.white,
                     child: Center(
                       child: Icon(
                         Icons.school,
@@ -208,7 +222,7 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
     );
   }
 
-  Widget _infoRow(String label, String value, {bool bold = false}) {
+  Widget _infoRow(String label, String value, ThemeProvider themeProvider, {bool bold = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
@@ -221,32 +235,45 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
               style: TextStyle(
                 fontWeight: bold ? FontWeight.bold : FontWeight.w600,
                 fontSize: 13,
+                color: themeProvider.isDarkMode ? Colors.white70 : Colors.black,
               ),
             ),
           ),
           Expanded(
-              flex: 3,
-              child: Text(value, style: const TextStyle(fontSize: 13))),
+            flex: 3,
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 13,
+                color: themeProvider.isDarkMode ? Colors.white70 : Colors.black,
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  // ===== SUBJECTS =====
-  Widget _buildSubjects(List<Subjects> subjects) {
+  Widget _buildSubjects(List<Subjects> subjects, ThemeProvider themeProvider) {
     if (subjects.isEmpty) {
-      return const Text(
+      return Text(
         "No subjects found.",
-        style: TextStyle(color: Colors.grey),
+        style: TextStyle(
+          color: themeProvider.isDarkMode ? Colors.white54 : Colors.grey,
+        ),
       );
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           "Exam Schedule",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: themeProvider.isDarkMode ? Colors.white : Colors.black,
+          ),
         ),
         const SizedBox(height: 8),
         ...subjects.map((sub) {
@@ -277,27 +304,34 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
             margin: const EdgeInsets.only(bottom: 10),
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.grey[100],
+              color: themeProvider.isDarkMode ? Colors.grey[850] : Colors.grey[100],
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey[300]!),
+              border: Border.all(
+                color: themeProvider.isDarkMode ? Colors.grey[700]! : Colors.grey[300]!,
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   "${sub.subjectCode} - ${sub.subjectName}",
-                  style: const TextStyle(fontSize:14,fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: themeProvider.isDarkMode ? Colors.white : Colors.black,
+                  ),
                 ),
                 const SizedBox(height: 6),
-                _detailRow("Exam Type", sub.examType ?? ""),
+                _detailRow("Exam Type", sub.examType ?? "", themeProvider),
                 _detailRow(
                   "Date",
                   (examDate.isNotEmpty && examDate.toLowerCase() != "tba")
                       ? parseDate(examDate)
                       : "TBA",
+                  themeProvider,
                 ),
-                _detailRow("Time", examTime),
-                _detailRow("Room", sub.examRoom ?? ""),
+                _detailRow("Time", examTime, themeProvider),
+                _detailRow("Room", sub.examRoom ?? "", themeProvider),
               ],
             ),
           );
@@ -306,42 +340,65 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
     );
   }
 
-  Widget _detailRow(String label, String value) {
+  Widget _detailRow(String label, String value, ThemeProvider themeProvider) {
     return Row(
       children: [
         Expanded(
-            flex: 2,
-            child: Text("$label:",
-                style: const TextStyle(fontWeight: FontWeight.w600))),
-        Expanded(flex: 3, child: Text(value)),
+          flex: 2,
+          child: Text(
+            "$label:",
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: themeProvider.isDarkMode ? Colors.white70 : Colors.black,
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 3,
+          child: Text(
+            value,
+            style: TextStyle(
+              color: themeProvider.isDarkMode ? Colors.white70 : Colors.black,
+            ),
+          ),
+        ),
       ],
     );
   }
 
-  // ===== INSTRUCTIONS =====
-  Widget _buildInstructions(String instructions) {
+  Widget _buildInstructions(String instructions, ThemeProvider themeProvider) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Important Instructions",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        Text(
+          "Important Instructions",
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: themeProvider.isDarkMode ? Colors.white : Colors.black,
+          ),
+        ),
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            color: Colors.grey[50],
+            color: themeProvider.isDarkMode ? Colors.grey[850] : Colors.grey[50],
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey[300]!),
+            border: Border.all(
+              color: themeProvider.isDarkMode ? Colors.grey[700]! : Colors.grey[300]!,
+            ),
           ),
           padding: const EdgeInsets.all(12),
           child: Text(
-            (instructions.isEmpty)
-                ? "No instructions provided."
-                : instructions.trim(),
-            style: const TextStyle(fontSize: 13, height: 1.4),
+            (instructions.isEmpty) ? "No instructions provided." : instructions.trim(),
+            style: TextStyle(
+              fontSize: 13,
+              height: 1.4,
+              color: themeProvider.isDarkMode ? Colors.white70 : Colors.black,
+            ),
           ),
         ),
         const SizedBox(height: 12),
-        const Center(
+        Center(
           child: Text(
             "Best of Luck!",
             style: TextStyle(
