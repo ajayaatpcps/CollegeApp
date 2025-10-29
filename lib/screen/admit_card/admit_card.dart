@@ -47,11 +47,9 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
           if (admitVM.isLoading ) {
             return const Center(child: CircularProgressIndicator());
           }
-
           if (admitVM.userData.status == Status.ERROR) {
             return SizedBox(height:100,child: BuildNoData(MediaQuery.of(context).size, admitVM.userData.message??"No Data Available" , Icons.do_not_disturb_alt));
           }
-
           if (data == null) {
             return const Center(
               child: Text(
@@ -60,9 +58,6 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
               ),
             );
           }
-
-
-
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Card(
@@ -105,17 +100,7 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
             Image.asset('assets/images/lbefHd.jpg', height: 50),
           ],
         ),
-        const SizedBox(height: 10),
-        const Text(
-          "Lord Buddha Education Foundation.",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          textAlign: TextAlign.center,
-        ),
-        const Text(
-          "Opposite Maiti Devi Temple, Kathmandu, Nepal",
-          style: TextStyle(color: Colors.grey, fontSize: 12),
-          textAlign: TextAlign.center,
-        ),
+
       ],
     );
   }
@@ -137,33 +122,33 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
         ? "Lord Buddha Education Foundation"
         : data.venue!;
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          flex: 4,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _infoRow("Student Name", data.studentName ?? "", bold: true),
-              _infoRow("University Roll No", data.stuUnivRollNo ?? "N/A"),
-              _infoRow("Course", data.courseShortName ?? ""),
-              _infoRow("Semester", data.semesterName ?? ""),
-              _infoRow("Exam Start Date", data.examStart ?? ""),
-              _infoRow("Venue", venue),
-            ],
-          ),
-        ),
-        const SizedBox(width: 10),
-        Consumer<UserDataViewModel>(
-          builder: (context, userDataViewModel, child) {
-            final user = userDataViewModel.currentUser;
-
-            String? image =
-                "${BaseUrl.imageDisplay}/html/profiles/students/${user?.stuProfilePath}/${user?.stuPhoto}";
-            var logger = Logger();
-            logger.d(image);
-            return SizedBox(
+    return Consumer<UserDataViewModel>(
+      builder: (context, userDataViewModel, child) {
+        final user = userDataViewModel.currentUser;
+        String? image =
+            "${BaseUrl.imageDisplay}/html/profiles/students/${user?.stuProfilePath}/${user?.stuPhoto}";
+        var logger = Logger();
+        logger.d(image);
+        return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 4,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _infoRow("Student Name", data.studentName ?? "", bold: true),
+                  _infoRow("University Roll No", data.stuUnivRollNo ?? "N/A"),
+                  _infoRow("Student Roll No", user?.stuRollNo ?? "N/A"),
+                  _infoRow("Course", data.courseShortName ?? ""),
+                  _infoRow("Semester", data.semesterName ?? ""),
+                  _infoRow("Exam Start Date", data.examStart ?? ""),
+                  _infoRow("Venue", venue),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            SizedBox(
               height: 100,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
@@ -197,11 +182,10 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
                       ),
                 ),
               ),
-            );
-          },
-        ),
-
-      ],
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -261,7 +245,7 @@ class _AdmitCardScreenState extends State<AdmitCardScreen> {
                 _detailRow("Exam Type", sub.examType ?? ""),
                 _detailRow("Date", date),
                 _detailRow("Time", time),
-                _detailRow("Room", sub.examRoom ?? ""),
+                _detailRow("Room", sub.examRoom ?? "Enquire with RTO department"),
               ],
             ),
           );
