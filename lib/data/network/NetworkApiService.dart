@@ -65,20 +65,54 @@ class NetworkApiService extends BaseApiServices {
   }
 
   @override
+  @override
   Future getApiResponse(String url) async {
     final headers = await _getHeaders();
     dynamic responseJson;
+
     try {
       final response = await http
           .get(Uri.parse(url), headers: headers)
           .timeout(const Duration(seconds: 10));
+
       var logger = Logger();
-// logger.d(jsonDecode(response.body));
+      logger.d(url);
+      logger.d("RAW RESPONSE: ${response.body}");
+
       responseJson = returnResponse(response);
+
     } on SocketException {
       throw FetchDataException("No internet Connection");
     }
     return responseJson;
+  }
+  dynamic _safeDecode(String raw) {
+    final cleaned = raw.trim();
+
+    // If already valid JSON
+    if (cleaned.startsWith('{') || cleaned.startsWith('[')) {
+      return jsonDecode(cleaned);
+    }
+
+    // Remove PHP warnings / HTML before JSON
+    final objStart = cleaned.indexOf('{');
+    final listStart = cleaned.indexOf('[');
+
+    int start = -1;
+    if (objStart == -1) {
+      start = listStart;
+    } else if (listStart == -1) {
+      start = objStart;
+    } else {
+      start = objStart < listStart ? objStart : listStart;
+    }
+
+    if (start == -1) {
+      throw FetchDataException("Invalid server response");
+    }
+
+    final jsonPart = cleaned.substring(start);
+    return jsonDecode(jsonPart);
   }
 
   @override
@@ -149,37 +183,48 @@ class NetworkApiService extends BaseApiServices {
   }
 
   dynamic returnResponse(http.Response response, {BuildContext? context}) {
-    final responseBody = jsonDecode(response.body);
+    dynamic responseBody;
+
+    try {
+      responseBody = _safeDecode(response.body);
+    } catch (e) {
+      throw FetchDataException("Invalid response from server");
+    }
+
     String errorMessage = "Something went wrong";
+
     if (responseBody is Map && responseBody.containsKey('err')) {
       errorMessage = responseBody['err'];
     } else if (responseBody is Map && responseBody.containsKey('message')) {
       errorMessage = responseBody['message'];
     }
+
     switch (response.statusCode) {
       case 200:
-        return responseBody;
       case 201:
         return responseBody;
+
       case 400:
         throw BadRequestException(errorMessage);
+
       case 401:
         throw UnAuthorizeException(errorMessage);
+
       case 403:
         throw FetchDataException("Forbidden: $errorMessage");
-      case 404:
 
-        throw NoDataException("Not Found: $errorMessage");
+      case 404:
+        throw NoDataException(errorMessage);
+
       case 410:
-        throw FetchDataException("Not Found: $errorMessage");
       case 500:
-        throw FetchDataException("Not Found: $errorMessage");
+        throw FetchDataException(errorMessage);
+
       default:
         throw FetchDataException(
-            'Error communicating with the server. Status code: ${response.statusCode}');
+            'Error communicating with server. Status: ${response.statusCode}');
     }
   }
-
   @override
   Future putUrlResponse(String url) async {
     final headers = await _getHeaders();

@@ -63,6 +63,8 @@ class SurveyRepository {
 
   Future<Map<String, dynamic>> fetchSurvey(BuildContext context) async {
     try {
+      logger.d("survey List ${SurveyEndpoints.fetch}");
+
       dynamic response = await _apiServices.getApiResponse(SurveyEndpoints.fetch);
 
       List<SurveyModel> surveyList = [];
@@ -89,7 +91,6 @@ class SurveyRepository {
       return {};
     }
   }
-
 
 
 
