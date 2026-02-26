@@ -132,9 +132,10 @@ class _LoginPageState extends State<LoginPage> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 InkWell(
-                                  onTap:(){
+                                  onTap: () {
                                     Navigator.of(context).push(
-                                      SlideRightRoute(page: const RecoverPassword()),
+                                      SlideRightRoute(
+                                          page: const RecoverPassword()),
                                     );
                                   },
                                   child: const Text(
@@ -191,21 +192,21 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(
                   height: 10,
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Column(
                     children: [
                       Text(
-                        '© 2025 PCPS. All Rights Reserved.',
-                        style: TextStyle(
+                        '© ${DateTime.now().year} PCPS. All Rights Reserved.',
+                        style: const TextStyle(
                           fontSize: 12,
                           color: Colors.grey,
                           fontFamily: 'poppins',
                         ),
                       ),
-                      SizedBox(height: 4),
-                      Text(
-                        'Designed, Built & Maintained by PCPS R&D',
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Designed, Built & Maintained by YakshaSoft',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey,

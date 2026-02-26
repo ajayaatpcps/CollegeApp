@@ -48,7 +48,7 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.wifi_off, size: 100, color: Color(0xFF393A8F)),
+              const Icon(Icons.wifi_off, size: 100, color: Color(0xff4469FF)),
               const SizedBox(height: 30),
               const Text(
                 'No Internet Connection',
@@ -76,7 +76,7 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
                 icon: const Icon(Icons.refresh),
                 label: const Text('Try Again'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF393A8F),
+                  backgroundColor: const Color(0xff4469FF),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(
                       horizontal: 32.0, vertical: 14.0),
@@ -100,12 +100,12 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   elevation: 3,
-                  color:  Colors.white,
+                  color: Colors.white,
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
                       children: [
-                        const Icon(Icons.wifi, color: Color(0xFF393A8F)),
+                        const Icon(Icons.wifi, color: Color(0xff4469FF)),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(
@@ -133,7 +133,8 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
                         ),
                         IconButton(
                           onPressed: () => copyToClipboard(access),
-                          icon: const Icon(Icons.copy, color: Color(0xFF393A8F)),
+                          icon:
+                              const Icon(Icons.copy, color: Color(0xff4469FF)),
                           tooltip: "Copy Password",
                         ),
                       ],

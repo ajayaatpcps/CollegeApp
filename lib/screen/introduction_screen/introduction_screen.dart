@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../auth/login_page.dart';
 
 class MyCollegeIntroScreen extends StatefulWidget {
@@ -72,7 +71,8 @@ class _MyCollegeIntroScreenState extends State<MyCollegeIntroScreen> {
         ],
         onDone: () => _onIntroEnd(context),
         showSkipButton: true,
-        skip: const Text('Skip'),
+        skip: const Text('Skip',
+            style: TextStyle(fontWeight: FontWeight.w600, color: Colors.blue)),
         next: const Icon(Icons.arrow_forward, color: Colors.blue),
         done: const Text("Get Started",
             style: TextStyle(fontWeight: FontWeight.w600, color: Colors.blue)),
