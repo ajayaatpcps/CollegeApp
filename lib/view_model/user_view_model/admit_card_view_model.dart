@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:lbef/model/admit_card_model.dart';
-import 'package:lbef/model/profile_model.dart';
 import 'package:lbef/repository/profile_repository/profile_repository.dart';
 import 'package:lbef/utils/utils.dart';
-import 'package:lbef/view_model/user_view_model/user_view_model.dart';
 import 'package:logger/logger.dart';
 import '../../data/api_response.dart';
 import '../../resource/routes_name.dart';

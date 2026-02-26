@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lbef/model/email_notice_model.dart';
-import 'package:lbef/model/notice_model.dart';
 import 'package:lbef/repository/notice_board/notice_board_repository.dart';
 import 'package:logger/logger.dart';
 import '../../data/api_response.dart';

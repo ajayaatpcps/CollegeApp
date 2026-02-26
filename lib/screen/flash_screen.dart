@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/status.dart';
-import '../resource/routes_name.dart';
 import '../view_model/user_view_model/current_user_model.dart';
 import '../widgets/no_internet_wrapper.dart';
 import 'introduction_screen/introduction_screen.dart';

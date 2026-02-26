@@ -8,7 +8,6 @@ import 'package:logger/logger.dart';
 import '../../data/api_response.dart';
 import '../../data/status.dart';
 import '../../repository/authentication_repo/auth_repository.dart';
-import '../../resource/routes_name.dart';
 import '../../utils/utils.dart';
 
 class AuthViewModel with ChangeNotifier {

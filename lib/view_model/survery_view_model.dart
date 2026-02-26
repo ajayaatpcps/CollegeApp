@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lbef/model/notice_model.dart';
 import 'package:lbef/model/survey_model.dart';
 import 'package:lbef/model/survey_question_model.dart';
-import 'package:lbef/repository/notice_board/notice_board_repository.dart';
 import 'package:lbef/repository/survey_repository/survey_repository.dart';
 import 'package:logger/logger.dart';
 import '../../data/api_response.dart';

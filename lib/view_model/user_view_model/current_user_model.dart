@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:lbef/data/status.dart';
 import 'package:lbef/model/profile_model.dart';
 import 'package:lbef/repository/profile_repository/profile_repository.dart';
 import 'package:lbef/utils/utils.dart';

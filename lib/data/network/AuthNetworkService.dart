@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:logger/logger.dart';
 import '../../model/user_model.dart';
 import '../../utils/utils.dart';
