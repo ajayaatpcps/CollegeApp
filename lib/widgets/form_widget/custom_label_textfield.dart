@@ -44,62 +44,62 @@ class CustomLabelTextfield extends StatefulWidget {
 class _CustomLabelTextfieldState extends State<CustomLabelTextfield> {
   @override
   Widget build(BuildContext context) {
-    return  Consumer<ThemeProvider>(
-        builder: (context, themeProvider, child) {
-         return SizedBox(
-            // height: 100,
-            width: widget.width,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.text,
-                    style: const TextStyle(
-                      fontFamily: 'poppins',
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  TextField(
-                    controller: widget.textController,
-                    onChanged: widget.onChanged,
-                    keyboardType: widget.keyboardType,
-                    style: const TextStyle(fontFamily: 'poppins', fontSize: 15),
-                    decoration: InputDecoration(
-                        helperText: widget.helper,
-                        helperStyle: widget.helperStyle,
-                        hintText: widget.hintText,
-                        hintStyle: const TextStyle(
-                          color: Colors.grey,
-                          fontFamily: 'poppins',
-                          fontSize: 16,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: BorderSide(
-                            color: widget.outlinedColor,
-                            width: 1.5,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: BorderSide(
-                            color: widget.focusedColor,
-                            width: 1.5,
-                          ),
-                        ),
-                        suffixIcon: widget.prefixicon,
-                        prefixIcon: widget.prefixicon,
-                        suffix: widget.suffixText),
-                  ),
-                ],
+    return Consumer<ThemeProvider>(builder: (context, themeProvider, child) {
+      return SizedBox(
+        // height: 100,
+        width: widget.width,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.text,
+                style: const TextStyle(
+                  fontFamily: 'poppins',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
               ),
-            ),
-          );
-        });
+              const SizedBox(
+                height: 8,
+              ),
+              TextField(
+                cursorColor: Colors.blue,
+                controller: widget.textController,
+                onChanged: widget.onChanged,
+                keyboardType: widget.keyboardType,
+                style: const TextStyle(fontFamily: 'poppins', fontSize: 15),
+                decoration: InputDecoration(
+                    helperText: widget.helper,
+                    helperStyle: widget.helperStyle,
+                    hintText: widget.hintText,
+                    hintStyle: const TextStyle(
+                      color: Colors.grey,
+                      fontFamily: 'poppins',
+                      fontSize: 16,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: BorderSide(
+                        color: widget.outlinedColor,
+                        width: 1.5,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: BorderSide(
+                        color: widget.focusedColor,
+                        width: 1.5,
+                      ),
+                    ),
+                    suffixIcon: widget.suffixicon,
+                    prefixIcon: widget.prefixicon,
+                    suffix: widget.suffixText),
+              ),
+            ],
+          ),
+        ),
+      );
+    });
   }
 }

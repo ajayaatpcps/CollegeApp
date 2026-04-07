@@ -3,7 +3,6 @@ import 'package:lbef/resource/colors.dart';
 import 'package:lbef/screen/student/dashboard/banner_widget.dart';
 import 'package:lbef/screen/student/dashboard/widgets/dashboard_head.dart';
 import 'package:lbef/screen/student/notice/notice.dart';
-import 'package:lbef/view_model/banner_view_model.dart';
 import 'package:lbef/view_model/notice_board/notice_board_view_model.dart';
 import 'package:lbef/view_model/survery_view_model.dart';
 import 'package:provider/provider.dart';

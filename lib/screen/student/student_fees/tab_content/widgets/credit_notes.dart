@@ -2,15 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:lbef/model/fee_model.dart';
 import 'package:lbef/utils/parse_date.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../../resource/colors.dart';
 import '../../../../../view_model/theme_provider.dart';
 import '../../../../../widgets/display_dialog/display_dialog.dart';
-import '../../../../../widgets/no_data/no_data_widget.dart';
 import '../dialog_content/credit_note_content.dart';
 
 Widget buildCreditNotesSection(List<CreditNotes> note, BuildContext context) {
-  final size = MediaQuery.of(context).size;
   final themeProvider=   Provider.of<ThemeProvider>(context, listen: false);
 
   return Column(

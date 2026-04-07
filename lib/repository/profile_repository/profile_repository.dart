@@ -4,6 +4,7 @@ import 'package:lbef/data/network/NetworkApiService.dart';
 import 'package:lbef/endpoints/profile_endpoints.dart';
 import 'package:lbef/model/admit_card_model.dart';
 import 'package:lbef/model/profile_model.dart';
+import 'package:lbef/model/student_model.dart';
 import 'package:logger/logger.dart';
 import '../../data/api_exception.dart';
 import '../../utils/utils.dart';
@@ -93,4 +94,29 @@ class ProfileRepository {
       return false;
     }
   }
+  Future<StudentProfileModel?> getStudentProfile(BuildContext context) async {
+    try {
+      _logger.d('Fetching student profile from ${ProfileEndpoints.getStudentProfile}');
+      final dynamic response =
+          await _apiServices.getApiResponse(ProfileEndpoints.getStudentProfile);
+      if (response == null) {
+        _logger.w('No response from getStudentProfile API');
+        Utils.flushBarErrorMessage("No response from server", context);
+        throw Exception("No response from server");
+      }
+      _logger.d('Fetched student profile response: $response');
+      return StudentProfileModel.fromJson(response);
+    } on TimeoutException {
+      _logger.e('Timeout: No internet connection for fetching student profile');
+      Utils.flushBarErrorMessage(
+          "No internet connection. Please try again later.", context);
+      throw Exception("No internet connection");
+    } catch (e) {
+      _logger.e('getStudentProfile error: $e');
+      Utils.flushBarErrorMessage(
+          'Failed to fetch student profile: $e', context);
+      throw e;
+    }
+  }
 }
+

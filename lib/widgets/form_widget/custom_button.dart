@@ -25,7 +25,6 @@ class CustomButton extends StatefulWidget {
 class _CustomButtonState extends State<CustomButton> {
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     const List<Color> _kDefaultRainbowColors = [
       Colors.red,
       Colors.orange,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lbef/data/status.dart';
 import 'package:lbef/model/dcr_detail_model.dart';
 import 'package:lbef/screen/student/daily_class_report/reports/stacked_reports.dart';
 import 'package:lbef/screen/student/daily_class_report/widgets/attendence_bar.dart';
@@ -10,9 +9,7 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import '../../../../resource/colors.dart';
 import '../../../../utils/format_time.dart';
-import '../../../../view_model/theme_provider.dart';
 import '../../../../widgets/no_data/no_data_widget.dart';
-import '../shimmer/class_card_shimmer.dart';
 import '../shimmer/report_shimmer.dart';
 
 class Reports extends StatefulWidget {

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:lbef/model/profile_model.dart';
+import 'package:lbef/model/student_model.dart';
 import 'package:lbef/repository/profile_repository/profile_repository.dart';
 import 'package:lbef/utils/utils.dart';
 import 'package:lbef/view_model/user_view_model/user_view_model.dart';
@@ -30,7 +31,7 @@ class UserDataViewModel with ChangeNotifier {
     try {
       ProfileModel? user = await _myRepo.getUser(context);
       if (user != null) {
-        await UserViewModel().saveWifiAccess(user.stuWifiAccess??'');
+        await UserViewModel().saveWifiAccess(user.stuWifiAccess ?? '');
         setUser(ApiResponse.completed(user));
       } else {
         _logger.w('getUser returned null');
@@ -50,21 +51,32 @@ class UserDataViewModel with ChangeNotifier {
     }
   }
 
-  Future<bool> changePassword(
-      BuildContext context, dynamic body) async {
+  Future<bool> changePassword(BuildContext context, dynamic body) async {
     setLoading(true);
     try {
-      bool? check =
-          await _myRepo.changePassword(context, body);
+      bool? check = await _myRepo.changePassword(context, body);
       if (check) {
         return true;
       } else {
         return false;
-
       }
     } catch (e) {
       _logger.e('getUser error: $e');
       return false;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  Future<StudentProfileModel?> getStudentProfile(BuildContext context) async {
+    setLoading(true);
+    try {
+      StudentProfileModel? profile = await _myRepo.getStudentProfile(context);
+      return profile;
+    } catch (e) {
+      _logger.e('getStudentProfile error: $e');
+      Utils.flushBarErrorMessage('Failed to fetch student profile', context);
+      return null;
     } finally {
       setLoading(false);
     }

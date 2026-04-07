@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:lbef/resource/colors.dart'; // Assuming AppColors is defined here
 
 class StatementsShimmer extends StatelessWidget {
   const StatementsShimmer({super.key});

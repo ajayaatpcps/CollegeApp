@@ -22,7 +22,6 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
 
   bool isLoading = false;
-  bool _isSubmitted = false;
 
   @override
   void initState() {
@@ -57,7 +56,11 @@ class _LoginPageState extends State<LoginPage> {
                     height: 140,
                   ),
                 ),
-                if (isLoading) const LinearProgressIndicator(),
+                if (isLoading)
+                  const LinearProgressIndicator(
+                    backgroundColor: Colors.transparent,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                  ),
                 const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Row(

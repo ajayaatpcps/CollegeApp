@@ -4,9 +4,6 @@ import 'package:lbef/screen/student/student_fees/tab_content/widgets/balance_car
 import 'package:lbef/screen/student/student_fees/tab_content/widgets/buildCreditSettlement.dart';
 import 'package:lbef/screen/student/student_fees/tab_content/widgets/credit_notes.dart';
 import 'package:lbef/widgets/no_data/no_data_widget.dart';
-import 'package:provider/provider.dart';
-
-import '../../../../view_model/theme_provider.dart';
 
 class Balance extends StatefulWidget {
   final List<CreditNotes>? credit;
@@ -55,7 +52,6 @@ class _BalanceState extends State<Balance> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final totals = calculateTotals();
-    final themeProvider=   Provider.of<ThemeProvider>(context, listen: false);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(15),

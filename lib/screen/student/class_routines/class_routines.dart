@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:lbef/model/routine_model.dart';
 import 'package:lbef/resource/colors.dart';
 import 'package:lbef/screen/student/class_routines/widgets/day_data.dart';
-import 'package:lbef/screen/student/class_routines/widgets/no_class_routine.dart';
 import 'package:lbef/widgets/no_data/no_data_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:lbef/view_model/class_routine/class_routine_view_model.dart';

@@ -6,10 +6,8 @@ import 'package:provider/provider.dart';
 
 import '../../../../../view_model/theme_provider.dart';
 import '../../../../../widgets/display_dialog/display_dialog.dart';
-import '../../../../../widgets/no_data/no_data_widget.dart';
 
 Widget buildCreditSettlement(List<CreditSettlementModel>? note, BuildContext context) {
-  final size = MediaQuery.of(context).size;
   final themeProvider=   Provider.of<ThemeProvider>(context, listen: false);
 
   return Column(

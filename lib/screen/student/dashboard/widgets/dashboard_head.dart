@@ -8,7 +8,6 @@ import 'package:lbef/screen/student/notice/notice.dart';
 import 'package:lbef/screen/student/profile/changePassword/change_password.dart';
 import 'package:lbef/screen/student/profile/recover_password/recover_password.dart';
 import 'package:lbef/screen/student/survey/survey_page.dart';
-import 'package:lbef/screen/student/view_my_profile/view_my_profile.dart';
 import 'package:lbef/utils/navigate_to.dart';
 import 'package:lbef/view_model/survery_view_model.dart';
 import 'package:lbef/widgets/custom_shimmer.dart';

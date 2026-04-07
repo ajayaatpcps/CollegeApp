@@ -8,6 +8,7 @@ import 'package:lbef/screen/student/profile/profile.dart';
 import 'package:lbef/screen/student/student_fees/student_fees.dart';
 import 'package:lbef/widgets/Dialog/alert.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../view_model/theme_provider.dart';
 import '../../view_model/user_view_model/current_user_model.dart';
 import '../student/application/application.dart';
@@ -27,9 +28,13 @@ class _StudentNavbarState extends State<StudentNavbar> {
   @override
   void initState() {
     super.initState();
-    fetch();
     _selectedIndex = widget.index ?? 0;
     _pageController = PageController(initialPage: _selectedIndex);
+    // Fetch user data then check profile status
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      fetch();
+      _checkProfileStatus();
+    });
   }
 
   @override
@@ -41,6 +46,139 @@ class _StudentNavbarState extends State<StudentNavbar> {
   void fetch() async {
     await Provider.of<UserDataViewModel>(context, listen: false)
         .getUser(context);
+  }
+
+  /// Checks profile_status; if incomplete, show blocking dialog
+  void _checkProfileStatus() async {
+    final profileViewModel =
+        Provider.of<UserDataViewModel>(context, listen: false);
+
+    final profile = await profileViewModel.getStudentProfile(context);
+
+    if (!mounted) return;
+
+    if (profile != null && profile.profileStatus?.toLowerCase() != 'complete') {
+      _showIncompleteProfileDialog();
+    }
+  }
+
+  void _showIncompleteProfileDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => PopScope(
+        canPop: false,
+        child: AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          icon: const Icon(Icons.account_circle_outlined,
+              color: Colors.orange, size: 52),
+          title: const Text(
+            'Complete Your Profile',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Your profile is incomplete. Please complete it to access the app.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                ),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.lightbulb_outline,
+                            color: Colors.orange, size: 16),
+                        SizedBox(width: 6),
+                        Text(
+                          'Tips for best experience',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                            color: Colors.orange,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    _TipRow(
+                      icon: Icons.computer,
+                      text: 'Use a PC/laptop for a better form experience.',
+                    ),
+                    SizedBox(height: 4),
+                    _TipRow(
+                      icon: Icons.wifi,
+                      text: 'Ensure a stable internet connection.',
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 14),
+              const Text(
+                'You will be redirected to PCPS Life website.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.grey,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actionsPadding: const EdgeInsets.only(bottom: 16),
+          actions: [
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 28, vertical: 13),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+              ),
+              icon: const Icon(Icons.open_in_browser, size: 20),
+              label: const Text(
+                'Go to PCPS Life',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
+              onPressed: () => _launchProfileUrl(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _launchProfileUrl() async {
+    final Uri url = Uri.parse('https://pcpslife.patancollege.edu.np');
+    try {
+      await launchUrl(
+        url,
+        mode: LaunchMode.externalApplication,
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'Could not open browser. Please visit pcpslife.patancollege.edu.np manually.'),
+          ),
+        );
+      }
+    }
   }
 
   final List<Widget> _pages = const [
@@ -190,6 +328,30 @@ class _StudentNavbarState extends State<StudentNavbar> {
               },
             );
           })),
+    );
+  }
+}
+
+class _TipRow extends StatelessWidget {
+  final IconData icon;
+  final String text;
+
+  const _TipRow({required this.icon, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 15, color: Colors.grey[700]),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+          ),
+        ),
+      ],
     );
   }
 }

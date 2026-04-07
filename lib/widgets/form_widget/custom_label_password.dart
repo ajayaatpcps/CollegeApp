@@ -58,6 +58,7 @@ class _PasswordTextfieldState extends State<PasswordTextfield> {
           ),
           const SizedBox(height: 4),
           TextField(
+            cursorColor: Colors.blue,
             controller: widget.textController,
             onChanged: widget.onChanged,
             keyboardType: widget.keyboardType,
@@ -88,20 +89,20 @@ class _PasswordTextfieldState extends State<PasswordTextfield> {
                 ),
               ),
               suffixIcon:
-              widget.obscureText // Show toggle only for password fields
-                  ? IconButton(
-                icon: Icon(
-                  isPasswordVisible
-                      ? Icons.visibility_off
-                      : Icons.visibility,
-                ),
-                onPressed: () {
-                  setState(() {
-                    isPasswordVisible = !isPasswordVisible;
-                  });
-                },
-              )
-                  : null,
+                  widget.obscureText // Show toggle only for password fields
+                      ? IconButton(
+                          icon: Icon(
+                            isPasswordVisible
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              isPasswordVisible = !isPasswordVisible;
+                            });
+                          },
+                        )
+                      : null,
             ),
           ),
         ],
