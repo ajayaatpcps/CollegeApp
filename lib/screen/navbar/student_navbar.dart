@@ -89,7 +89,11 @@ class _StudentNavbarState extends State<StudentNavbar> {
 
   Future<void> _promptBiometricSetup() async {
     final pageContext = context;
+    // Capture theme BEFORE the async sheet opens
+    final isDark = Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
+
     await showModalBottomSheet(
+      backgroundColor: isDark ? Colors.grey[900] : Colors.white,
       context: pageContext,
       isDismissible: true,
       enableDrag: true,
@@ -102,24 +106,33 @@ class _StudentNavbarState extends State<StudentNavbar> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 40, height: 4,
+              width: 40,
+              height: 4,
               margin: const EdgeInsets.only(bottom: 20),
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: isDark ? Colors.grey[700] : Colors.grey[300],
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
             Icon(Icons.fingerprint, size: 60, color: AppColors.primary),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'Enable Fingerprint Login?',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black,
+              ),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Skip entering your password next time.\nUse your fingerprint to log in instantly.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey, fontSize: 14, height: 1.5),
+              style: TextStyle(
+                color: isDark ? Colors.grey[400] : Colors.grey,
+                fontSize: 14,
+                height: 1.5,
+              ),
             ),
             const SizedBox(height: 28),
             Row(
@@ -129,10 +142,14 @@ class _StudentNavbarState extends State<StudentNavbar> {
                     onPressed: () async {
                       final prefs = await SharedPreferences.getInstance();
                       await prefs.setBool('biometric_prompt_dismissed', true);
-                      Navigator.of(context).pop();
+                      Navigator.of(sheetContext).pop();
                     },
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
+                      side: BorderSide(
+                        color: isDark ? Colors.grey[600]! : Colors.grey[300]!,
+                      ),
+                      foregroundColor: isDark ? Colors.white : Colors.black,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),
                     ),
@@ -183,41 +200,51 @@ class _StudentNavbarState extends State<StudentNavbar> {
   }
 
   void _showIncompleteProfileDialog() {
+    final isDark = Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
+
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => PopScope(
         canPop: false,
         child: AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          backgroundColor: isDark ? Colors.grey[900] : Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           icon: const Icon(Icons.account_circle_outlined,
               color: Colors.orange, size: 52),
-          title: const Text(
+          title: Text(
             'Complete Your Profile',
             textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              color: isDark ? Colors.white : Colors.black,
+            ),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+              Text(
                 'Your profile is incomplete. Please complete it to access the app.',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: isDark ? Colors.grey[300] : Colors.black87,
+                ),
               ),
               const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.08),
+                  color: Colors.orange.withOpacity(isDark ? 0.15 : 0.08),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                  border: Border.all(
+                      color: Colors.orange.withOpacity(isDark ? 0.5 : 0.3)),
                 ),
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    const Row(
                       children: [
                         Icon(Icons.lightbulb_outline,
                             color: Colors.orange, size: 16),
@@ -232,26 +259,28 @@ class _StudentNavbarState extends State<StudentNavbar> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     _TipRow(
                       icon: Icons.computer,
                       text: 'Use a PC/laptop for a better form experience.',
+                      isDark: isDark,
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     _TipRow(
                       icon: Icons.wifi,
                       text: 'Ensure a stable internet connection.',
+                      isDark: isDark,
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 14),
-              const Text(
+               Text(
                 'You will be redirected to PCPS Life website.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 13,
-                  color: Colors.grey,
+                  color: isDark ? Colors.grey[500] : Colors.grey,
                   fontStyle: FontStyle.italic,
                 ),
               ),
@@ -264,8 +293,7 @@ class _StudentNavbarState extends State<StudentNavbar> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 28, vertical: 13),
+                padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 13),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
               ),
@@ -455,20 +483,29 @@ class _StudentNavbarState extends State<StudentNavbar> {
 class _TipRow extends StatelessWidget {
   final IconData icon;
   final String text;
+  final bool isDark; // add this
 
-  const _TipRow({required this.icon, required this.text});
+  const _TipRow({
+    required this.icon,
+    required this.text,
+    required this.isDark, // add this
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 15, color: Colors.grey[700]),
+        Icon(icon, size: 15,
+            color: isDark ? Colors.grey[400] : Colors.grey[700]),
         const SizedBox(width: 6),
         Expanded(
           child: Text(
             text,
-            style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+            style: TextStyle(
+              fontSize: 12,
+              color: isDark ? Colors.grey[400] : Colors.grey[700],
+            ),
           ),
         ),
       ],
