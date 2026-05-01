@@ -71,20 +71,21 @@ class _MyCollegeIntroScreenState extends State<MyCollegeIntroScreen> {
             decoration: pageDecoration,
           ),
         ],
-        onDone: () => _onIntroEnd(context),
-        showSkipButton: true,
-        skip: const Text('Skip'),
-        next: const Icon(Icons.arrow_forward, color: Colors.blue),
-        done: const Text("Get Started",
-            style: TextStyle(fontWeight: FontWeight.w600, color: Colors.blue)),
-        dotsDecorator: const DotsDecorator(
-          activeColor: Colors.blue,
-          size: Size(10.0, 10.0),
-          activeSize: Size(22.0, 10.0),
-          activeShape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(25.0)),
+          onDone: () => _onIntroEnd(context),
+          showSkipButton: true,
+          skip: const Text('Skip',
+              style: TextStyle(fontWeight: FontWeight.w600, color: Colors.blue)),
+          next: const Icon(Icons.arrow_forward, color: Colors.blue),
+          done: const Text("Get Started",
+              style: TextStyle(fontWeight: FontWeight.w600, color: Colors.blue)),
+          dotsDecorator: const DotsDecorator(
+            activeColor: Colors.blue,
+            size: Size(10.0, 10.0),
+            activeSize: Size(22.0, 10.0),
+            activeShape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(25.0)),
+            ),
           ),
-        ),
       ),
     );
   }

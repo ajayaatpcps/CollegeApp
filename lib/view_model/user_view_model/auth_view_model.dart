@@ -1,14 +1,15 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:lbef/model/user_model.dart';
 import 'package:lbef/screen/auth/login_page.dart';
 import 'package:lbef/screen/navbar/student_navbar.dart';
+import 'package:lbef/services/biometric_service.dart';
 import 'package:lbef/view_model/user_view_model/user_view_model.dart';
 import 'package:lbef/widgets/no_internet_wrapper.dart';
 import 'package:logger/logger.dart';
 import '../../data/api_response.dart';
 import '../../data/status.dart';
 import '../../repository/authentication_repo/auth_repository.dart';
-import '../../resource/routes_name.dart';
 import '../../utils/utils.dart';
 
 class AuthViewModel with ChangeNotifier {
@@ -24,6 +25,10 @@ class AuthViewModel with ChangeNotifier {
   String _role = '';
   String get role => _role;
 
+  // Holds the regular login token so biometric setup can use it after login
+  String? _regularToken;
+  String? get token => _regularToken;
+
   void setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
@@ -33,6 +38,8 @@ class AuthViewModel with ChangeNotifier {
     userData = response;
     notifyListeners();
   }
+
+  // ── Normal password login ─────────────────────────────────────────────────
 
   Future<void> login(dynamic body, BuildContext context) async {
     setLoading(true);
@@ -44,28 +51,14 @@ class AuthViewModel with ChangeNotifier {
             response.message ?? "Unexpected error", context);
         return;
       }
+
       setUser(ApiResponse.completed(response.data));
+      _regularToken = response.data?.token;
+      notifyListeners();
+
       Utils.flushBarSuccessMessage(
           response.message ?? "User Logged in successfully!", context);
-      Navigator.of(context).pushAndRemoveUntil(
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              const NoInternetWrapper(child: StudentNavbar()),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            const begin = Offset(1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.easeInOut;
-            var tween =
-                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-            var offsetAnimation = animation.drive(tween);
-            return SlideTransition(
-              position: offsetAnimation,
-              child: child,
-            );
-          },
-        ),
-        (route) => false, // Remove all previous routes
-      );
+      _navigateToHome(context);
     } catch (error) {
       setUser(ApiResponse.error(error.toString()));
       Utils.flushBarErrorMessage(error.toString(), context);
@@ -74,18 +67,123 @@ class AuthViewModel with ChangeNotifier {
     }
   }
 
-  Future<bool> recover(BuildContext context, dynamic body) async {
+  // ── Biometric setup (called after password login) ─────────────────────────
+
+  /// Calls GET /api/biometrics with the cached regular token.
+  /// On success, saves the returned biometric token securely.
+  Future<bool> setupBiometric(BuildContext context) async {
     setLoading(true);
-    var _logger = Logger();
     try {
-      bool? check = await _myrepo.recover(context, body);
-      if (check) {
-        return true;
-      } else {
+      final biometricToken = await _myrepo.fetchBiometricToken();
+      if (biometricToken == null) {
+        Utils.flushBarErrorMessage(
+            'Could not enable biometrics. Please try again.', context);
         return false;
       }
+      await BiometricService.saveToken(biometricToken);
+      logger.d('Biometric token saved successfully.');
+      return true;
     } catch (e) {
-      _logger.e('getUser error: $e');
+      logger.e('setupBiometric error: $e');
+      Utils.flushBarErrorMessage(
+          'Error enabling biometrics: ${e.toString()}', context);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // ── Biometric login flow ──────────────────────────────────────────────────
+  ///  On success, retrieve the saved biometric token
+  ///POST to /api/biometrics with that token
+  Future<bool> loginWithBiometric(BuildContext context) async {
+    try {
+
+      final authenticated = await BiometricService.authenticate();
+      if (!authenticated) {
+        logger.w('Biometric auth returned false (cancelled or failed).');
+        return false;
+      }
+
+      // Step 2: Get the stored biometric token
+      final biometricToken = await BiometricService.getToken();
+      if (biometricToken == null) {
+        logger.w('No biometric token found in storage.');
+        Utils.flushBarErrorMessage(
+            'Biometric not configured. Please log in with your password.',
+            context);
+        return false;
+      }
+
+      // Step 3: Validate token with server
+      logger.d('Sending biometric token to server...');
+      final responseData =
+      await _myrepo.loginWithBiometricToken(biometricToken);
+      if (responseData == null) {
+        logger.w('Server rejected biometric token.');
+        Utils.flushBarErrorMessage(
+            'Biometric login failed. Please use your password.', context);
+        // Clear the bad token so the user isn't stuck
+        // await BiometricService.clearToken();
+        return false;
+      }
+
+      // Step 4: Parse user, save session, navigate
+      logger.d('Biometric login response: $responseData');
+      final user = UserModel.fromJson(responseData);
+
+      // Save user to local storage (same as normal login)
+      await UserViewModel().saveUser(user);
+
+      setUser(ApiResponse.completed(user));
+      // Adjust 'token' field to match your UserModel
+      _regularToken = user.token;
+      notifyListeners();
+
+      Utils.flushBarSuccessMessage('Logged in successfully!', context);
+      _navigateToHome(context);
+      return true;
+    } on PlatformException catch (e) {
+      // Catch any PlatformException that slipped through BiometricService
+      logger.e('PlatformException in loginWithBiometric: ${e.code} — ${e.message}');
+      // Map known error codes to friendly messages
+      String message;
+      switch (e.code) {
+        case 'NotEnrolled':
+        case 'notEnrolled':
+          message = 'No fingerprints enrolled on this device.';
+          break;
+        case 'LockedOut':
+        case 'lockedOut':
+          message = 'Too many attempts. Try again later.';
+          break;
+        case 'PermanentlyLockedOut':
+        case 'permanentlyLockedOut':
+          message = 'Biometrics locked. Unlock with your device PIN first.';
+          break;
+        default:
+          message = 'Biometric error. Please use your password.';
+      }
+      Utils.flushBarErrorMessage(message, context);
+      return false;
+    } catch (e) {
+      logger.e('loginWithBiometric unexpected error: $e');
+      Utils.flushBarErrorMessage(
+          'An unexpected error occurred. Please use your password.', context);
+      return false;
+    }
+  }
+
+  // ── Other methods ─────────────────────────────────────────────────────────
+
+  Future<bool> recover(BuildContext context, dynamic body) async {
+    setLoading(true);
+    final _logger = Logger();
+    try {
+      final check = await _myrepo.recover(context, body);
+      return check;
+    } catch (e) {
+      _logger.e('recover error: $e');
       return false;
     } finally {
       setLoading(false);
@@ -99,26 +197,24 @@ class AuthViewModel with ChangeNotifier {
       if (response.status == Status.COMPLETED) {
         Utils.flushBarSuccessMessage(
             response.message ?? "User Logged out Successfully!", context);
+        _regularToken = null;
         await UserViewModel().remove(context);
         Navigator.of(context).pushAndRemoveUntil(
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
-                const LoginPage(),
+            const LoginPage(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
               const begin = Offset(1.0, 0.0);
               const end = Offset.zero;
               const curve = Curves.easeInOut;
-              var tween =
-                  Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-              var offsetAnimation = animation.drive(tween);
+              final tween = Tween(begin: begin, end: end)
+                  .chain(CurveTween(curve: curve));
               return SlideTransition(
-                position: offsetAnimation,
-                child: child,
-              );
+                  position: animation.drive(tween), child: child);
             },
           ),
-          (route) => false, // Remove all previous routes
+              (route) => false,
         );
       } else {
         Utils.flushBarErrorMessage(
@@ -130,5 +226,26 @@ class AuthViewModel with ChangeNotifier {
     } finally {
       setLoading(false);
     }
+  }
+
+  // ── Private helpers ───────────────────────────────────────────────────────
+
+  void _navigateToHome(BuildContext context) {
+    Navigator.of(context).pushAndRemoveUntil(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+        const NoInternetWrapper(child: StudentNavbar()),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOut;
+          final tween =
+          Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          return SlideTransition(
+              position: animation.drive(tween), child: child);
+        },
+      ),
+          (route) => false,
+    );
   }
 }

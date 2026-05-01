@@ -6,11 +6,15 @@ import 'package:lbef/screen/student/daily_class_report/daily_class_report.dart';
 import 'package:lbef/screen/student/dashboard/dashboard.dart';
 import 'package:lbef/screen/student/profile/profile.dart';
 import 'package:lbef/screen/student/student_fees/student_fees.dart';
+import 'package:lbef/view_model/user_view_model/auth_view_model.dart';
 import 'package:lbef/widgets/Dialog/alert.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../view_model/theme_provider.dart';
 import '../../view_model/user_view_model/current_user_model.dart';
 import '../student/application/application.dart';
+import 'package:lbef/services/biometric_service.dart';
 
 class StudentNavbar extends StatefulWidget {
   final int? index;
@@ -23,13 +27,20 @@ class StudentNavbar extends StatefulWidget {
 class _StudentNavbarState extends State<StudentNavbar> {
   int _selectedIndex = 0;
   late PageController _pageController;
+  bool _biometricAvailable = false;
+  bool _biometricSetup = false;
 
   @override
   void initState() {
     super.initState();
-    fetch();
     _selectedIndex = widget.index ?? 0;
     _pageController = PageController(initialPage: _selectedIndex);
+    // Fetch user data then check profile status
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      fetch();
+      await _checkAndPromptBiometric(); // waits for user to enable/dismiss
+      if (mounted) _checkProfileStatus(); // only runs after sheet is gone
+    });
   }
 
   @override
@@ -41,6 +52,279 @@ class _StudentNavbarState extends State<StudentNavbar> {
   void fetch() async {
     await Provider.of<UserDataViewModel>(context, listen: false)
         .getUser(context);
+  }
+
+  /// Checks profile_status; if incomplete, show blocking dialog
+  void _checkProfileStatus() async {
+    final profileViewModel =
+    Provider.of<UserDataViewModel>(context, listen: false);
+
+    final profile = await profileViewModel.getStudentProfile(context);
+
+    if (!mounted) return;
+
+    if (profile != null && profile.profileStatus?.toLowerCase() != 'complete') {
+      _showIncompleteProfileDialog();
+    }
+  }
+  // Add these three methods to _StudentNavbarState:
+  Future<void> _checkAndPromptBiometric() async {
+    final available = await BiometricService.isAvailable();
+    final setup = await BiometricService.isSetup();
+
+    final prefs = await SharedPreferences.getInstance();
+    final dismissed = prefs.getBool('biometric_prompt_dismissed') ?? false;
+
+    if (!mounted) return;
+    setState(() {
+      _biometricAvailable = available;
+      _biometricSetup = setup;
+    });
+
+    if (available && !setup && !dismissed) {
+      await Future.delayed(const Duration(milliseconds: 600));
+      if (mounted) await _promptBiometricSetup(); // await so it blocks until user responds
+    }
+  }
+
+  Future<void> _promptBiometricSetup() async {
+    final pageContext = context;
+    // Capture theme BEFORE the async sheet opens
+    final isDark = Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
+
+    await showModalBottomSheet(
+      backgroundColor: isDark ? Colors.grey[900] : Colors.white,
+      context: pageContext,
+      isDismissible: true,
+      enableDrag: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (sheetContext) => Padding(
+        padding: const EdgeInsets.fromLTRB(24, 16, 24, 36),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 20),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.grey[700] : Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Icon(Icons.fingerprint, size: 60, color: AppColors.primary),
+            const SizedBox(height: 16),
+            Text(
+              'Enable Fingerprint Login?',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Skip entering your password next time.\nUse your fingerprint to log in instantly.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: isDark ? Colors.grey[400] : Colors.grey,
+                fontSize: 14,
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 28),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setBool('biometric_prompt_dismissed', true);
+                      Navigator.of(sheetContext).pop();
+                    },
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      side: BorderSide(
+                        color: isDark ? Colors.grey[600]! : Colors.grey[300]!,
+                      ),
+                      foregroundColor: isDark ? Colors.white : Colors.black,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text('Not Now'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    onPressed: () {
+                      Navigator.of(sheetContext).pop();
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        _setupBiometric(pageContext);
+                      });
+                    },
+                    child: const Text('Enable'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  Future<void> _setupBiometric(BuildContext ctx) async {
+    if (!mounted) return;
+    final success =
+    await Provider.of<AuthViewModel>(ctx, listen: false).setupBiometric(ctx);
+    if (!mounted) return;
+    if (success) {
+      setState(() => _biometricSetup = true);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Fingerprint login enabled!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    }
+  }
+  void _showIncompleteProfileDialog() {
+    final isDark = Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => PopScope(
+        canPop: false,
+        child: AlertDialog(
+          backgroundColor: isDark ? Colors.grey[900] : Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          icon: const Icon(Icons.account_circle_outlined,
+              color: Colors.orange, size: 52),
+          title: Text(
+            'Complete Your Profile',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              color: isDark ? Colors.white : Colors.black,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Your profile is incomplete. Please complete it to access the app.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: isDark ? Colors.grey[300] : Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withOpacity(isDark ? 0.15 : 0.08),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                      color: Colors.orange.withOpacity(isDark ? 0.5 : 0.3)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Row(
+                      children: [
+                        Icon(Icons.lightbulb_outline,
+                            color: Colors.orange, size: 16),
+                        SizedBox(width: 6),
+                        Text(
+                          'Tips for best experience',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                            color: Colors.orange,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    _TipRow(
+                      icon: Icons.computer,
+                      text: 'Use a PC/laptop for a better form experience.',
+                      isDark: isDark,
+                    ),
+                    const SizedBox(height: 4),
+                    _TipRow(
+                      icon: Icons.wifi,
+                      text: 'Ensure a stable internet connection.',
+                      isDark: isDark,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                'You will be redirected to Evolve with LBEF website.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: isDark ? Colors.grey[500] : Colors.grey,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actionsPadding: const EdgeInsets.only(bottom: 16),
+          actions: [
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 13),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+              ),
+              icon: const Icon(Icons.open_in_browser, size: 20),
+              label: const Text(
+                'Go to Evolve with LBEF',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
+              onPressed: () => _launchProfileUrl(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _launchProfileUrl() async {
+    final Uri url = Uri.parse('https://evolve.lbef.info');
+    try {
+      await launchUrl(
+        url,
+        mode: LaunchMode.externalApplication,
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'Could not open browser. Please visit evolve.lbef.info manually.'),
+          ),
+        );
+      }
+    }
   }
 
   final List<Widget> _pages = const [
@@ -78,7 +362,7 @@ class _StudentNavbarState extends State<StudentNavbar> {
             children: _pages,
           ),
           bottomNavigationBar:
-              Consumer<ThemeProvider>(builder: (context, provider, child) {
+          Consumer<ThemeProvider>(builder: (context, provider, child) {
             return CurvedNavigationBar(
               index: _selectedIndex,
               backgroundColor: Colors.transparent,
@@ -116,7 +400,7 @@ class _StudentNavbarState extends State<StudentNavbar> {
                     labelStyle: TextStyle(
                         fontSize: 12,
                         color:
-                            provider.isDarkMode ? Colors.white : Colors.black)),
+                        provider.isDarkMode ? Colors.white : Colors.black)),
                 CurvedNavigationBarItem(
                     child: SizedBox(
                       height: 35,
@@ -131,14 +415,18 @@ class _StudentNavbarState extends State<StudentNavbar> {
                     labelStyle: TextStyle(
                         fontSize: 12,
                         color:
-                            provider.isDarkMode ? Colors.white : Colors.black)),
+                        provider.isDarkMode ? Colors.white : Colors.black)),
                 CurvedNavigationBarItem(
                     child: SizedBox(
                       height: 35,
                       width: 35,
                       child: Icon(
                         Icons.payments_outlined,
-                        color: _selectedIndex == 3 ? Colors.blue : (provider.isDarkMode? Colors.white:Colors.black),
+                        color: _selectedIndex == 3
+                            ? Colors.blue
+                            : (provider.isDarkMode
+                            ? Colors.white
+                            : Colors.black),
                         size: 25,
                       ),
                     ),
@@ -146,14 +434,18 @@ class _StudentNavbarState extends State<StudentNavbar> {
                     labelStyle: TextStyle(
                         fontSize: 12,
                         color:
-                            provider.isDarkMode ? Colors.white : Colors.black)),
+                        provider.isDarkMode ? Colors.white : Colors.black)),
                 CurvedNavigationBarItem(
                     child: SizedBox(
                       height: 35,
                       width: 35,
                       child: Icon(
                         Icons.person_outline,
-                        color: _selectedIndex == 4 ? Colors.blue : (provider.isDarkMode? Colors.white:Colors.black),
+                        color: _selectedIndex == 4
+                            ? Colors.blue
+                            : (provider.isDarkMode
+                            ? Colors.white
+                            : Colors.black),
                         size: 25,
                       ),
                     ),
@@ -161,7 +453,7 @@ class _StudentNavbarState extends State<StudentNavbar> {
                     labelStyle: TextStyle(
                         fontSize: 12,
                         color:
-                            provider.isDarkMode ? Colors.white : Colors.black)),
+                        provider.isDarkMode ? Colors.white : Colors.black)),
               ],
               onTap: (index) {
                 _pageController.animateToPage(
@@ -172,6 +464,39 @@ class _StudentNavbarState extends State<StudentNavbar> {
               },
             );
           })),
+    );
+  }
+}
+
+class _TipRow extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  final bool isDark; // add this
+
+  const _TipRow({
+    required this.icon,
+    required this.text,
+    required this.isDark, // add this
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 15,
+            color: isDark ? Colors.grey[400] : Colors.grey[700]),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 12,
+              color: isDark ? Colors.grey[400] : Colors.grey[700],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

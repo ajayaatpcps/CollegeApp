@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lbef/screen/student/profile/recover_password/recover_password.dart';
-import 'package:lbef/widgets/form_widget/role_selection.dart';
+import 'package:lbef/services/biometric_service.dart';
 import 'package:provider/provider.dart';
 import '../../resource/colors.dart';
 import '../../utils/navigate_to.dart';
@@ -23,11 +23,13 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
 
   bool isLoading = false;
-  bool _isSubmitted = false;
+  bool _biometricAvailable = false;
+  bool _biometricSetup = false;
 
   @override
   void initState() {
     super.initState();
+    _checkBiometric();
   }
 
   @override
@@ -37,9 +39,31 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  Future<void> _checkBiometric() async {
+    final available = await BiometricService.isAvailable();
+    final setup = await BiometricService.isSetup();
+    if (mounted) {
+      setState(() {
+        _biometricAvailable = available;
+        _biometricSetup = setup;
+      });
+    }
+  }
+
+  Future<void> _loginWithBiometric() async {
+    setState(() => isLoading = true);
+    final success = await Provider.of<AuthViewModel>(context, listen: false)
+        .loginWithBiometric(context);
+    if (mounted) {
+      setState(() => isLoading = false);
+
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -61,165 +85,187 @@ class _LoginPageState extends State<LoginPage> {
                 if (isLoading) const LinearProgressIndicator(),
                 const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: Column(
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Sign in",
-                            style: TextStyle(
-                              fontFamily: 'poppins',
-                              fontWeight: FontWeight.bold,
-                              fontSize: 30,
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            "Hi there! Nice to see you again.",
-                            style: TextStyle(
-                              fontFamily: 'poppins',
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                      )
+                      Text(
+                        "Sign in",
+                        style: TextStyle(
+                          fontFamily: 'poppins',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 30,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        "Hi there! Nice to see you again.",
+                        style: TextStyle(fontFamily: 'poppins', fontSize: 16),
+                      ),
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
                 Form(
                   key: _formKey,
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomLabelTextfield(
+                          textController: _studentIdController,
+                          hintText: "Student Id",
+                          outlinedColor: Colors.grey,
+                          focusedColor: AppColors.primary,
+                          width: size.width,
+                          helperStyle: const TextStyle(
+                            color: Colors.red,
+                            fontFamily: 'poppins',
+                            fontStyle: FontStyle.italic,
+                          ),
+                          text: "Student Id",
+                        ),
+                        const SizedBox(height: 14),
+                        PasswordTextfield(
+                          textController: _passwordController,
+                          hintText: "Password",
+                          obscureText: true,
+                          outlinedColor: Colors.grey,
+                          focusedColor: AppColors.primary,
+                          width: size.width,
+                          helperStyle: const TextStyle(
+                            color: Colors.red,
+                            fontFamily: 'poppins',
+                            fontStyle: FontStyle.italic,
+                          ),
+                          text: "Password",
+                        ),
+                        const SizedBox(height: 18),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            CustomLabelTextfield(
-                              textController: _studentIdController,
-                              hintText: "Student Id",
-                              outlinedColor: Colors.grey,
-                              focusedColor: AppColors.primary,
-                              width: size.width,
-                              helperStyle: const TextStyle(
-                                color: Colors.red,
-                                fontFamily: 'poppins',
-                                fontStyle: FontStyle.italic,
+                            InkWell(
+                              onTap: () => Navigator.of(context).push(
+                                SlideRightRoute(page: const RecoverPassword()),
                               ),
-                              text: "Student Id",
-                            ),
-                            const SizedBox(height: 14),
-                            PasswordTextfield(
-                              textController: _passwordController,
-                              hintText: "Password",
-                              obscureText: true,
-                              outlinedColor: Colors.grey,
-                              focusedColor: AppColors.primary,
-                              width: size.width,
-                              helperStyle: const TextStyle(
-                                color: Colors.red,
-                                fontFamily: 'poppins',
-                                fontStyle: FontStyle.italic,
+                              child: const Text(
+                                "Recover Password",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontFamily: 'poppins',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
                               ),
-                              text: "Password",
                             ),
-                            const SizedBox(height: 18),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                          ],
+                        ),
+                        const SizedBox(height: 26),
+                        CustomButton(
+                          isLoading: isLoading,
+                          text: "Sign in",
+                          onPressed: () async {
+                            if (_studentIdController.text.trim().isEmpty) {
+                              return Utils.flushBarErrorMessage(
+                                  "Student Id is required.", context);
+                            }
+                            if (_passwordController.text.isEmpty) {
+                              return Utils.flushBarErrorMessage(
+                                  "Password is required.", context);
+                            }
+
+                            setState(() => isLoading = true);
+
+                            await Provider.of<AuthViewModel>(context,
+                                listen: false)
+                                .login({
+                              "username": _studentIdController.text.trim(),
+                              "password": _passwordController.text,
+                            }, context);
+
+                            setState(() => isLoading = false);
+                          },
+                        ),
+
+                        // Fingerprint button — only visible when already set up
+                        if (_biometricAvailable && _biometricSetup) ...[
+                          const SizedBox(height: 24),
+                          const Row(
+                            children: [
+                              Expanded(child: Divider()),
+                              Padding(
+                                padding:
+                                EdgeInsets.symmetric(horizontal: 12),
+                                child: Text('or continue',
+                                    style: TextStyle(color: Colors.grey)),
+                              ),
+                              Expanded(child: Divider()),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          Center(
+                            child: Column(
                               children: [
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      SlideRightRoute(
-                                          page: const RecoverPassword()),
-                                    );
-                                  },
-                                  child: const Text(
-                                    "Recover Password",
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      fontFamily: 'poppins',
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
+                                GestureDetector(
+                                  onTap: isLoading
+                                      ? null
+                                      : _loginWithBiometric,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(18),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: AppColors.primary,
+                                          width: 2),
+                                      borderRadius:
+                                      BorderRadius.circular(60),
                                     ),
+                                    child: Icon(
+                                      Icons.fingerprint,
+                                      size: 52,
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                const Text(
+                                  'Login with Fingerprint',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontFamily: 'poppins',
+                                    fontSize: 13,
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 26),
-                            CustomButton(
-                                isLoading: isLoading,
-                                text: "Sign in",
-                                onPressed: () async {
-                                  setState(() {
-                                    isLoading = true;
-                                  });
-                                  if (_studentIdController.text.isEmpty) {
-                                    setState(() {
-                                      isLoading = false;
-                                    });
-                                    return Utils.flushBarErrorMessage(
-                                        "Student Id is required.", context);
-                                  }
-                                  if (_passwordController.text.isEmpty) {
-                                    setState(() {
-                                      isLoading = false;
-                                    });
-                                    return Utils.flushBarErrorMessage(
-                                        "Password is required.", context);
-                                  }
-
-                                  await Provider.of<AuthViewModel>(context,
-                                          listen: false)
-                                      .login({
-                                    "username": _studentIdController.text,
-                                    "password": _passwordController.text
-                                  }, context);
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                }),
-                          ],
-                        ),
-                      ),
-                    ],
+                          ),
+                        ],
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Column(
                     children: [
                       Text(
-                        '© 2025 LBEF. All Rights Reserved.',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                          fontFamily: 'poppins',
-                        ),
+                        '© ${DateTime.now().year} LBEF. All Rights Reserved.',
+                        style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                            fontFamily: 'poppins'),
                       ),
-                      SizedBox(height: 4),
-                      Text(
-                        'Designed, Built & Maintained by LBEF R&D',
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Designed, Built & Maintained by YakshaSoft',
                         style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                          fontFamily: 'poppins',
-                        ),
+                            fontSize: 12,
+                            color: Colors.grey,
+                            fontFamily: 'poppins'),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
+                const SizedBox(height: 10),
               ],
             ),
           ),

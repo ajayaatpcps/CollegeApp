@@ -180,6 +180,26 @@ class NetworkApiService extends BaseApiServices {
     }
     return responseJson;
   }
+  @override
+  Future getPostBiometricsApiResponse(String url, dynamic body, String session) async {
+    dynamic responseJson;
+    try {
+      Response response = await http.post(
+        Uri.parse(url),
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          HttpHeaders.acceptHeader: "application/json",
+          HttpHeaders.authorizationHeader: 'Bearer $session',
+        },
+        body: jsonEncode(body),
+      ).timeout(const Duration(seconds: 10));
+
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw FetchDataException("No internet Connection");
+    }
+    return responseJson;
+  }
 
   dynamic returnResponse(http.Response response, {BuildContext? context}) {
     dynamic responseBody;
