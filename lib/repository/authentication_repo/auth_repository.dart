@@ -78,4 +78,56 @@ class AuthRepository {
       return ApiResponse.error(e.toString());
     }
   }
+
+  /// GET /biometrics
+  /// Called after normal login with the regular token.
+  /// Returns the biometric token (1-year validity) on success.
+  Future<String?> fetchBiometricToken() async {
+    try {
+      logger.d('Fetching biometric token via ${AuthEndPoints.biometricsUrl}');
+      // Uses NetworkApiService which already attaches the saved token from storage
+      final response =
+      await _apiServices2.getApiResponse(AuthEndPoints.biometricsUrl);
+      if (response != null && response is Map) {
+        final token = response['token'];
+        logger.d('Biometric token received: $token');
+        return token?.toString();
+      }
+      logger.w('fetchBiometricToken: unexpected response format: $response');
+      return null;
+    } on TimeoutException {
+      Utils.noInternet("No internet connection. Please try again later.");
+      return null;
+    } catch (e) {
+      logger.e('fetchBiometricToken error: $e');
+      return null;
+    }
+  }
+
+  /// POST /biometrics
+  /// Called when the user attempts biometric login.
+  /// Sends the stored biometric token; returns parsed response map on success.
+  Future<Map<String, dynamic>?> loginWithBiometricToken(
+      String biometricToken) async {
+    try {
+      logger.d(
+          'Biometric login via ${AuthEndPoints.biometricsUrl} with token: $biometricToken');
+      final response = await _apiServices2.getPostBiometricsApiResponse(
+        AuthEndPoints.biometricsUrl,
+        {},
+        biometricToken
+      );
+      if (response != null && response is Map<String, dynamic>) {
+        logger.d('Biometric login response: $response');
+        return response;
+      }
+      return null;
+    } on TimeoutException {
+      Utils.noInternet("No internet connection. Please try again later.");
+      return null;
+    } catch (e) {
+      logger.e('loginWithBiometricToken error: $e');
+      return null;
+    }
+  }
 }
