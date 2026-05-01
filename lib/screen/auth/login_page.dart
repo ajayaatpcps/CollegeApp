@@ -56,9 +56,7 @@ class _LoginPageState extends State<LoginPage> {
         .loginWithBiometric(context);
     if (mounted) {
       setState(() => isLoading = false);
-      // AuthViewModel shows its own error messages.
-      // OS biometric UI shows its own failure UI.
-      // Nothing extra needed here.
+
     }
   }
 
@@ -68,117 +66,10 @@ class _LoginPageState extends State<LoginPage> {
   /// variable BEFORE the sheet is shown. The sheet's own builder receives
   /// a different [sheetContext] which becomes invalid after pop().
   /// All calls to Provider and Utils use [pageContext], never [sheetContext].
-  void _promptBiometricSetup() {
-    // Capture page context NOW, before any async gap or navigation.
-    final pageContext = context;
-
-    showModalBottomSheet(
-      context: pageContext,
-      isDismissible: true,
-      enableDrag: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (sheetContext) => Padding(
-        padding: const EdgeInsets.fromLTRB(24, 16, 24, 36),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Drag handle
-            Container(
-              width: 40,
-              height: 4,
-              margin: const EdgeInsets.only(bottom: 20),
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            Icon(Icons.fingerprint, size: 60, color: AppColors.primary),
-            const SizedBox(height: 16),
-            const Text(
-              'Enable Fingerprint Login?',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Skip entering your password next time.\nUse your fingerprint to log in instantly.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey, fontSize: 14, height: 1.5),
-            ),
-            const SizedBox(height: 28),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.of(sheetContext).pop(),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                    ),
-                    child: const Text('Not Now'),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                    ),
-                    onPressed: () {
-                      // 1. Close the bottom sheet first using sheetContext
-                      Navigator.of(sheetContext).pop();
-                      // 2. Then run setup using the CAPTURED pageContext,
-                      //    NOT sheetContext (which is now invalid after pop).
-                      //    We schedule it after the current frame so the sheet
-                      //    animation has time to complete cleanly.
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        _setupBiometric(pageContext);
-                      });
-                    },
-                    child: const Text('Enable'),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   /// Calls GET /api/biometrics via AuthViewModel and saves the returned token.
   /// Takes an explicit [ctx] parameter so it never relies on `this.context`
   /// after an async gap, avoiding the "widget has been unmounted" crash.
-  Future<void> _setupBiometric(BuildContext ctx) async {
-    // Guard: if the page itself was somehow disposed, do nothing.
-    if (!mounted) return;
-
-    final success =
-    await Provider.of<AuthViewModel>(ctx, listen: false)
-        .setupBiometric(ctx);
-
-    // Guard again after the await.
-    if (!mounted) return;
-
-    if (success) {
-      setState(() => _biometricSetup = true);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Fingerprint login enabled!'),
-          backgroundColor: Colors.green,
-        ),
-      );
-    } else {
-      // AuthViewModel already shows an error snackbar on failure,
-      // so nothing extra needed here.
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -305,16 +196,6 @@ class _LoginPageState extends State<LoginPage> {
                             }, context);
 
                             setState(() => isLoading = false);
-
-                            // Prompt biometric setup only if:
-                            // • widget is still mounted
-                            // • device supports biometrics
-                            // • biometric not yet configured
-                            if (mounted &&
-                                _biometricAvailable &&
-                                !_biometricSetup) {
-                              _promptBiometricSetup();
-                            }
                           },
                         ),
 

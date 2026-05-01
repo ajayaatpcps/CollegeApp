@@ -6,12 +6,15 @@ import 'package:lbef/screen/student/daily_class_report/daily_class_report.dart';
 import 'package:lbef/screen/student/dashboard/dashboard.dart';
 import 'package:lbef/screen/student/profile/profile.dart';
 import 'package:lbef/screen/student/student_fees/student_fees.dart';
+import 'package:lbef/view_model/user_view_model/auth_view_model.dart';
 import 'package:lbef/widgets/Dialog/alert.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../view_model/theme_provider.dart';
 import '../../view_model/user_view_model/current_user_model.dart';
 import '../student/application/application.dart';
+import 'package:lbef/services/biometric_service.dart';
 
 class StudentNavbar extends StatefulWidget {
   final int? index;
@@ -24,6 +27,9 @@ class StudentNavbar extends StatefulWidget {
 class _StudentNavbarState extends State<StudentNavbar> {
   int _selectedIndex = 0;
   late PageController _pageController;
+  // In _StudentNavbarState, add these two fields:
+  bool _biometricAvailable = false;
+  bool _biometricSetup = false;
 
   @override
   void initState() {
@@ -33,7 +39,8 @@ class _StudentNavbarState extends State<StudentNavbar> {
     // Fetch user data then check profile status
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       fetch();
-      _checkProfileStatus();
+      await _checkAndPromptBiometric(); // waits for user to enable/dismiss
+      if (mounted) _checkProfileStatus(); // only runs after sheet is gone
     });
   }
 
@@ -59,6 +66,120 @@ class _StudentNavbarState extends State<StudentNavbar> {
 
     if (profile != null && profile.profileStatus?.toLowerCase() != 'complete') {
       _showIncompleteProfileDialog();
+    }
+  }
+  // Add these three methods to _StudentNavbarState:
+  Future<void> _checkAndPromptBiometric() async {
+    final available = await BiometricService.isAvailable();
+    final setup = await BiometricService.isSetup();
+
+    final prefs = await SharedPreferences.getInstance();
+    final dismissed = prefs.getBool('biometric_prompt_dismissed') ?? false;
+
+    if (!mounted) return;
+    setState(() {
+      _biometricAvailable = available;
+      _biometricSetup = setup;
+    });
+
+    if (available && !setup && !dismissed) {
+      await Future.delayed(const Duration(milliseconds: 600));
+      if (mounted) await _promptBiometricSetup(); // await so it blocks until user responds
+    }
+  }
+
+  Future<void> _promptBiometricSetup() async {
+    final pageContext = context;
+    await showModalBottomSheet(
+      context: pageContext,
+      isDismissible: true,
+      enableDrag: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (sheetContext) => Padding(
+        padding: const EdgeInsets.fromLTRB(24, 16, 24, 36),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40, height: 4,
+              margin: const EdgeInsets.only(bottom: 20),
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Icon(Icons.fingerprint, size: 60, color: AppColors.primary),
+            const SizedBox(height: 16),
+            const Text(
+              'Enable Fingerprint Login?',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Skip entering your password next time.\nUse your fingerprint to log in instantly.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey, fontSize: 14, height: 1.5),
+            ),
+            const SizedBox(height: 28),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setBool('biometric_prompt_dismissed', true);
+                      Navigator.of(context).pop();
+                    },
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text('Not Now'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    onPressed: () {
+                      Navigator.of(sheetContext).pop();
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        _setupBiometric(pageContext);
+                      });
+                    },
+                    child: const Text('Enable'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _setupBiometric(BuildContext ctx) async {
+    if (!mounted) return;
+    final success =
+    await Provider.of<AuthViewModel>(ctx, listen: false).setupBiometric(ctx);
+    if (!mounted) return;
+    if (success) {
+      setState(() => _biometricSetup = true);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Fingerprint login enabled!'),
+          backgroundColor: Colors.green,
+        ),
+      );
     }
   }
 
