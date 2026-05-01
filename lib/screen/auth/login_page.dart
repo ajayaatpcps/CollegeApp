@@ -197,7 +197,7 @@ class _LoginPageState extends State<LoginPage> {
                               Padding(
                                 padding:
                                 EdgeInsets.symmetric(horizontal: 12),
-                                child: Text('or',
+                                child: Text('or continue',
                                     style: TextStyle(color: Colors.grey)),
                               ),
                               Expanded(child: Divider()),
