@@ -27,7 +27,6 @@ class StudentNavbar extends StatefulWidget {
 class _StudentNavbarState extends State<StudentNavbar> {
   int _selectedIndex = 0;
   late PageController _pageController;
-  // In _StudentNavbarState, add these two fields:
   bool _biometricAvailable = false;
   bool _biometricSetup = false;
 

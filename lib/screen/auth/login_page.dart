@@ -60,17 +60,6 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  /// Shows the "Enable Fingerprint?" bottom sheet.
-  ///
-  /// THE KEY FIX: We capture the outer page's BuildContext into a local
-  /// variable BEFORE the sheet is shown. The sheet's own builder receives
-  /// a different [sheetContext] which becomes invalid after pop().
-  /// All calls to Provider and Utils use [pageContext], never [sheetContext].
-
-  /// Calls GET /api/biometrics via AuthViewModel and saves the returned token.
-  /// Takes an explicit [ctx] parameter so it never relies on `this.context`
-  /// after an async gap, avoiding the "widget has been unmounted" crash.
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;

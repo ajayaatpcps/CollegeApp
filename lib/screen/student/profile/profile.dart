@@ -21,8 +21,6 @@ import '../../../view_model/user_view_model/current_user_model.dart';
 import '../../../widgets/custom_shimmer.dart';
 import 'changePassword/change_password.dart';
 
-/// Converted to StatefulWidget so we can call setState() when
-/// the biometric toggle changes, refreshing the switch instantly.
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -53,7 +51,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  /// Toggle ON: call GET /api/biometrics → save token securely.
+  /// Toggle ON: call GET /biometrics → save token securely.
   Future<void> _enableBiometric() async {
     setState(() => _biometricLoading = true);
 
@@ -78,10 +76,13 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   /// Toggle OFF: ask for confirmation then clear saved token.
-  Future<void> _disableBiometric() async {
+  Future<void> _disableBiometric(bool Isdark) async {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
+          backgroundColor: Isdark
+              ? Colors.black
+              : Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('Disable Fingerprint Login?'),
         content: const Text(
@@ -387,6 +388,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           onTap: () {
                             showModalBottomSheet(
+                                backgroundColor: themeProvider.isDarkMode
+                            ? Colors.black
+                                : Colors.white,
                               context: context,
                               shape: const RoundedRectangleBorder(
                                 borderRadius: BorderRadius.vertical(
@@ -431,8 +435,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
                         // ── Biometric tile ────────────────────────────
                         // Only shown when the device actually supports biometrics.
-                        // Uses local state (_biometricSetup) → no FutureBuilder
-                        // needed here, state is loaded once in initState.
                         if (_biometricAvailable)
                           ListTile(
                             leading: _biometricLoading
@@ -469,7 +471,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 if (value) {
                                   await _enableBiometric();
                                 } else {
-                                  await _disableBiometric();
+                                  await _disableBiometric(themeProvider.isDarkMode);
                                 }
                               },
                             ),

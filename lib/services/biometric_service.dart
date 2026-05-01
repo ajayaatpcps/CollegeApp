@@ -14,10 +14,6 @@ class BiometricService {
   static const _tokenKey = 'biometric_token';
   static final _logger = Logger();
 
-  /// Returns true only if:
-  /// • the device hardware supports biometrics, AND
-  /// • the user has enrolled at least one biometric (fingerprint/face)
-  ///
   /// This prevents the fingerprint button from showing on devices
   /// where biometrics are supported in hardware but no finger is enrolled.
   static Future<bool> isAvailable() async {
@@ -47,9 +43,6 @@ class BiometricService {
     }
   }
 
-  /// Triggers the OS biometric prompt.
-  /// Returns true if the user successfully authenticates.
-  /// Returns false (never throws) for any failure or cancellation.
   static Future<bool> authenticate() async {
     try {
       _logger.d('Starting biometric authentication...');

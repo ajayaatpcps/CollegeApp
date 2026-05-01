@@ -6,7 +6,6 @@ import 'package:lbef/screen/navbar/student_navbar.dart';
 import 'package:lbef/services/biometric_service.dart';
 import 'package:lbef/view_model/user_view_model/user_view_model.dart';
 import 'package:lbef/widgets/no_internet_wrapper.dart';
-import 'package:local_auth/local_auth.dart';
 import 'package:logger/logger.dart';
 import '../../data/api_response.dart';
 import '../../data/status.dart';
@@ -54,9 +53,6 @@ class AuthViewModel with ChangeNotifier {
       }
 
       setUser(ApiResponse.completed(response.data));
-
-      // Cache token so setupBiometric() can use it immediately after login
-      // Adjust 'token' to match your actual UserModel field name
       _regularToken = response.data?.token;
       notifyListeners();
 
@@ -75,7 +71,6 @@ class AuthViewModel with ChangeNotifier {
 
   /// Calls GET /api/biometrics with the cached regular token.
   /// On success, saves the returned biometric token securely.
-  /// Returns true on success, false on any failure.
   Future<bool> setupBiometric(BuildContext context) async {
     setLoading(true);
     try {
@@ -99,27 +94,13 @@ class AuthViewModel with ChangeNotifier {
   }
 
   // ── Biometric login flow ──────────────────────────────────────────────────
-
-  /// Full biometric login:
-  /// Step 1 — Trigger OS fingerprint/face prompt via BiometricService
-  /// Step 2 — On success, retrieve the saved biometric token
-  /// Step 3 — POST to /api/biometrics with that token
-  /// Step 4 — Parse the response, save session, navigate home
-  ///
-  /// Returns true on full success, false on any failure.
-  /// Shows appropriate error messages for each failure case.
+  ///  On success, retrieve the saved biometric token
+  ///POST to /api/biometrics with that token
   Future<bool> loginWithBiometric(BuildContext context) async {
-    // Do NOT call setLoading here — the login page manages its own
-    // isLoading spinner. setLoading would cause a ChangeNotifier rebuild
-    // mid-auth which can interfere with the OS biometric dialog.
     try {
-      // Step 1: Trigger local biometric authentication
-      // BiometricService.authenticate() never throws — returns false on any failure
+
       final authenticated = await BiometricService.authenticate();
       if (!authenticated) {
-        // User cancelled, failed, or hardware issue — don't show error here
-        // because the OS already shows its own UI for failures.
-        // Just return false silently; login page decides what to show.
         logger.w('Biometric auth returned false (cancelled or failed).');
         return false;
       }
