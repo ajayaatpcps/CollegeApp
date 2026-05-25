@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "867709926525",
+    "project_id": "pcpslife",
+    "storage_bucket": "pcpslife.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:867709926525:android:78a0d5f95579e5ffa6c514",
+        "android_client_info": {
+          "package_name": "com.patancollegeorg.lbef"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiMNPNZ0cKbXtaQhFsF64-pkWI28DP8ls"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
