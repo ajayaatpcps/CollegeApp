@@ -1,3 +1,4 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:lbef/model/user_model.dart';
@@ -97,11 +98,19 @@ class AuthViewModel with ChangeNotifier {
   ///  On success, retrieve the saved biometric token
   ///POST to /api/biometrics with that token
   Future<bool> loginWithBiometric(BuildContext context) async {
+    FirebaseCrashlytics.instance.log('biometric login: started');
     try {
-
+      // Step 1: Prompt for fingerprint. Now throws on real errors instead of
+      // returning false, so a genuine failure is no longer silent.
       final authenticated = await BiometricService.authenticate();
       if (!authenticated) {
+        // Reaching here means the prompt showed but the user cancelled or the
+        // scan was not recognised (not a system error).
         logger.w('Biometric auth returned false (cancelled or failed).');
+        FirebaseCrashlytics.instance.log('biometric login: prompt returned false');
+        Utils.flushBarErrorMessage(
+            'Fingerprint not recognised. Try again or use your password.',
+            context);
         return false;
       }
 
@@ -109,6 +118,7 @@ class AuthViewModel with ChangeNotifier {
       final biometricToken = await BiometricService.getToken();
       if (biometricToken == null) {
         logger.w('No biometric token found in storage.');
+        FirebaseCrashlytics.instance.log('biometric login: no token in storage');
         Utils.flushBarErrorMessage(
             'Biometric not configured. Please log in with your password.',
             context);
@@ -117,10 +127,12 @@ class AuthViewModel with ChangeNotifier {
 
       // Step 3: Validate token with server
       logger.d('Sending biometric token to server...');
+      FirebaseCrashlytics.instance.log('biometric login: sending token to server');
       final responseData =
       await _myrepo.loginWithBiometricToken(biometricToken);
       if (responseData == null) {
         logger.w('Server rejected biometric token.');
+        FirebaseCrashlytics.instance.log('biometric login: server returned null');
         Utils.flushBarErrorMessage(
             'Biometric login failed. Please use your password.', context);
         // Clear the bad token so the user isn't stuck
@@ -143,9 +155,17 @@ class AuthViewModel with ChangeNotifier {
       Utils.flushBarSuccessMessage('Logged in successfully!', context);
       _navigateToHome(context);
       return true;
-    } on PlatformException catch (e) {
-      // Catch any PlatformException that slipped through BiometricService
+    } on PlatformException catch (e, stack) {
+      // Now reachable: BiometricService rethrows PlatformExceptions instead of
+      // swallowing them. This is the path that was failing silently in release.
       logger.e('PlatformException in loginWithBiometric: ${e.code} — ${e.message}');
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        stack,
+        reason: 'loginWithBiometric PlatformException (${e.code})',
+        information: ['code: ${e.code}', 'message: ${e.message}'],
+        fatal: false,
+      );
       // Map known error codes to friendly messages
       String message;
       switch (e.code) {
@@ -166,10 +186,16 @@ class AuthViewModel with ChangeNotifier {
       }
       Utils.flushBarErrorMessage(message, context);
       return false;
-    } catch (e) {
+    } catch (e, stack) {
       logger.e('loginWithBiometric unexpected error: $e');
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        stack,
+        reason: 'loginWithBiometric unexpected error',
+        fatal: false,
+      );
       Utils.flushBarErrorMessage(
-          'An unexpected error occurred. Please use your password.', context);
+          'Biometric login failed: $e', context);
       return false;
     }
   }

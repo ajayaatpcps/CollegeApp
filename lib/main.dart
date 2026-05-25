@@ -1,4 +1,8 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:lbef/firebase_options.dart';
 import 'package:lbef/resource/routes.dart';
 import 'package:lbef/resource/routes_name.dart';
 import 'package:lbef/view_model/application_files/application_view_model.dart';
@@ -20,7 +24,21 @@ import 'package:lbef/view_model/user_view_model/current_user_model.dart';
 import 'package:lbef/view_model/user_view_model/user_view_model.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // Send uncaught framework errors to Crashlytics.
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+
+  // Send uncaught async errors (outside the Flutter framework) to Crashlytics.
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+
   runApp(const MyApp());
 }
 
